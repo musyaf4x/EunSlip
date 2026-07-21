@@ -9,32 +9,75 @@
             <sys:String>en-US</sys:String>
         </x:Array>
     </UserControl.Resources>
-    <ScrollViewer Padding="32">
-        <StackPanel>
-            <TextBlock Text="Pengaturan" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,16" />
+    <ScrollViewer Background="{StaticResource PaperWhiteBrush}">
+        <StackPanel Margin="40,32" MaxWidth="640">
 
-            <TextBlock Text="Gmail" FontWeight="SemiBold" Margin="0,0,0,4" />
-            <TextBlock Text="{Binding ConnectedGmail, StringFormat='Akun: {0}'}" Margin="0,0,0,4" />
-            <TextBlock Text="{Binding HasGmailConnection, StringFormat='Terkoneksi: {0}'}" Margin="0,0,0,8" />
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-                <Button Content="Hubungkan" Command="{Binding ConnectGmailCommand}" Padding="12,4" Margin="0,0,8,0" />
-                <Button Content="Putuskan" Command="{Binding DisconnectGmailCommand}" Padding="12,4" />
-            </StackPanel>
+            <TextBlock Text="Pengaturan" Style="{StaticResource DisplayHeading}" FontSize="28" Margin="0,0,0,24" />
 
-            <TextBlock Text="Stamp" FontWeight="SemiBold" Margin="0,0,0,4" />
-            <TextBlock Text="{Binding HasStamp, StringFormat='Stamp aktif: {0}'}" Margin="0,0,0,8" />
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-                <Button Content="Pilih gambar stamp..." Click="PickStamp_Click" Padding="12,4" Margin="0,0,8,0" />
-                <Button Content="Hapus Stamp" Command="{Binding RemoveStampCommand}" Padding="12,4" />
-            </StackPanel>
+            <!-- Gmail -->
+            <TextBlock Text="GMAIL" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
+            <Border Style="{StaticResource Card}" Margin="0,0,0,24">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,4">
+                        <Run Text="Akun: " /><Run Text="{Binding ConnectedGmail}" Foreground="{StaticResource GraphiteBrush}" />
+                    </TextBlock>
+                    <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,12">
+                        <Run Text="Terkoneksi: " /><Run Text="{Binding HasGmailConnection}" Foreground="{StaticResource GraphiteBrush}" />
+                    </TextBlock>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="HUBUNGKAN" Command="{Binding ConnectGmailCommand}"
+                                Style="{StaticResource PrimaryButton}" Padding="16,8" Margin="0,0,8,0" />
+                        <Button Content="PUTUSKAN" Command="{Binding DisconnectGmailCommand}"
+                                Style="{StaticResource OutlinedButton}" Padding="16,8" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
 
-            <TextBlock Text="Bahasa" FontWeight="SemiBold" Margin="0,0,0,4" />
-            <ComboBox SelectedItem="{Binding SelectedLanguage}" ItemsSource="{StaticResource Languages}"
-                      Width="200" HorizontalAlignment="Left" Margin="0,0,0,4" />
-            <TextBlock Text="Perubahan bahasa diterapkan setelah mulai ulang." Foreground="#888" Margin="0,4,0,0"
-                       Visibility="{Binding LanguageChangedRequiresRestart, Converter={StaticResource BoolToVis}}" />
+            <!-- OAuth credential -->
+            <TextBlock Text="KREDENSIAL OAUTH" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
+            <Border Style="{StaticResource Card}" Margin="0,0,0,24">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,4"
+                               Text="{Binding HasOAuthSecret, StringFormat='Tersimpan: {0}'}" />
+                    <TextBlock Text="Tempel client_secret.json dari Google Cloud Console. Disimpan terenkripsi (DPAPI)."
+                               Style="{StaticResource MutedText}" Margin="0,0,0,12" />
+                    <TextBox Text="{Binding OauthClientSecretJson, UpdateSourceTrigger=PropertyChanged}"
+                             AcceptsReturn="True" TextWrapping="Wrap" Height="100"
+                             Style="{StaticResource FieldInput}" Margin="0,0,0,12" />
+                    <Button Content="SIMPAN" Command="{Binding SaveOAuthSecretCommand}"
+                            Style="{StaticResource PrimaryButton}" Padding="16,8" HorizontalAlignment="Left" />
+                </StackPanel>
+            </Border>
 
-            <TextBlock Text="{Binding StatusMessage}" Foreground="#555" Margin="0,16,0,0" />
+            <!-- Stamp -->
+            <TextBlock Text="STAMP" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
+            <Border Style="{StaticResource Card}" Margin="0,0,0,24">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,12">
+                        <Run Text="Stamp aktif: " /><Run Text="{Binding HasStamp}" Foreground="{StaticResource GraphiteBrush}" />
+                    </TextBlock>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="PILIH GAMBAR" Click="PickStamp_Click"
+                                Style="{StaticResource OutlinedButton}" Padding="16,8" Margin="0,0,8,0" />
+                        <Button Content="HAPUS STAMP" Command="{Binding RemoveStampCommand}"
+                                Style="{StaticResource OutlinedButton}" Padding="16,8" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Language -->
+            <TextBlock Text="BAHASA" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
+            <Border Style="{StaticResource Card}" Margin="0,0,0,24">
+                <StackPanel>
+                    <ComboBox SelectedItem="{Binding SelectedLanguage}" ItemsSource="{StaticResource Languages}"
+                              Style="{StaticResource FieldCombo}" Width="240" HorizontalAlignment="Left" />
+                    <TextBlock Text="Perubahan bahasa diterapkan setelah mulai ulang."
+                               Style="{StaticResource MutedText}" Margin="0,12,0,0"
+                               Visibility="{Binding LanguageChangedRequiresRestart, Converter={StaticResource BoolToVis}}" />
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource MutedText}" Margin="0,8,0,0" />
         </StackPanel>
     </ScrollViewer>
 </UserControl>

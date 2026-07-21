@@ -4,111 +4,167 @@
              xmlns:vm="clr-namespace:EunSlip.Desktop.ViewModels">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <c:NullToBoolConverter x:Key="NullToBool" xmlns:c="clr-namespace:EunSlip.Desktop.Converters" />
+
         <DataTemplate x:Key="SelectStep" DataType="{x:Type vm:PayrollWizardViewModel}">
-            <StackPanel Margin="0,8,0,0">
-                <TextBlock Text="File Excel (.xlsx)" />
-                <Grid Margin="0,4,0,8">
+            <StackPanel MaxWidth="560" Margin="0,8,0,0">
+                <TextBlock Text="FILE EXCEL (.XLSX)" Style="{StaticResource MicroLabel}" Margin="0,0,0,6" />
+                <Grid Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <TextBox Text="{Binding SelectedFilePath, UpdateSourceTrigger=PropertyChanged}"
-                             IsReadOnly="True" Margin="0,0,8,0" />
-                    <Button Content="Pilih..." Grid.Column="1" Click="PickFile_Click" Padding="12,4" />
+                             IsReadOnly="True" Style="{StaticResource FieldInput}" Margin="0,0,8,0" />
+                    <Button Content="PILIH" Grid.Column="1" Click="PickFile_Click"
+                            Style="{StaticResource OutlinedButton}" Padding="16,8" />
                 </Grid>
-                <TextBlock Text="Periode payroll (mis. JULY 2025)" />
-                <TextBox Text="{Binding Period, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,8" />
-                <TextBlock Text="Tanggal pembayaran" />
-                <DatePicker SelectedDate="{Binding PaymentDate}" Margin="0,4,0,8" />
+                <TextBlock Text="PERIODE PAYROLL" Style="{StaticResource MicroLabel}" Margin="0,0,0,6" />
+                <TextBox Text="{Binding Period, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource FieldInput}" Margin="0,0,0,20" />
+                <TextBlock Text="TANGGAL PEMBAYARAN" Style="{StaticResource MicroLabel}" Margin="0,0,0,6" />
+                <DatePicker SelectedDate="{Binding PaymentDate}" Style="{StaticResource FieldPicker}"
+                            MaxWidth="320" HorizontalAlignment="Left" />
             </StackPanel>
         </DataTemplate>
+
         <DataTemplate x:Key="ValidateStep" DataType="{x:Type vm:PayrollWizardViewModel}">
             <StackPanel>
-                <TextBlock Text="{Binding RecipientCount, StringFormat='Penerima valid: {0}'}" Margin="0,0,0,8" />
-                <DataGrid ItemsSource="{Binding ValidationRows}" AutoGenerateColumns="False"
-                          IsReadOnly="True" HeadersVisibility="Column" Height="300">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Baris" Binding="{Binding RowNumber}" Width="50" />
-                        <DataGridTextColumn Header="NIK" Binding="{Binding Nik}" Width="100" />
-                        <DataGridTextColumn Header="Nama" Binding="{Binding Name}" Width="*" />
-                        <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="200" />
-                        <DataGridTextColumn Header="Masalah" Binding="{Binding IssueSummary}" Width="180" />
-                    </DataGrid.Columns>
-                </DataGrid>
-            </StackPanel>
-        </DataTemplate>
-        <DataTemplate x:Key="PreviewStep" DataType="{x:Type vm:PayrollWizardViewModel}">
-            <StackPanel>
-                <Button Content="Buka Pratinjau" Command="{Binding OpenPreviewCommand}" Padding="12,4" Margin="0,0,0,12" HorizontalAlignment="Left" />
-                <TextBlock Text="Subjek email" />
-                <TextBox Text="{Binding EmailSubject, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,8" />
-                <TextBlock Text="Isi email" />
-                <TextBox Text="{Binding EmailBody, UpdateSourceTrigger=PropertyChanged}"
-                         AcceptsReturn="True" TextWrapping="Wrap" Height="160" Margin="0,4,0,8" />
-                <TextBlock Text="{Binding RecipientCount, StringFormat='Jumlah penerima: {0}'}" />
-                <TextBlock Text="{Binding ConnectedGmail, StringFormat='Gmail: {0}'}" />
-                <TextBlock Text="{Binding HasStamp, StringFormat='Stamp siap: {0}'}" />
-            </StackPanel>
-        </DataTemplate>
-        <DataTemplate x:Key="ConfirmStep" DataType="{x:Type vm:PayrollWizardViewModel}">
-            <StackPanel>
-                <TextBlock Text="{Binding RecipientCount, StringFormat='Penerima: {0}'}" Margin="0,0,0,8" />
-                <TextBlock Text="{Binding ConnectedGmail, StringFormat='Gmail: {0}'}" Margin="0,0,0,8" />
-                <TextBlock Text="{Binding Period, StringFormat='Periode: {0}'}" Margin="0,0,0,8" />
-                <TextBlock Text="Pengiriman tidak dapat dihentikan setelah konfirmasi."
-                           FontWeight="SemiBold" Foreground="#C62828" Margin="0,0,0,16" />
-                <Button Content="Konfirmasi &amp; Kirim" Command="{Binding ConfirmSendCommand}"
-                        Padding="16,8" HorizontalAlignment="Left" />
-            </StackPanel>
-        </DataTemplate>
-        <DataTemplate x:Key="SendStep" DataType="{x:Type vm:PayrollWizardViewModel}">
-            <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="{Binding StatusMessage}" FontSize="16" Margin="0,0,0,16" />
-                <TextBlock>
-                    <Run Text="{Binding CurrentRecipient}" />
-                    <Run Text="dari" />
-                    <Run Text="{Binding TotalRecipients}" />
+                <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,12">
+                    <Run Text="Penerima valid: " />
+                    <Run Text="{Binding RecipientCount}" FontWeight="SemiBold" Foreground="{StaticResource CarbonInkBrush}" />
                 </TextBlock>
-                <TextBlock Text="{Binding CurrentNik, StringFormat='NIK: {0}'}" />
-                <TextBlock Text="{Binding CurrentName, StringFormat='Nama: {0}'}" />
-                <TextBlock Text="{Binding CurrentAttempt, StringFormat='Percobaan: {0}'}" />
-                <TextBlock Text="{Binding SentCount, StringFormat='Terkirim: {0}'}" />
-                <TextBlock Text="{Binding FailedCount, StringFormat='Gagal: {0}'}" />
-                <TextBlock Text="Jangan tutup aplikasi." Foreground="#888" Margin="0,16,0,0" />
+                <Border Style="{StaticResource Card}" Padding="0">
+                    <DataGrid ItemsSource="{Binding ValidationRows}" Style="{StaticResource EditorialDataGrid}"
+                              AutoGenerateColumns="False" IsReadOnly="True" Height="340">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="BARIS" Binding="{Binding RowNumber}" Width="56" />
+                            <DataGridTextColumn Header="NIK" Binding="{Binding Nik}" Width="110" />
+                            <DataGridTextColumn Header="NAMA" Binding="{Binding Name}" Width="*" />
+                            <DataGridTextColumn Header="EMAIL" Binding="{Binding Email}" Width="220" />
+                            <DataGridTextColumn Header="MASALAH" Binding="{Binding IssueSummary}" Width="200" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Border>
             </StackPanel>
         </DataTemplate>
+
+        <DataTemplate x:Key="PreviewStep" DataType="{x:Type vm:PayrollWizardViewModel}">
+            <StackPanel MaxWidth="640">
+                <Button Content="BUKA PRATINJAU PDF" Command="{Binding OpenPreviewCommand}"
+                        Style="{StaticResource OutlinedButton}" Padding="20,10" Margin="0,0,0,24"
+                        HorizontalAlignment="Left" />
+                <TextBlock Text="SUBJEK EMAIL" Style="{StaticResource MicroLabel}" Margin="0,0,0,6" />
+                <TextBox Text="{Binding EmailSubject, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource FieldInput}" Margin="0,0,0,20" />
+                <TextBlock Text="ISI EMAIL" Style="{StaticResource MicroLabel}" Margin="0,0,0,6" />
+                <TextBox Text="{Binding EmailBody, UpdateSourceTrigger=PropertyChanged}"
+                         AcceptsReturn="True" TextWrapping="Wrap" Height="180"
+                         Style="{StaticResource FieldInput}" Margin="0,0,0,20" />
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                    <TextBlock Style="{StaticResource MutedText}" Margin="0,0,16,0">
+                        <Run Text="Penerima: " /><Run Text="{Binding RecipientCount}" Foreground="{StaticResource CarbonInkBrush}" />
+                    </TextBlock>
+                    <TextBlock Style="{StaticResource MutedText}" Margin="0,0,16,0">
+                        <Run Text="Gmail: " /><Run Text="{Binding ConnectedGmail}" Foreground="{StaticResource CarbonInkBrush}" />
+                    </TextBlock>
+                    <TextBlock Style="{StaticResource MutedText}">
+                        <Run Text="Stamp: " /><Run Text="{Binding HasStamp}" Foreground="{StaticResource CarbonInkBrush}" />
+                    </TextBlock>
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ConfirmStep" DataType="{x:Type vm:PayrollWizardViewModel}">
+            <StackPanel MaxWidth="560">
+                <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,8">
+                    <Run Text="Penerima: " /><Run Text="{Binding RecipientCount}" FontWeight="SemiBold" />
+                </TextBlock>
+                <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,8">
+                    <Run Text="Gmail: " /><Run Text="{Binding ConnectedGmail}" FontWeight="SemiBold" />
+                </TextBlock>
+                <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,24">
+                    <Run Text="Periode: " /><Run Text="{Binding Period}" FontWeight="SemiBold" />
+                </TextBlock>
+                <Border Background="{StaticResource FogBrush}" BorderBrush="{StaticResource EmberRedBrush}"
+                        BorderThickness="2,0,0,0" Padding="16,12" Margin="0,0,0,24">
+                    <TextBlock Style="{StaticResource BodyText}" Text="Pengiriman tidak dapat dihentikan setelah konfirmasi." />
+                </Border>
+                <Button Content="KONFIRMASI &amp; KIRIM" Command="{Binding ConfirmSendCommand}"
+                        Style="{StaticResource PrimaryButton}" Padding="24,12" HorizontalAlignment="Left" />
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SendStep" DataType="{x:Type vm:PayrollWizardViewModel}">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" MaxWidth="480">
+                <TextBlock Text="MENGIRIM" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
+                <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource SectionHeading}" Margin="0,0,0,24" />
+                <TextBlock Style="{StaticResource DisplayHeading}" FontSize="48" Margin="0,0,0,8">
+                    <Run Text="{Binding CurrentRecipient}" /><Run Text=" / " /><Run Text="{Binding TotalRecipients}" />
+                </TextBlock>
+                <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,4">
+                    <Run Text="NIK: " /><Run Text="{Binding CurrentNik}" Foreground="{StaticResource CarbonInkBrush}" />
+                </TextBlock>
+                <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,4">
+                    <Run Text="Nama: " /><Run Text="{Binding CurrentName}" Foreground="{StaticResource CarbonInkBrush}" />
+                </TextBlock>
+                <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,16">
+                    <Run Text="Percobaan: " /><Run Text="{Binding CurrentAttempt}" Foreground="{StaticResource CarbonInkBrush}" />
+                </TextBlock>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
+                    <TextBlock Style="{StaticResource BodyText}" Margin="0,0,24,0">
+                        <Run Text="Terkirim " /><Run Text="{Binding SentCount}" FontWeight="SemiBold" />
+                    </TextBlock>
+                    <TextBlock Style="{StaticResource BodyText}">
+                        <Run Text="Gagal " /><Run Text="{Binding FailedCount}" FontWeight="SemiBold" Foreground="{StaticResource EmberRedBrush}" />
+                    </TextBlock>
+                </StackPanel>
+                <TextBlock Text="Jangan tutup aplikasi." Style="{StaticResource MutedText}" />
+            </StackPanel>
+        </DataTemplate>
+
         <DataTemplate x:Key="ResultsStep" DataType="{x:Type vm:PayrollWizardViewModel}">
             <StackPanel>
-                <TextBlock Text="{Binding SentCount, StringFormat='Terkirim: {0}'}" FontSize="16" />
-                <TextBlock Text="{Binding FailedCount, StringFormat='Gagal: {0}'}" FontSize="16" Margin="0,0,0,12" />
-                <DataGrid ItemsSource="{Binding Results}" AutoGenerateColumns="False"
-                          IsReadOnly="True" HeadersVisibility="Column" Height="300">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="NIK" Binding="{Binding Nik}" Width="100" />
-                        <DataGridTextColumn Header="Nama" Binding="{Binding Name}" Width="*" />
-                        <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="200" />
-                        <DataGridTextColumn Header="Percobaan" Binding="{Binding AttemptsMade}" Width="70" />
-                        <DataGridTextColumn Header="Alasan" Binding="{Binding ErrorMessage}" Width="200" />
-                    </DataGrid.Columns>
-                </DataGrid>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                    <TextBlock Style="{StaticResource SectionHeading}" Margin="0,0,24,0">
+                        <Run Text="Terkirim " /><Run Text="{Binding SentCount}" />
+                    </TextBlock>
+                    <TextBlock Style="{StaticResource SectionHeading}">
+                        <Run Text="Gagal " /><Run Text="{Binding FailedCount}" Foreground="{StaticResource EmberRedBrush}" />
+                    </TextBlock>
+                </StackPanel>
+                <Border Style="{StaticResource Card}" Padding="0">
+                    <DataGrid ItemsSource="{Binding Results}" Style="{StaticResource EditorialDataGrid}"
+                              AutoGenerateColumns="False" IsReadOnly="True" Height="340">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="NIK" Binding="{Binding Nik}" Width="110" />
+                            <DataGridTextColumn Header="NAMA" Binding="{Binding Name}" Width="*" />
+                            <DataGridTextColumn Header="EMAIL" Binding="{Binding Email}" Width="220" />
+                            <DataGridTextColumn Header="PERC." Binding="{Binding AttemptsMade}" Width="70" />
+                            <DataGridTextColumn Header="ALASAN" Binding="{Binding ErrorMessage}" Width="220" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Border>
             </StackPanel>
         </DataTemplate>
     </UserControl.Resources>
 
-    <Grid Margin="24">
+    <Grid Background="{StaticResource PaperWhiteBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Margin="0,0,0,16">
-            <TextBlock Text="{Binding StepTitle}" FontSize="18" FontWeight="SemiBold" />
-            <TextBlock Text="{Binding ErrorMessage}" Foreground="#C62828" Margin="0,4,0,0"
+        <StackPanel Grid.Row="0" Margin="40,32,40,0">
+            <TextBlock Text="{Binding StepTitle}" Style="{StaticResource DisplayHeading}" FontSize="28" />
+            <Border Background="{StaticResource MistBrush}" Height="1" Margin="0,16,0,0" />
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource EmberRedBrush}"
+                       FontFamily="{StaticResource BodyFont}" FontSize="13" Margin="0,12,0,0"
                        Visibility="{Binding HasError, Converter={StaticResource BoolToVis}}" />
         </StackPanel>
 
-        <ContentControl Grid.Row="1" Content="{Binding}">
+        <ContentControl Grid.Row="1" Content="{Binding}" Margin="40,24,40,0">
             <ContentControl.Style>
                 <Style TargetType="ContentControl">
                     <Style.Triggers>
@@ -135,17 +191,17 @@
             </ContentControl.Style>
         </ContentControl>
 
-        <Grid Grid.Row="2" Margin="0,16,0,0">
+        <Grid Grid.Row="2" Margin="40,0,40,32">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Button Content="Kembali" Command="{Binding BackCommand}" Grid.Column="1"
-                    Margin="0,0,8,0" Padding="16,6"
+            <Button Content="KEMBALI" Command="{Binding BackCommand}" Grid.Column="1"
+                    Style="{StaticResource OutlinedButton}" Margin="0,0,8,0" Padding="20,10"
                     Visibility="{Binding CanGoBack, Converter={StaticResource BoolToVis}}" />
-            <Button Content="Lanjut" Command="{Binding NextCommand}" Grid.Column="2"
-                    Padding="16,6"
+            <Button Content="LANJUT" Command="{Binding NextCommand}" Grid.Column="2"
+                    Style="{StaticResource PrimaryButton}" Padding="20,10"
                     Visibility="{Binding CanGoNext, Converter={StaticResource BoolToVis}}" />
         </Grid>
     </Grid>

@@ -3,10 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:EunSlip.Desktop.ViewModels"
         xmlns:v="clr-namespace:EunSlip.Desktop.Views"
-        Title="EunSlip" Width="1024" Height="740"
+        Title="EunSlip" Width="1180" Height="760"
+        Background="{StaticResource PaperWhiteBrush}"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
-        <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <DataTemplate DataType="{x:Type vm:HomeViewModel}">
             <v:HomeView />
         </DataTemplate>
@@ -26,26 +26,68 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="210" />
+            <ColumnDefinition Width="232" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Border Background="#F4F4F6" BorderBrush="#DDDDDD" BorderThickness="0,0,1,0">
-            <StackPanel Margin="16">
-                <TextBlock Text="EunSlip" FontSize="24" FontWeight="Bold" Margin="0,0,0,24" />
-                <Button Content="{Binding NavHome}" Command="{Binding GoHomeCommand}"
-                        Margin="0,0,0,4" Padding="8,6" HorizontalAlignment="Stretch" />
-                <Button Content="{Binding NavPayrollProcess}" Command="{Binding GoPayrollCommand}"
-                        Margin="0,0,0,4" Padding="8,6" HorizontalAlignment="Stretch" />
-                <Button Content="{Binding NavHistory}" Command="{Binding GoHistoryCommand}"
-                        Margin="0,0,0,4" Padding="8,6" HorizontalAlignment="Stretch" />
-                <Button Content="{Binding NavSettings}" Command="{Binding GoSettingsCommand}"
-                        Margin="0,0,0,4" Padding="8,6" HorizontalAlignment="Stretch" />
-                <Button Content="{Binding NavAbout}" Command="{Binding GoAboutCommand}"
-                        Margin="0,0,0,4" Padding="8,6" HorizontalAlignment="Stretch" />
-            </StackPanel>
+        <!-- Nav rail (carbon ink panel) -->
+        <Border Grid.Column="0" Background="{StaticResource CarbonInkBrush}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Brand -->
+                <StackPanel Grid.Row="0" Margin="24,28,24,24">
+                    <TextBlock Text="EunSlip" FontFamily="{StaticResource DisplaySerifFont}"
+                               FontStyle="Italic" FontSize="26" Foreground="{StaticResource PaperWhiteBrush}" />
+                    <TextBlock Text="PAYROLL DELIVERY" FontFamily="{StaticResource BodyFont}"
+                               FontSize="10" FontStretch="Condensed" FontWeight="SemiBold"
+                               Foreground="{StaticResource GraphiteBrush}" Margin="0,4,0,0"
+                               TextOptions.TextFormattingMode="Display" />
+                </StackPanel>
+
+                <!-- Nav buttons -->
+                <StackPanel Grid.Row="1" Margin="16,0">
+                    <Button Content="{Binding NavHome}" Command="{Binding GoHomeCommand}"
+                            Style="{StaticResource GhostButton}" Foreground="{StaticResource FogBrush}"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                            Padding="12,10" Margin="0,2" />
+                    <Button Content="{Binding NavPayrollProcess}" Command="{Binding GoPayrollCommand}"
+                            Style="{StaticResource GhostButton}" Foreground="{StaticResource FogBrush}"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                            Padding="12,10" Margin="0,2" />
+                    <Button Content="{Binding NavHistory}" Command="{Binding GoHistoryCommand}"
+                            Style="{StaticResource GhostButton}" Foreground="{StaticResource FogBrush}"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                            Padding="12,10" Margin="0,2" />
+                    <Button Content="{Binding NavSettings}" Command="{Binding GoSettingsCommand}"
+                            Style="{StaticResource GhostButton}" Foreground="{StaticResource FogBrush}"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                            Padding="12,10" Margin="0,2" />
+                    <Button Content="{Binding NavAbout}" Command="{Binding GoAboutCommand}"
+                            Style="{StaticResource GhostButton}" Foreground="{StaticResource FogBrush}"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                            Padding="12,10" Margin="0,2" />
+                </StackPanel>
+
+                <!-- Vierth Labs trademark footer -->
+                <StackPanel Grid.Row="2" Margin="24,16,24,24">
+                    <Border BorderBrush="#2a322e" BorderThickness="0,1,0,0" Margin="0,0,0,12" />
+                    <Image Source="/Assets/vierth.png" Height="22" HorizontalAlignment="Left"
+                           RenderOptions.BitmapScalingMode="HighQuality" />
+                    <TextBlock Text="DEVELOPED BY VIERTH LABS" FontFamily="{StaticResource BodyFont}"
+                               FontSize="9" FontWeight="SemiBold" Foreground="{StaticResource GraphiteBrush}"
+                               Margin="0,6,0,0" TextOptions.TextFormattingMode="Display" />
+                    <TextBlock Text="© 2026 Vierth Labs" FontFamily="{StaticResource BodyFont}"
+                               FontSize="9" Foreground="{StaticResource PewterBrush}" Margin="0,2,0,0" />
+                </StackPanel>
+            </Grid>
         </Border>
 
+        <!-- Content -->
         <ContentControl Grid.Column="1" Content="{Binding Current}" />
     </Grid>
 </Window>

@@ -39,6 +39,13 @@ public sealed partial class SettingsViewModel(
     private string? _statusMessage;
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(SaveOAuthSecretCommand))]
+    private string _oauthClientSecretJson = string.Empty;
+
+    [ObservableProperty]
+    private bool _hasOAuthSecret;
+
+    [ObservableProperty]
     private bool _languageChangedRequiresRestart;
 
     [RelayCommand]
@@ -51,7 +58,29 @@ public sealed partial class SettingsViewModel(
         {
             SelectedLanguage = savedLanguage;
         }
+        HasOAuthSecret = !string.IsNullOrWhiteSpace(_repository.GetSetting(SettingClientSecret));
     }
+
+    [RelayCommand(CanExecute = nameof(CanSaveOAuthSecret))]
+    private void SaveOAuthSecret()
+    {
+        try
+        {
+            byte[] secretBytes = Encoding.UTF8.GetBytes(OauthClientSecretJson);
+            byte[] envelope = DpapiKeyProtector.ProtectToken(secretBytes);
+            _repository.SetSetting(SettingClientSecret, Convert.ToBase64String(envelope));
+            HasOAuthSecret = true;
+            OauthClientSecretJson = string.Empty;
+            StatusMessage = "Kredensial OAuth disimpan (terenkripsi DPAPI).";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "OAuth secret save failed");
+            StatusMessage = "Gagal menyimpan kredensial OAuth.";
+        }
+    }
+
+    private bool CanSaveOAuthSecret() => !string.IsNullOrWhiteSpace(OauthClientSecretJson);
 
     [RelayCommand]
     private async Task RefreshGmailAsync()

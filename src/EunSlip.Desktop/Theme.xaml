@@ -1,0 +1,284 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ===== Colors (Peak Design tokens) ===== -->
+    <Color x:Key="CarbonInkColor">#1a211e</Color>
+    <Color x:Key="PaperWhiteColor">#ffffff</Color>
+    <Color x:Key="TrueBlackColor">#000000</Color>
+    <Color x:Key="ObsidianColor">#0c0c0c</Color>
+    <Color x:Key="FogColor">#eef1f0</Color>
+    <Color x:Key="MistColor">#e0e0e0</Color>
+    <Color x:Key="GraphiteColor">#606562</Color>
+    <Color x:Key="AshBorderColor">#cccfcd</Color>
+    <Color x:Key="SlateColor">#363537</Color>
+    <Color x:Key="PewterColor">#4e4e4e</Color>
+    <Color x:Key="EmberRedColor">#cc2e39</Color>
+
+    <SolidColorBrush x:Key="CarbonInkBrush" Color="{StaticResource CarbonInkColor}" />
+    <SolidColorBrush x:Key="PaperWhiteBrush" Color="{StaticResource PaperWhiteColor}" />
+    <SolidColorBrush x:Key="TrueBlackBrush" Color="{StaticResource TrueBlackColor}" />
+    <SolidColorBrush x:Key="ObsidianBrush" Color="{StaticResource ObsidianColor}" />
+    <SolidColorBrush x:Key="FogBrush" Color="{StaticResource FogColor}" />
+    <SolidColorBrush x:Key="MistBrush" Color="{StaticResource MistColor}" />
+    <SolidColorBrush x:Key="GraphiteBrush" Color="{StaticResource GraphiteColor}" />
+    <SolidColorBrush x:Key="AshBorderBrush" Color="{StaticResource AshBorderColor}" />
+    <SolidColorBrush x:Key="SlateBrush" Color="{StaticResource SlateColor}" />
+    <SolidColorBrush x:Key="PewterBrush" Color="{StaticResource PewterColor}" />
+    <SolidColorBrush x:Key="EmberRedBrush" Color="{StaticResource EmberRedColor}" />
+
+    <!-- ===== Typography ===== -->
+    <FontFamily x:Key="DisplaySerifFont">Georgia, Cambria, Times New Roman</FontFamily>
+    <FontFamily x:Key="BodyFont">Segoe UI Variable, Segoe UI, system-ui</FontFamily>
+
+    <Style x:Key="DisplayHeading" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource DisplaySerifFont}" />
+        <Setter Property="FontStyle" Value="Italic" />
+        <Setter Property="FontSize" Value="32" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="Foreground" Value="{StaticResource CarbonInkBrush}" />
+        <Setter Property="TextOptions.TextFormattingMode" Value="Ideal" />
+    </Style>
+
+    <Style x:Key="SectionHeading" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+        <Setter Property="FontSize" Value="22" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource CarbonInkBrush}" />
+    </Style>
+
+    <Style x:Key="LabelText" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource SlateBrush}" />
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+    </Style>
+
+    <Style x:Key="BodyText" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="Foreground" Value="{StaticResource CarbonInkBrush}" />
+    </Style>
+
+    <Style x:Key="MutedText" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="Foreground" Value="{StaticResource GraphiteBrush}" />
+    </Style>
+
+    <Style x:Key="MicroLabel" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource GraphiteBrush}" />
+    </Style>
+
+    <!-- ===== Geometry / Radii ===== -->
+    <CornerRadius x:Key="RadiusSm">4</CornerRadius>
+    <CornerRadius x:Key="RadiusMd">8</CornerRadius>
+
+    <!-- ===== Base Button (ghost, uppercase label) ===== -->
+    <Style x:Key="GhostButton" TargetType="Button">
+        <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource CarbonInkBrush}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
+                            CornerRadius="{StaticResource RadiusSm}"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          TextBlock.FontFamily="{TemplateBinding FontFamily}"
+                                          TextBlock.FontSize="{TemplateBinding FontSize}"
+                                          TextBlock.FontWeight="{TemplateBinding FontWeight}"
+                                          TextBlock.Foreground="{TemplateBinding Foreground}" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource FogBrush}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{StaticResource AshBorderBrush}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ===== Filled Button (primary action — carbon ink) ===== -->
+    <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource GhostButton}">
+        <Setter Property="Background" Value="{StaticResource CarbonInkBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource PaperWhiteBrush}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource ObsidianBrush}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="{StaticResource MistBrush}" />
+                <Setter Property="Foreground" Value="{StaticResource GraphiteBrush}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ===== Outlined Button (secondary) ===== -->
+    <Style x:Key="OutlinedButton" TargetType="Button" BasedOn="{StaticResource GhostButton}">
+        <Setter Property="BorderBrush" Value="{StaticResource AshBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{StaticResource CarbonInkBrush}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource FogBrush}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ===== Nav Rail Button ===== -->
+    <Style x:Key="NavButton" TargetType="Button" BasedOn="{StaticResource GhostButton}">
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="Padding" Value="12,10" />
+        <Setter Property="Foreground" Value="{StaticResource SlateBrush}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource FogBrush}" />
+                <Setter Property="Foreground" Value="{StaticResource CarbonInkBrush}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ===== TextBox ===== -->
+    <Style x:Key="FieldInput" TargetType="TextBox">
+        <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="{StaticResource CarbonInkBrush}" />
+        <Setter Property="Background" Value="{StaticResource FogBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource AshBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="10,8" />
+        <Setter Property="CaretBrush" Value="{StaticResource CarbonInkBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{StaticResource RadiusSm}">
+                        <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"
+                                      Focusable="False" HorizontalScrollBarVisibility="Hidden"
+                                      VerticalScrollBarVisibility="Hidden" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsKeyboardFocused" Value="True">
+                <Setter Property="BorderBrush" Value="{StaticResource CarbonInkBrush}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{StaticResource GraphiteBrush}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ===== DatePicker ===== -->
+    <Style x:Key="FieldPicker" TargetType="DatePicker">
+        <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="{StaticResource CarbonInkBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource AshBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="8,6" />
+    </Style>
+
+    <!-- ===== Card ===== -->
+    <Style x:Key="Card" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource PaperWhiteBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource MistBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{StaticResource RadiusMd}" />
+        <Setter Property="Padding" Value="24" />
+    </Style>
+
+    <!-- ===== DataGrid ===== -->
+    <Style x:Key="EditorialDataGrid" TargetType="DataGrid">
+        <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Foreground" Value="{StaticResource CarbonInkBrush}" />
+        <Setter Property="Background" Value="{StaticResource PaperWhiteBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource MistBrush}" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <Setter Property="RowBackground" Value="{StaticResource PaperWhiteBrush}" />
+        <Setter Property="AlternatingRowBackground" Value="{StaticResource FogBrush}" />
+        <Setter Property="GridLinesVisibility" Value="Horizontal" />
+        <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource MistBrush}" />
+        <Setter Property="HeadersVisibility" Value="Column" />
+        <Setter Property="ColumnHeaderHeight" Value="36" />
+        <Setter Property="RowHeight" Value="32" />
+        <Setter Property="ColumnHeaderStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+                    <Setter Property="FontSize" Value="11" />
+                    <Setter Property="FontWeight" Value="SemiBold" />
+                    <Setter Property="Foreground" Value="{StaticResource GraphiteBrush}" />
+                    <Setter Property="Background" Value="{StaticResource PaperWhiteBrush}" />
+                    <Setter Property="BorderBrush" Value="{StaticResource MistBrush}" />
+                    <Setter Property="BorderThickness" Value="0,0,0,1" />
+                    <Setter Property="Padding" Value="10,0" />
+                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                </Style>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="RowStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="BorderBrush" Value="{StaticResource MistBrush}" />
+                    <Setter Property="BorderThickness" Value="0,0,0,1" />
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{StaticResource FogBrush}" />
+                            <Setter Property="Foreground" Value="{StaticResource CarbonInkBrush}" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="CellStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="Padding" Value="10,0" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Foreground" Value="{StaticResource CarbonInkBrush}" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ===== ComboBox ===== -->
+    <Style x:Key="FieldCombo" TargetType="ComboBox">
+        <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="{StaticResource CarbonInkBrush}" />
+        <Setter Property="Background" Value="{StaticResource FogBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource AshBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="10,8" />
+    </Style>
+
+</ResourceDictionary>

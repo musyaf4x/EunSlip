@@ -1,13 +1,50 @@
 <UserControl x:Class="EunSlip.Desktop.Views.AboutView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ScrollViewer Padding="32">
-        <StackPanel>
-            <TextBlock Text="Tentang Aplikasi" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,16" />
-            <TextBlock Text="{Binding AppName, StringFormat='Nama: {0}'}" Margin="0,0,0,4" />
-            <TextBlock Text="{Binding Version, StringFormat='Versi: {0}'}" Margin="0,0,0,4" />
-            <TextBlock Text="{Binding Company, StringFormat='Perusahaan: {0}'}" Margin="0,0,0,4" />
-            <TextBlock Text="{Binding LogFolder, StringFormat='Folder log: {0}'}" Margin="0,0,0,4" />
+    <ScrollViewer Background="{StaticResource PaperWhiteBrush}">
+        <StackPanel Margin="40,32" MaxWidth="640">
+            <TextBlock Text="Tentang Aplikasi" Style="{StaticResource DisplayHeading}" FontSize="28" Margin="0,0,0,24" />
+
+            <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="EunSlip" Style="{StaticResource SectionHeading}" Margin="0,0,0,4" />
+                    <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,4">
+                        <Run Text="Versi " /><Run Text="{Binding Version}" Foreground="{StaticResource GraphiteBrush}" />
+                    </TextBlock>
+                    <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,0">
+                        <Run Text="Untuk " /><Run Text="{Binding Company}" Foreground="{StaticResource GraphiteBrush}" />
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="DIKEMBANGKAN OLEH" Style="{StaticResource MicroLabel}" Margin="0,0,0,12" />
+                    <Image Source="/Assets/vierth.png" Height="28" HorizontalAlignment="Left"
+                           RenderOptions.BitmapScalingMode="HighQuality" Margin="0,0,0,12" />
+                    <TextBlock Text="{Binding Developer}" Style="{StaticResource SectionHeading}" FontSize="18" Margin="0,0,0,4" />
+                    <TextBlock Style="{StaticResource BodyText}">
+                        <Run Text="Kontak: " /><Run Text="{Binding ContactEmail}" Foreground="{StaticResource GraphiteBrush}" />
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="LISENSI" Style="{StaticResource MicroLabel}" Margin="0,0,0,12" />
+                    <TextBlock Text="{Binding LicenseSummary}" Style="{StaticResource BodyText}" TextWrapping="Wrap" Margin="0,0,0,12" />
+                    <TextBlock Text="{Binding Disclaimer}" Style="{StaticResource MutedText}" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="DIAGNOSTIK" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
+                    <TextBlock Style="{StaticResource BodyText}">
+                        <Run Text="Folder log: " /><Run Text="{Binding LogFolder}" Foreground="{StaticResource GraphiteBrush}" />
+                    </TextBlock>
+                </StackPanel>
+            </Border>
         </StackPanel>
     </ScrollViewer>
 </UserControl>
