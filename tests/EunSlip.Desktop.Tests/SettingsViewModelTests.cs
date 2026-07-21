@@ -110,6 +110,7 @@ public sealed class SettingsViewModelTests
         byte[] envelope = EunSlip.Infrastructure.Security.DpapiKeyProtector.ProtectToken(
             System.Text.Encoding.UTF8.GetBytes("{ \"installed\": {} }"));
         repo.Settings["OAuthClientSecret"] = Convert.ToBase64String(envelope);
+        await vm.LoadedCommand.ExecuteAsync(null);
 
         await vm.ConnectGmailCommand.ExecuteAsync(null);
 

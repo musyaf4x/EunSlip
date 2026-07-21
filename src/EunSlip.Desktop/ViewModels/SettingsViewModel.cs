@@ -46,6 +46,11 @@ public sealed partial class SettingsViewModel(
     private bool _hasOAuthSecret;
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ConnectGmailCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DisconnectGmailCommand))]
+    private bool _isConnecting;
+
+    [ObservableProperty]
     private bool _languageChangedRequiresRestart;
 
     [RelayCommand]
@@ -97,31 +102,47 @@ public sealed partial class SettingsViewModel(
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanConnectGmail))]
     private async Task ConnectGmailAsync()
     {
-        byte[]? secretEnvelope = LoadSecretEnvelope();
-        if (secretEnvelope is null)
+        if (!HasOAuthSecret)
         {
-            StatusMessage = "Kredensial OAuth belum dikonfigurasi. Hubungi IT.";
+            StatusMessage = "Simpan kredensial OAuth di bawah ini dulu, lalu klik Hubungkan.";
             return;
         }
 
+        IsConnecting = true;
+        StatusMessage = "Membuka browser untuk otorisasi Gmail…";
         try
         {
+            byte[]? secretEnvelope = LoadSecretEnvelope();
+            if (secretEnvelope is null)
+            {
+                StatusMessage = "Kredensial OAuth rusak. Tempel ulang dan simpan.";
+                return;
+            }
+
             byte[] secretBytes = DpapiKeyProtector.UnprotectToken(secretEnvelope);
             string clientSecret = Encoding.UTF8.GetString(secretBytes);
             GoogleAccount? account = await _gmail.ConnectAsync(clientSecret, CancellationToken.None);
             ConnectedGmail = account?.Email;
             HasGmailConnection = account is not null;
-            StatusMessage = HasGmailConnection ? "Gmail terhubung." : "Gagal menghubungkan Gmail.";
+            StatusMessage = HasGmailConnection
+                ? $"Gmail terhubung: {account?.Email}"
+                : "Gagal menghubungkan Gmail. Periksa kredensial / jaringan.";
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Gmail connect failed");
-            StatusMessage = "Gagal menghubungkan Gmail.";
+            StatusMessage = "Gagal menghubungkan Gmail: " + ex.Message;
+        }
+        finally
+        {
+            IsConnecting = false;
         }
     }
+
+    private bool CanConnectGmail() => !IsConnecting;
 
     private byte[]? LoadSecretEnvelope()
     {

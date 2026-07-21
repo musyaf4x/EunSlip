@@ -16,7 +16,7 @@
 
             <!-- Gmail -->
             <TextBlock Text="GMAIL" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
-            <Border Style="{StaticResource Card}" Margin="0,0,0,24">
+            <Border Style="{StaticResource Card}" Margin="0,0,0,8">
                 <StackPanel>
                     <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,4">
                         <Run Text="Akun: " /><Run Text="{Binding ConnectedGmail, Mode=OneWay}" Foreground="{StaticResource GraphiteBrush}" />
@@ -25,13 +25,62 @@
                         <Run Text="Terkoneksi: " /><Run Text="{Binding HasGmailConnection, Mode=OneWay}" Foreground="{StaticResource GraphiteBrush}" />
                     </TextBlock>
                     <StackPanel Orientation="Horizontal">
-                        <Button Content="HUBUNGKAN" Command="{Binding ConnectGmailCommand}"
-                                Style="{StaticResource PrimaryButton}" Padding="16,8" Margin="0,0,8,0" />
+                        <Button Command="{Binding ConnectGmailCommand}"
+                                Padding="16,8" Margin="0,0,8,0">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                                    <Setter Property="Content" Value="HUBUNGKAN" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsConnecting}" Value="True">
+                                            <Setter Property="Content" Value="MENGHUBUNGKAN…" />
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
                         <Button Content="PUTUSKAN" Command="{Binding DisconnectGmailCommand}"
                                 Style="{StaticResource OutlinedButton}" Padding="16,8" />
                     </StackPanel>
+                    <TextBlock Text="{Binding StatusMessage, Mode=OneWay}" Style="{StaticResource MutedText}"
+                               Margin="0,12,0,0" TextWrapping="Wrap" />
                 </StackPanel>
             </Border>
+
+            <!-- Setup guide -->
+            <Expander Header="PANDUAN SETUP GOOGLE CLOUD &amp; OAUTH" Margin="0,0,0,24"
+                      FontFamily="{StaticResource BodyFont}" FontSize="12" FontWeight="SemiBold"
+                      Foreground="{StaticResource SlateBrush}" Padding="0">
+                <Border Background="{StaticResource FogBrush}" Padding="16,12" CornerRadius="4" Margin="0,8,0,0">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource BodyText}" FontWeight="SemiBold" Margin="0,0,0,8" Text="Langkah-langkah:" />
+                        <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,0,0,6">
+                            <Run Text="1. Buka " /><Run Text="console.cloud.google.com" /><Run Text=" → buat / pilih project." />
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,0,0,6">
+                            <Run Text="2. APIs &amp; Services → Library → aktifkan " /><Run Text="Gmail API" /><Run Text="." />
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,0,0,6">
+                            <Run Text="3. OAuth consent screen: pilih " /><Run Text="Internal" /><Run Text=" (jika Google Workspace), isi app name &amp; email." />
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,0,0,6">
+                            <Run Text="4. Credentials → Create Credentials → OAuth client ID → type " /><Run Text="Desktop app" /><Run Text="." />
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,0,0,6">
+                            <Run Text="5. Download " /><Run Text="client_secret.json" /><Run Text="." />
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,0,0,6">
+                            <Run Text="6. Buka isi file client_secret.json, tempel ke kotak " /><Run Text="Kredensial OAuth" /><Run Text=" di bawah, klik Simpan." />
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,0,0,6">
+                            <Run Text="7. Klik " /><Run Text="Hubungkan" /><Run Text=" — browser terbuka, login akun payroll Gmail, izinkan." />
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,0,0,0" Foreground="{StaticResource EmberRedBrush}">
+                            <Run Text="Catatan: gunakan akun payroll Gmail (PT. EUNSUNG INDONESIA). Akun ini jadi pengirim." />
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+            </Expander>
 
             <!-- OAuth credential -->
             <TextBlock Text="KREDENSIAL OAUTH" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
@@ -76,8 +125,6 @@
                                Visibility="{Binding LanguageChangedRequiresRestart, Converter={StaticResource BoolToVis}}" />
                 </StackPanel>
             </Border>
-
-            <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource MutedText}" Margin="0,8,0,0" />
         </StackPanel>
     </ScrollViewer>
 </UserControl>

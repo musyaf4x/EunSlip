@@ -5,82 +5,90 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <c:NullToBoolConverter x:Key="NullToBool" />
+        <c:NullToVisibilityConverter x:Key="NullToVis" />
     </UserControl.Resources>
     <Grid Background="{StaticResource PaperWhiteBrush}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
+        <!-- Header -->
         <StackPanel Grid.Row="0" Margin="40,32,40,0">
             <TextBlock Text="Riwayat Batch" Style="{StaticResource DisplayHeading}" FontSize="28" />
             <Border Background="{StaticResource MistBrush}" Height="1" Margin="0,16,0,0" />
         </StackPanel>
 
-        <Grid Grid.Row="1" Margin="40,24,40,0">
+        <!-- Toolbar -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="40,20,40,0">
+            <Button Content="KIRIM ULANG GAGAL" Command="{Binding RetryFailedCommand}"
+                    CommandParameter="{Binding SelectedBatch}" Style="{StaticResource OutlinedButton}"
+                    Padding="16,8" Margin="0,0,8,0"
+                    IsEnabled="{Binding SelectedBatch, Converter={StaticResource NullToBool}}" />
+            <Button Content="PULIHKAN" Command="{Binding RecoverCommand}"
+                    CommandParameter="{Binding SelectedBatch}" Style="{StaticResource OutlinedButton}"
+                    Padding="16,8" Margin="0,0,8,0"
+                    IsEnabled="{Binding SelectedBatch, Converter={StaticResource NullToBool}}" />
+            <Button Content="HAPUS" Command="{Binding RequestDeleteCommand}"
+                    CommandParameter="{Binding SelectedBatch}" Style="{StaticResource OutlinedButton}"
+                    Padding="16,8"
+                    IsEnabled="{Binding SelectedBatch, Converter={StaticResource NullToBool}}" />
+            <TextBlock Text="{Binding StatusMessage, Mode=OneWay}" Style="{StaticResource MutedText}"
+                       VerticalAlignment="Center" Margin="16,0,0,0" />
+        </StackPanel>
+
+        <!-- Master/detail -->
+        <Grid Grid.Row="2" Margin="40,16,40,16">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="1.6*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Border Grid.Column="0" Style="{StaticResource Card}" Padding="0" Margin="0,0,8,0">
+            <Border Grid.Column="0" Style="{StaticResource Card}" Padding="0" Margin="0,0,12,0">
                 <DataGrid ItemsSource="{Binding Batches}" Style="{StaticResource EditorialDataGrid}"
                           AutoGenerateColumns="False" IsReadOnly="True"
                           SelectedItem="{Binding SelectedBatch}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="PERIODE" Binding="{Binding Period}" Width="90" />
-                        <DataGridTextColumn Header="TANGGAL" Binding="{Binding PaymentDate}" Width="100" />
-                        <DataGridTextColumn Header="PENERIMA" Binding="{Binding RecipientCount}" Width="70" />
-                        <DataGridTextColumn Header="KIRIM" Binding="{Binding SentCount}" Width="60" />
-                        <DataGridTextColumn Header="GAGAL" Binding="{Binding FailedCount}" Width="56" />
+                        <DataGridTextColumn Header="PERIODE" Binding="{Binding Period}" Width="100" />
+                        <DataGridTextColumn Header="TANGGAL" Binding="{Binding PaymentDate}" Width="110" />
+                        <DataGridTextColumn Header="PENERIMA" Binding="{Binding RecipientCount}" Width="80" />
+                        <DataGridTextColumn Header="KIRIM" Binding="{Binding SentCount}" Width="64" />
+                        <DataGridTextColumn Header="GAGAL" Binding="{Binding FailedCount}" Width="60" />
                         <DataGridTextColumn Header="STATUS" Binding="{Binding Status}" Width="*" />
                     </DataGrid.Columns>
                 </DataGrid>
             </Border>
 
-            <Border Grid.Column="1" Style="{StaticResource Card}" Padding="0" Margin="8,0,0,0">
-                <DataGrid ItemsSource="{Binding SelectedRecipients}" Style="{StaticResource EditorialDataGrid}"
-                          AutoGenerateColumns="False" IsReadOnly="True">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="NIK (HINT)" Binding="{Binding NikHint}" Width="120" />
-                        <DataGridTextColumn Header="STATUS" Binding="{Binding Status}" Width="100" />
-                        <DataGridTextColumn Header="DIPERBARUI" Binding="{Binding LastUpdatedAtUtc}" Width="*" />
-                    </DataGrid.Columns>
-                </DataGrid>
+            <Border Grid.Column="1" Style="{StaticResource Card}" Padding="0" Margin="12,0,0,0">
+                <Grid>
+                    <DataGrid ItemsSource="{Binding SelectedRecipients}" Style="{StaticResource EditorialDataGrid}"
+                              AutoGenerateColumns="False" IsReadOnly="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="NIK" Binding="{Binding NikHint}" Width="90" />
+                            <DataGridTextColumn Header="STATUS" Binding="{Binding Status}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <TextBlock Text="Pilih batch untuk melihat detail penerima."
+                               Style="{StaticResource MutedText}" Margin="16"
+                               Visibility="{Binding SelectedBatch, Converter={StaticResource NullToVis}}" />
+                </Grid>
             </Border>
         </Grid>
 
-        <StackPanel Grid.Row="2" Margin="40,16,40,32">
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                <Button Content="KIRIM ULANG GAGAL" Command="{Binding RetryFailedCommand}"
-                        CommandParameter="{Binding SelectedBatch}" Style="{StaticResource OutlinedButton}"
-                        Padding="16,8" Margin="0,0,8,0"
-                        IsEnabled="{Binding SelectedBatch, Converter={StaticResource NullToBool}}" />
-                <Button Content="PULIHKAN" Command="{Binding RecoverCommand}"
-                        CommandParameter="{Binding SelectedBatch}" Style="{StaticResource OutlinedButton}"
-                        Padding="16,8" Margin="0,0,8,0"
-                        IsEnabled="{Binding SelectedBatch, Converter={StaticResource NullToBool}}" />
-                <Button Content="HAPUS" Command="{Binding RequestDeleteCommand}"
-                        CommandParameter="{Binding SelectedBatch}" Style="{StaticResource OutlinedButton}"
-                        Padding="16,8"
-                        IsEnabled="{Binding SelectedBatch, Converter={StaticResource NullToBool}}" />
+        <!-- Delete confirmation -->
+        <Border Grid.Row="3" Background="{StaticResource FogBrush}" BorderBrush="{StaticResource EmberRedBrush}"
+                BorderThickness="2,0,0,0" Padding="20,12" Margin="40,0,40,32"
+                Visibility="{Binding ConfirmDelete, Converter={StaticResource BoolToVis}}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Hapus permanen batch ini? Riwayat tak bisa dikembalikan."
+                           Style="{StaticResource BodyText}" VerticalAlignment="Center" Margin="0,0,16,0" />
+                <Button Content="HAPUS PERMANEN" Command="{Binding ConfirmDeleteBatchCommand}"
+                        Style="{StaticResource PrimaryButton}" Padding="14,6" Margin="0,0,8,0" />
+                <Button Content="BATAL" Command="{Binding CancelDeleteCommand}"
+                        Style="{StaticResource OutlinedButton}" Padding="14,6" />
             </StackPanel>
-
-            <Border Background="{StaticResource FogBrush}" BorderBrush="{StaticResource EmberRedBrush}"
-                    BorderThickness="2,0,0,0" Padding="16,10" Margin="0,0,0,8"
-                    Visibility="{Binding ConfirmDelete, Converter={StaticResource BoolToVis}}">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Hapus permanen batch ini? Riwayat tak bisa dikembalikan."
-                               Style="{StaticResource BodyText}" VerticalAlignment="Center" Margin="0,0,16,0" />
-                    <Button Content="HAPUS PERMANEN" Command="{Binding ConfirmDeleteBatchCommand}"
-                            Style="{StaticResource PrimaryButton}" Padding="14,6" Margin="0,0,8,0" />
-                    <Button Content="BATAL" Command="{Binding CancelDeleteCommand}"
-                            Style="{StaticResource OutlinedButton}" Padding="14,6" />
-                </StackPanel>
-            </Border>
-
-            <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource MutedText}" />
-        </StackPanel>
+        </Border>
     </Grid>
 </UserControl>

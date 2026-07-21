@@ -10,17 +10,20 @@ public sealed class OpenXmlWorkbookReader : IPayrollWorkbookReader
 {
     public WorkbookReadResult Read(string filePath)
     {
+        FileStream stream;
         SpreadsheetDocument document;
         try
         {
-            document = SpreadsheetDocument.Open(filePath, isEditable: false);
+            stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            document = SpreadsheetDocument.Open(stream, isEditable: false);
         }
         catch (Exception ex) when (ex is IOException or InvalidDataException or FileFormatException)
         {
-            throw new WorkbookUnreadableException($"Cannot open workbook '{filePath}'.", ex);
+            throw new WorkbookUnreadableException(
+                $"Cannot open workbook '{filePath}'. {ex.Message}", ex);
         }
 
-        using (document)
+        try
         {
             try
             {
@@ -35,6 +38,11 @@ public sealed class OpenXmlWorkbookReader : IPayrollWorkbookReader
             {
                 throw new WorkbookUnreadableException($"Workbook '{filePath}' is corrupt or unsupported.", ex);
             }
+        }
+        finally
+        {
+            document.Dispose();
+            stream.Dispose();
         }
     }
 
