@@ -32,7 +32,7 @@
             <StackPanel>
                 <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,12">
                     <Run Text="Penerima valid: " />
-                    <Run Text="{Binding RecipientCount}" FontWeight="SemiBold" Foreground="{StaticResource CarbonInkBrush}" />
+                    <Run Text="{Binding RecipientCount, Mode=OneWay}" FontWeight="SemiBold" Foreground="{StaticResource CarbonInkBrush}" />
                 </TextBlock>
                 <Border Style="{StaticResource Card}" Padding="0">
                     <DataGrid ItemsSource="{Binding ValidationRows}" Style="{StaticResource EditorialDataGrid}"
@@ -63,13 +63,13 @@
                          Style="{StaticResource FieldInput}" Margin="0,0,0,20" />
                 <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
                     <TextBlock Style="{StaticResource MutedText}" Margin="0,0,16,0">
-                        <Run Text="Penerima: " /><Run Text="{Binding RecipientCount}" Foreground="{StaticResource CarbonInkBrush}" />
+                        <Run Text="Penerima: " /><Run Text="{Binding RecipientCount, Mode=OneWay}" Foreground="{StaticResource CarbonInkBrush}" />
                     </TextBlock>
                     <TextBlock Style="{StaticResource MutedText}" Margin="0,0,16,0">
-                        <Run Text="Gmail: " /><Run Text="{Binding ConnectedGmail}" Foreground="{StaticResource CarbonInkBrush}" />
+                        <Run Text="Gmail: " /><Run Text="{Binding ConnectedGmail, Mode=OneWay}" Foreground="{StaticResource CarbonInkBrush}" />
                     </TextBlock>
                     <TextBlock Style="{StaticResource MutedText}">
-                        <Run Text="Stamp: " /><Run Text="{Binding HasStamp}" Foreground="{StaticResource CarbonInkBrush}" />
+                        <Run Text="Stamp: " /><Run Text="{Binding HasStamp, Mode=OneWay}" Foreground="{StaticResource CarbonInkBrush}" />
                     </TextBlock>
                 </StackPanel>
             </StackPanel>
@@ -78,13 +78,13 @@
         <DataTemplate x:Key="ConfirmStep" DataType="{x:Type vm:PayrollWizardViewModel}">
             <StackPanel MaxWidth="560">
                 <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,8">
-                    <Run Text="Penerima: " /><Run Text="{Binding RecipientCount}" FontWeight="SemiBold" />
+                    <Run Text="Penerima: " /><Run Text="{Binding RecipientCount, Mode=OneWay}" FontWeight="SemiBold" />
                 </TextBlock>
                 <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,8">
-                    <Run Text="Gmail: " /><Run Text="{Binding ConnectedGmail}" FontWeight="SemiBold" />
+                    <Run Text="Gmail: " /><Run Text="{Binding ConnectedGmail, Mode=OneWay}" FontWeight="SemiBold" />
                 </TextBlock>
                 <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,24">
-                    <Run Text="Periode: " /><Run Text="{Binding Period}" FontWeight="SemiBold" />
+                    <Run Text="Periode: " /><Run Text="{Binding Period, Mode=OneWay}" FontWeight="SemiBold" />
                 </TextBlock>
                 <Border Background="{StaticResource FogBrush}" BorderBrush="{StaticResource EmberRedBrush}"
                         BorderThickness="2,0,0,0" Padding="16,12" Margin="0,0,0,24">
@@ -100,23 +100,23 @@
                 <TextBlock Text="MENGIRIM" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
                 <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource SectionHeading}" Margin="0,0,0,24" />
                 <TextBlock Style="{StaticResource DisplayHeading}" FontSize="48" Margin="0,0,0,8">
-                    <Run Text="{Binding CurrentRecipient}" /><Run Text=" / " /><Run Text="{Binding TotalRecipients}" />
+                    <Run Text="{Binding CurrentRecipient, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding TotalRecipients, Mode=OneWay}" />
                 </TextBlock>
                 <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,4">
-                    <Run Text="NIK: " /><Run Text="{Binding CurrentNik}" Foreground="{StaticResource CarbonInkBrush}" />
+                    <Run Text="NIK: " /><Run Text="{Binding CurrentNik, Mode=OneWay}" Foreground="{StaticResource CarbonInkBrush}" />
                 </TextBlock>
                 <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,4">
-                    <Run Text="Nama: " /><Run Text="{Binding CurrentName}" Foreground="{StaticResource CarbonInkBrush}" />
+                    <Run Text="Nama: " /><Run Text="{Binding CurrentName, Mode=OneWay}" Foreground="{StaticResource CarbonInkBrush}" />
                 </TextBlock>
                 <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,16">
-                    <Run Text="Percobaan: " /><Run Text="{Binding CurrentAttempt}" Foreground="{StaticResource CarbonInkBrush}" />
+                    <Run Text="Percobaan: " /><Run Text="{Binding CurrentAttempt, Mode=OneWay}" Foreground="{StaticResource CarbonInkBrush}" />
                 </TextBlock>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
                     <TextBlock Style="{StaticResource BodyText}" Margin="0,0,24,0">
-                        <Run Text="Terkirim " /><Run Text="{Binding SentCount}" FontWeight="SemiBold" />
+                        <Run Text="Terkirim " /><Run Text="{Binding SentCount, Mode=OneWay}" FontWeight="SemiBold" />
                     </TextBlock>
                     <TextBlock Style="{StaticResource BodyText}">
-                        <Run Text="Gagal " /><Run Text="{Binding FailedCount}" FontWeight="SemiBold" Foreground="{StaticResource EmberRedBrush}" />
+                        <Run Text="Gagal " /><Run Text="{Binding FailedCount, Mode=OneWay}" FontWeight="SemiBold" Foreground="{StaticResource EmberRedBrush}" />
                     </TextBlock>
                 </StackPanel>
                 <TextBlock Text="Jangan tutup aplikasi." Style="{StaticResource MutedText}" />
@@ -127,10 +127,10 @@
             <StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
                     <TextBlock Style="{StaticResource SectionHeading}" Margin="0,0,24,0">
-                        <Run Text="Terkirim " /><Run Text="{Binding SentCount}" />
+                        <Run Text="Terkirim " /><Run Text="{Binding SentCount, Mode=OneWay}" />
                     </TextBlock>
                     <TextBlock Style="{StaticResource SectionHeading}">
-                        <Run Text="Gagal " /><Run Text="{Binding FailedCount}" Foreground="{StaticResource EmberRedBrush}" />
+                        <Run Text="Gagal " /><Run Text="{Binding FailedCount, Mode=OneWay}" Foreground="{StaticResource EmberRedBrush}" />
                     </TextBlock>
                 </StackPanel>
                 <Border Style="{StaticResource Card}" Padding="0">

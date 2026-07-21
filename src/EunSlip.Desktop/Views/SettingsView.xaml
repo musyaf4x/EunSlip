@@ -19,10 +19,10 @@
             <Border Style="{StaticResource Card}" Margin="0,0,0,24">
                 <StackPanel>
                     <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,4">
-                        <Run Text="Akun: " /><Run Text="{Binding ConnectedGmail}" Foreground="{StaticResource GraphiteBrush}" />
+                        <Run Text="Akun: " /><Run Text="{Binding ConnectedGmail, Mode=OneWay}" Foreground="{StaticResource GraphiteBrush}" />
                     </TextBlock>
                     <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,12">
-                        <Run Text="Terkoneksi: " /><Run Text="{Binding HasGmailConnection}" Foreground="{StaticResource GraphiteBrush}" />
+                        <Run Text="Terkoneksi: " /><Run Text="{Binding HasGmailConnection, Mode=OneWay}" Foreground="{StaticResource GraphiteBrush}" />
                     </TextBlock>
                     <StackPanel Orientation="Horizontal">
                         <Button Content="HUBUNGKAN" Command="{Binding ConnectGmailCommand}"
@@ -54,7 +54,7 @@
             <Border Style="{StaticResource Card}" Margin="0,0,0,24">
                 <StackPanel>
                     <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,12">
-                        <Run Text="Stamp aktif: " /><Run Text="{Binding HasStamp}" Foreground="{StaticResource GraphiteBrush}" />
+                        <Run Text="Stamp aktif: " /><Run Text="{Binding HasStamp, Mode=OneWay}" Foreground="{StaticResource GraphiteBrush}" />
                     </TextBlock>
                     <StackPanel Orientation="Horizontal">
                         <Button Content="PILIH GAMBAR" Click="PickStamp_Click"

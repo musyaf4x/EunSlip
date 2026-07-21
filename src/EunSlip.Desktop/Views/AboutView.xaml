@@ -9,10 +9,10 @@
                 <StackPanel>
                     <TextBlock Text="EunSlip" Style="{StaticResource SectionHeading}" Margin="0,0,0,4" />
                     <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,4">
-                        <Run Text="Versi " /><Run Text="{Binding Version}" Foreground="{StaticResource GraphiteBrush}" />
+                        <Run Text="Versi " /><Run Text="{Binding Version, Mode=OneWay}" Foreground="{StaticResource GraphiteBrush}" />
                     </TextBlock>
                     <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,0">
-                        <Run Text="Untuk " /><Run Text="{Binding Company}" Foreground="{StaticResource GraphiteBrush}" />
+                        <Run Text="Untuk " /><Run Text="{Binding Company, Mode=OneWay}" Foreground="{StaticResource GraphiteBrush}" />
                     </TextBlock>
                 </StackPanel>
             </Border>
@@ -24,7 +24,7 @@
                            RenderOptions.BitmapScalingMode="HighQuality" Margin="0,0,0,12" />
                     <TextBlock Text="{Binding Developer}" Style="{StaticResource SectionHeading}" FontSize="18" Margin="0,0,0,4" />
                     <TextBlock Style="{StaticResource BodyText}">
-                        <Run Text="Kontak: " /><Run Text="{Binding ContactEmail}" Foreground="{StaticResource GraphiteBrush}" />
+                        <Run Text="Kontak: " /><Run Text="{Binding ContactEmail, Mode=OneWay}" Foreground="{StaticResource GraphiteBrush}" />
                     </TextBlock>
                 </StackPanel>
             </Border>
@@ -41,7 +41,7 @@
                 <StackPanel>
                     <TextBlock Text="DIAGNOSTIK" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
                     <TextBlock Style="{StaticResource BodyText}">
-                        <Run Text="Folder log: " /><Run Text="{Binding LogFolder}" Foreground="{StaticResource GraphiteBrush}" />
+                        <Run Text="Folder log: " /><Run Text="{Binding LogFolder, Mode=OneWay}" Foreground="{StaticResource GraphiteBrush}" />
                     </TextBlock>
                 </StackPanel>
             </Border>

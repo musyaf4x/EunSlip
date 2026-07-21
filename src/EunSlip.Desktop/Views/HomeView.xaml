@@ -8,13 +8,13 @@
                 <StackPanel>
                     <TextBlock Text="STATUS" Style="{StaticResource MicroLabel}" Margin="0,0,0,12" />
                     <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,6">
-                        <Run Text="Gmail: " /><Run Text="{Binding ConnectedGmail}" FontWeight="SemiBold" Foreground="{StaticResource GraphiteBrush}" />
+                        <Run Text="Gmail: " /><Run Text="{Binding ConnectedGmail, Mode=OneWay}" FontWeight="SemiBold" Foreground="{StaticResource GraphiteBrush}" />
                     </TextBlock>
                     <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,6">
-                        <Run Text="Terkoneksi: " /><Run Text="{Binding HasGmailConnection}" FontWeight="SemiBold" Foreground="{StaticResource GraphiteBrush}" />
+                        <Run Text="Terkoneksi: " /><Run Text="{Binding HasGmailConnection, Mode=OneWay}" FontWeight="SemiBold" Foreground="{StaticResource GraphiteBrush}" />
                     </TextBlock>
                     <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,0">
-                        <Run Text="Stamp siap: " /><Run Text="{Binding HasStamp}" FontWeight="SemiBold" Foreground="{StaticResource GraphiteBrush}" />
+                        <Run Text="Stamp siap: " /><Run Text="{Binding HasStamp, Mode=OneWay}" FontWeight="SemiBold" Foreground="{StaticResource GraphiteBrush}" />
                     </TextBlock>
                 </StackPanel>
             </Border>
