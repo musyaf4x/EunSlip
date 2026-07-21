@@ -18,6 +18,7 @@ public interface IAppRepository
     void UpdateRecipientStatus(Guid recipientId, RecipientStatus status, DateTimeOffset updatedAtUtc);
     void AddAttempt(SendAttemptRecord attempt);
     void CompleteAttempt(Guid attemptId, AttemptStatus status, DateTimeOffset completedAtUtc, string? errorCategory, string? errorMessage, string? gmailMessageId);
+    AttemptStatus? GetLatestAttemptStatus(Guid recipientId);
 
     IReadOnlyList<Guid> FindInterruptedBatches();
     void ResetSendingRecipientsToPending(Guid batchId);

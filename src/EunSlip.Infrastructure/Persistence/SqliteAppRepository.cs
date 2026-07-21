@@ -242,6 +242,23 @@ public sealed class SqliteAppRepository(string connectionString) : IAppRepositor
         transaction.Commit();
     }
 
+    public AttemptStatus? GetLatestAttemptStatus(Guid recipientId)
+    {
+        using SqliteConnection connection = OpenConnection();
+        using SqliteCommand command = connection.CreateCommand();
+        command.CommandText =
+            "SELECT Status FROM SendAttempts WHERE RecipientId = @id ORDER BY AttemptNumber DESC LIMIT 1;";
+        command.Parameters.AddWithValue("@id", recipientId.ToString());
+        object? result = command.ExecuteScalar();
+        if (result is null)
+        {
+            return null;
+        }
+
+        string statusText = Convert.ToString(result, CultureInfo.InvariantCulture)!;
+        return Enum.Parse<AttemptStatus>(statusText);
+    }
+
     public IReadOnlyList<Guid> FindInterruptedBatches()
     {
         using SqliteConnection connection = OpenConnection();

@@ -25,5 +25,9 @@ dotnet_diagnostic.IDE0046.severity = none
 [tests/**.cs]
 # Underscored test names are intentional (Method_Condition_Expectation)
 dotnet_diagnostic.CA1707.severity = none
+# var is fine in test bodies
+dotnet_diagnostic.IDE0008.severity = none
+dotnet_diagnostic.CA1859.severity = none
+dotnet_diagnostic.IDE0011.severity = none
 # Assert.* return values are commonly ignored in tests
 dotnet_diagnostic.IDE0058.severity = none
