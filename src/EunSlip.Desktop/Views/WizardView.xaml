@@ -6,6 +6,7 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <c:NullToBoolConverter x:Key="NullToBool" />
+        <c:InverseBoolToVisibilityConverter x:Key="InverseBoolToVis" />
 
         <DataTemplate x:Key="SelectStep" DataType="{x:Type vm:PayrollWizardViewModel}">
             <Grid MaxWidth="720" Margin="0,8,0,0">
@@ -108,7 +109,7 @@
 
         <DataTemplate x:Key="ConfirmStep" DataType="{x:Type vm:PayrollWizardViewModel}">
             <StackPanel MaxWidth="560">
-                <Border Background="{StaticResource FogBrush}" Padding="20,16" CornerRadius="4" Margin="0,0,0,24">
+                <Border Background="{StaticResource FogBrush}" Padding="20,16" CornerRadius="4" Margin="0,0,0,20">
                     <StackPanel>
                         <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,8">
                             <Run Text="Penerima: " /><Run Text="{Binding RecipientCount, Mode=OneWay}" FontWeight="SemiBold" />
@@ -121,6 +122,25 @@
                         </TextBlock>
                     </StackPanel>
                 </Border>
+
+                <!-- Prerequisite checklist -->
+                <StackPanel Margin="0,0,0,20">
+                    <TextBlock Text="PRASYARAT KIRIM" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                        <TextBlock Text="{Binding GmailReady, Mode=OneWay}" Style="{StaticResource BodyText}"
+                                   Foreground="{StaticResource EmberRedBrush}" FontWeight="SemiBold" Width="24" />
+                        <TextBlock Text="Gmail terhubung" Style="{StaticResource BodyText}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding StampReady, Mode=OneWay}" Style="{StaticResource BodyText}"
+                                   Foreground="{StaticResource EmberRedBrush}" FontWeight="SemiBold" Width="24" />
+                        <TextBlock Text="Stamp aktif" Style="{StaticResource BodyText}" />
+                    </StackPanel>
+                    <TextBlock Text="Lengkapi di Pengaturan jika ada yang belum siap."
+                               Style="{StaticResource MutedText}" Margin="24,8,0,0"
+                               Visibility="{Binding IsReadyToConfirm, Converter={StaticResource InverseBoolToVis}}" />
+                </StackPanel>
+
                 <Border Background="{StaticResource FogBrush}" BorderBrush="{StaticResource EmberRedBrush}"
                         BorderThickness="2,0,0,0" Padding="16,12" Margin="0,0,0,24">
                     <TextBlock Style="{StaticResource BodyText}" Text="Pengiriman tidak dapat dihentikan setelah konfirmasi." />

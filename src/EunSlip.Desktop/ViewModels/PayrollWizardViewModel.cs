@@ -136,6 +136,9 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
     public bool HasError => !string.IsNullOrEmpty(ErrorMessage);
     public bool CanGoBack => StepIndex > 0 && !IsOnSendStep;
     public bool CanGoNext => !IsOnSendStep && !IsOnResultsStep;
+    public bool IsReadyToConfirm => CurrentStep == WizardStep.Confirm && !IsBusy && HasGmailConnection && HasStamp;
+    public bool GmailReady => HasGmailConnection;
+    public bool StampReady => HasStamp;
 
     public void Reset()
     {

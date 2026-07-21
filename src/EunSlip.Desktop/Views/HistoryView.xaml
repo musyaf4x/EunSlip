@@ -6,6 +6,7 @@
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <c:NullToBoolConverter x:Key="NullToBool" />
         <c:NullToVisibilityConverter x:Key="NullToVis" />
+        <c:NullToVisibilityInverseConverter x:Key="NullToVisInverse" />
     </UserControl.Resources>
     <Grid Background="{StaticResource PaperWhiteBrush}">
         <Grid.RowDefinitions>
@@ -57,10 +58,11 @@
         </Border>
 
         <!-- Detail recipients -->
-        <Border Grid.Row="3" Style="{StaticResource Card}" Padding="0" Margin="40,0,40,32" MinHeight="120">
+        <Border Grid.Row="3" Style="{StaticResource Card}" Padding="0" Margin="40,0,40,32" Height="160">
             <Grid>
                 <DataGrid ItemsSource="{Binding SelectedRecipients}" Style="{StaticResource EditorialDataGrid}"
-                          AutoGenerateColumns="False" IsReadOnly="True" MinHeight="120">
+                          AutoGenerateColumns="False" IsReadOnly="True"
+                          Visibility="{Binding SelectedBatch, Converter={StaticResource NullToVisInverse}}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="NIK" Binding="{Binding NikHint}" Width="140" />
                         <DataGridTextColumn Header="STATUS" Binding="{Binding Status}" Width="120" />
@@ -69,6 +71,7 @@
                 </DataGrid>
                 <TextBlock Text="Pilih batch di atas untuk melihat detail penerima."
                            Style="{StaticResource MutedText}" Margin="20"
+                           VerticalAlignment="Center"
                            Visibility="{Binding SelectedBatch, Converter={StaticResource NullToVis}}" />
             </Grid>
         </Border>

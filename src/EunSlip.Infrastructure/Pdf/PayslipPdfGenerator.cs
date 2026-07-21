@@ -9,15 +9,18 @@ public sealed class PayslipPdfGenerator : IPayslipPdfGenerator
 {
     private const double PageWidth = 595.0;
     private const double PageHeight = 842.0;
-    private const double OuterMargin = 30.0;
-    private const double LeftX = 44.0;
-    private const double LeftValueX = 100.0;
-    private const double RightLabelX = 320.0;
-    private const double RightValueX = 390.0;
-    private const double IncomeAmountRightX = 270.0;
-    private const double DeductionAmountRightX = 545.0;
-    private const double LineHeight = 11.5;
-    private static readonly XRect StampArea = new(455, 322, 100, 58);
+    private const double Margin = 36.0;
+    private const double ContentWidth = PageWidth - (2 * Margin);
+
+    // Columns
+    private const double LeftColX = Margin;
+    private const double MidDividerX = Margin + (ContentWidth / 2);
+    private const double RightColX = MidDividerX;
+    private const double ValueRightIncome = MidDividerX - 8;
+    private const double ValueRightDeduction = PageWidth - Margin;
+    private const double LineHeight = 13.0;
+
+    private static readonly XRect StampArea = new(PageWidth - Margin - 90, 540, 80, 50);
 
     static PayslipPdfGenerator()
     {
@@ -41,10 +44,9 @@ public sealed class PayslipPdfGenerator : IPayslipPdfGenerator
             page.Width = new XUnitPt(PageWidth);
             page.Height = new XUnitPt(PageHeight);
 
-            using (XGraphics graphics = XGraphics.FromPdfPage(page))
+            using (XGraphics g = XGraphics.FromPdfPage(page))
             {
-                DrawContent(graphics, request);
-                DrawStamp(graphics, request.StampImagePath!);
+                DrawPage(g, request);
             }
 
             document.Save(outputPath);
@@ -59,103 +61,134 @@ public sealed class PayslipPdfGenerator : IPayslipPdfGenerator
         }
     }
 
-    private static void DrawContent(XGraphics graphics, PayslipRequest request)
+    private static void DrawPage(XGraphics g, PayslipRequest request)
     {
-        XFont headerFont = new("Arial", 11, XFontStyleEx.Bold);
+        XFont companyFont = new("Arial", 13, XFontStyleEx.Bold);
+        XFont salaryFont = new("Arial", 11, XFontStyleEx.Bold);
         XFont labelFont = new("Arial", 8.5, XFontStyleEx.Regular);
-        XFont boldLabelFont = new("Arial", 8.5, XFontStyleEx.Bold);
+        XFont labelBold = new("Arial", 8.5, XFontStyleEx.Bold);
         XFont sectionFont = new("Arial", 9, XFontStyleEx.Bold);
         XFont totalFont = new("Arial", 9, XFontStyleEx.Bold);
-        XFont nettFont = new("Arial", 10, XFontStyleEx.Bold);
-        XPen outerPen = new(XColors.Black, 1.2);
-        XPen linePen = new(XColors.Black, 0.8);
+        XFont nettFont = new("Arial", 11, XFontStyleEx.Bold);
+        XPen pen = new(XColors.Black, 0.75);
 
-        graphics.DrawRectangle(outerPen,
-            OuterMargin, OuterMargin, PageWidth - (2 * OuterMargin), PageHeight - (2 * OuterMargin));
+        // Outer border
+        g.DrawRectangle(pen, Margin, Margin, ContentWidth, PageHeight - (2 * Margin));
 
+        // Header band
+        double headerY = Margin + 14;
         string[] header = PayslipContent.HeaderLines(request);
-        graphics.DrawString(header[0], headerFont, XBrushes.Black,
-            new XRect(0, 48, PageWidth, 14), XStringFormats.TopCenter);
-        graphics.DrawString(header[1], headerFont, XBrushes.Black,
-            new XRect(0, 62, PageWidth, 14), XStringFormats.TopCenter);
-        graphics.DrawLine(linePen, LeftX, 80, PageWidth - LeftX, 80);
+        g.DrawString(header[0], companyFont, XBrushes.Black,
+            new XRect(Margin, headerY, ContentWidth, 16), XStringFormats.Center);
+        g.DrawString(header[1], salaryFont, XBrushes.Black,
+            new XRect(Margin, headerY + 18, ContentWidth, 14), XStringFormats.Center);
+        double headerBottom = headerY + 38;
+        g.DrawLine(pen, Margin + 10, headerBottom, PageWidth - Margin - 10, headerBottom);
 
+        // Identity block
         (string Label, string Value)[] identity = PayslipContent.Identity(request);
-        double identityY = 90;
+        double idY = headerBottom + 12;
         for (int i = 0; i < 2; i++)
         {
-            graphics.DrawString(identity[i].Label, boldLabelFont, XBrushes.Black, LeftX, identityY + (i * LineHeight));
-            graphics.DrawString(identity[i].Value, labelFont, XBrushes.Black, LeftValueX, identityY + (i * LineHeight));
+            double y = idY + (i * LineHeight);
+            g.DrawString(identity[i].Label, labelBold, XBrushes.Black, LeftColX + 4, y);
+            g.DrawString(identity[i].Value, labelFont, XBrushes.Black, LeftColX + 70, y);
         }
         for (int i = 2; i < identity.Length; i++)
         {
             int row = i - 2;
-            graphics.DrawString(identity[i].Label, boldLabelFont, XBrushes.Black, RightLabelX, identityY + (row * LineHeight));
-            graphics.DrawString(identity[i].Value, labelFont, XBrushes.Black, RightValueX, identityY + (row * LineHeight));
+            double y = idY + (row * LineHeight);
+            g.DrawString(identity[i].Label, labelBold, XBrushes.Black, RightColX + 4, y);
+            g.DrawString(identity[i].Value, labelFont, XBrushes.Black, RightColX + 70, y);
         }
 
-        double tableTop = 140;
-        graphics.DrawString("INCOME", sectionFont, XBrushes.Black, LeftX, tableTop);
-        graphics.DrawString($"( {PayslipContent.OtHoursText(request)} )", labelFont, XBrushes.Black,
-            new XRect(LeftX, tableTop, IncomeAmountRightX - LeftX, 11), XStringFormats.TopRight);
-        graphics.DrawString("Deduction", sectionFont, XBrushes.Black, RightLabelX, tableTop);
-        graphics.DrawLine(linePen, LeftX, tableTop + 13, PageWidth - LeftX, tableTop + 13);
+        // Table
+        double tableTop = idY + (4 * LineHeight) + 10;
+        double tableBottom = DrawTable(g, request, tableTop, pen, labelFont, sectionFont, totalFont);
 
-        (string Label, string Value)[] income = PayslipContent.IncomeRows(request);
-        (string Label, string Value)[] deduction = PayslipContent.DeductionRows(request);
-        double rowY = tableTop + 18;
-        for (int i = 0; i < income.Length; i++)
-        {
-            double y = rowY + (i * LineHeight);
-            graphics.DrawString(income[i].Label, labelFont, XBrushes.Black, LeftX, y);
-            graphics.DrawString(income[i].Value, labelFont, XBrushes.Black,
-                new XRect(LeftX, y, IncomeAmountRightX - LeftX, LineHeight), XStringFormats.TopRight);
-        }
-        for (int i = 0; i < deduction.Length; i++)
-        {
-            double y = rowY + (i * LineHeight);
-            graphics.DrawString(deduction[i].Label, labelFont, XBrushes.Black, RightLabelX, y);
-            graphics.DrawString(deduction[i].Value, labelFont, XBrushes.Black,
-                new XRect(RightLabelX, y, DeductionAmountRightX - RightLabelX, LineHeight), XStringFormats.TopRight);
-        }
+        // Nett income box
+        double nettY = tableBottom + 12;
+        g.DrawRectangle(new XPen(XColors.Black, 1), Margin + 4, nettY, ContentWidth - 8, 22);
+        g.DrawString("NETT INCOME", nettFont, XBrushes.Black, Margin + 12, nettY + 6);
+        g.DrawString(PayslipContent.NettIncome(request), nettFont, XBrushes.Black,
+            new XRect(Margin + 4, nettY + 4, ContentWidth - 16, 16), XStringFormats.TopRight);
 
-        double totalY = rowY + (income.Length * LineHeight) + 8;
-        graphics.DrawLine(linePen, LeftX, totalY - 4, PageWidth - LeftX, totalY - 4);
-        graphics.DrawString("Total", totalFont, XBrushes.Black, LeftX, totalY);
-        graphics.DrawString(PayslipContent.IncomeTotal(request), totalFont, XBrushes.Black,
-            new XRect(LeftX, totalY, IncomeAmountRightX - LeftX, 12), XStringFormats.TopRight);
-        graphics.DrawString("Total", totalFont, XBrushes.Black, RightLabelX, totalY);
-        graphics.DrawString(PayslipContent.DeductionTotal(request), totalFont, XBrushes.Black,
-            new XRect(RightLabelX, totalY, DeductionAmountRightX - RightLabelX, 12), XStringFormats.TopRight);
+        // Footer
+        double footerY = nettY + 44;
+        g.DrawString($"OT Hours : {PayslipContent.OtHoursText(request).Replace("OT Hours : ", "")}",
+            sectionFont, XBrushes.Black, LeftColX + 4, footerY);
+        g.DrawString($"Payment Date : {PayslipContent.PaymentDateText(request)}",
+            sectionFont, XBrushes.Black, RightColX + 4, footerY);
 
-        double nettY = totalY + 20;
-        graphics.DrawRectangle(linePen, LeftX - 4, nettY - 3, PageWidth - (2 * LeftX) + 8, 18);
-        graphics.DrawString("Nett Income", nettFont, XBrushes.Black, LeftX, nettY);
-        graphics.DrawString(PayslipContent.NettIncome(request), nettFont, XBrushes.Black,
-            new XRect(LeftX, nettY, DeductionAmountRightX - LeftX, 14), XStringFormats.TopRight);
+        // Signature row
+        double sigY = footerY + 36;
+        g.DrawString("Made By", sectionFont, XBrushes.Black, LeftColX + 4, sigY);
+        g.DrawString("ACC", sectionFont, XBrushes.Black, RightColX + 4, sigY);
+        g.DrawLine(pen, LeftColX + 4, sigY + 28, LeftColX + 110, sigY + 28);
+        g.DrawLine(pen, RightColX + 4, sigY + 28, RightColX + 110, sigY + 28);
 
-        double footerY = nettY + 30;
-        string paymentDate = PayslipContent.PaymentDateText(request);
-        graphics.DrawString(paymentDate, sectionFont, XBrushes.Black, LeftX, footerY);
-        double paymentWidth = graphics.MeasureString(paymentDate, sectionFont).Width;
-        graphics.DrawLine(linePen, LeftX, footerY + 11, LeftX + paymentWidth, footerY + 11);
-
-        graphics.DrawString(PayslipContent.MadeByText, sectionFont, XBrushes.Black,
-            new XRect(0, footerY + 10, PageWidth, 12), XStringFormats.TopCenter);
-        graphics.DrawString(PayslipContent.AccText, sectionFont, XBrushes.Black, 520, footerY + 10);
+        DrawStamp(g, request.StampImagePath!);
     }
 
-    private static void DrawStamp(XGraphics graphics, string stampImagePath)
+    private static double DrawTable(XGraphics g, PayslipRequest request, double top, XPen pen,
+        XFont labelFont, XFont sectionFont, XFont totalFont)
+    {
+        (string Label, string Value)[] income = PayslipContent.IncomeRows(request);
+        (string Label, string Value)[] deduction = PayslipContent.DeductionRows(request);
+        int maxRows = Math.Max(income.Length, deduction.Length);
+
+        // Section headers
+        g.DrawString("INCOME", sectionFont, XBrushes.Black, LeftColX + 4, top);
+        g.DrawString("DEDUCTION", sectionFont, XBrushes.Black, RightColX + 4, top);
+        double headerLine = top + 14;
+        g.DrawLine(pen, Margin, headerLine, PageWidth - Margin, headerLine);
+
+        double rowY = headerLine + 4;
+        for (int i = 0; i < maxRows; i++)
+        {
+            double y = rowY + (i * LineHeight) + LineHeight;
+            if (i < income.Length)
+            {
+                g.DrawString(income[i].Label, labelFont, XBrushes.Black, LeftColX + 4, y);
+                g.DrawString(income[i].Value, labelFont, XBrushes.Black,
+                    new XRect(LeftColX + 4, y - 2, ValueRightIncome - LeftColX - 4, LineHeight), XStringFormats.TopRight);
+            }
+            if (i < deduction.Length)
+            {
+                g.DrawString(deduction[i].Label, labelFont, XBrushes.Black, RightColX + 4, y);
+                g.DrawString(deduction[i].Value, labelFont, XBrushes.Black,
+                    new XRect(RightColX + 4, y - 2, ValueRightDeduction - RightColX - 4, LineHeight), XStringFormats.TopRight);
+            }
+        }
+
+        // Totals row
+        double totalY = rowY + (maxRows * LineHeight) + LineHeight + 6;
+        g.DrawLine(pen, Margin, totalY, PageWidth - Margin, totalY);
+        g.DrawString("Total", totalFont, XBrushes.Black, LeftColX + 4, totalY + 4);
+        g.DrawString(PayslipContent.IncomeTotal(request), totalFont, XBrushes.Black,
+            new XRect(LeftColX + 4, totalY + 2, ValueRightIncome - LeftColX - 4, LineHeight), XStringFormats.TopRight);
+        g.DrawString("Total", totalFont, XBrushes.Black, RightColX + 4, totalY + 4);
+        g.DrawString(PayslipContent.DeductionTotal(request), totalFont, XBrushes.Black,
+            new XRect(RightColX + 4, totalY + 2, ValueRightDeduction - RightColX - 4, LineHeight), XStringFormats.TopRight);
+        g.DrawLine(pen, Margin, totalY + 18, PageWidth - Margin, totalY + 18);
+
+        // Mid vertical divider
+        g.DrawLine(pen, MidDividerX, headerLine, MidDividerX, totalY + 18);
+
+        return totalY + 18;
+    }
+
+    private static void DrawStamp(XGraphics g, string stampImagePath)
     {
         try
         {
             using XImage image = XImage.FromFile(stampImagePath);
             double scale = Math.Min(StampArea.Width / image.PixelWidth, StampArea.Height / image.PixelHeight);
-            double width = image.PixelWidth * scale;
-            double height = image.PixelHeight * scale;
-            double x = StampArea.X + ((StampArea.Width - width) / 2);
-            double y = StampArea.Y + ((StampArea.Height - height) / 2);
-            graphics.DrawImage(image, x, y, width, height);
+            double w = image.PixelWidth * scale;
+            double h = image.PixelHeight * scale;
+            double x = StampArea.X + ((StampArea.Width - w) / 2);
+            double y = StampArea.Y + ((StampArea.Height - h) / 2);
+            g.DrawImage(image, x, y, w, h);
         }
         catch (Exception ex)
         {
