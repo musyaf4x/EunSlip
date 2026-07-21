@@ -201,7 +201,7 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
                 PaymentDate is not null,
             WizardStep.Validate => (_validation?.CanProceed ?? false)
                 && (!HasWarnings || WarningConfirmed),
-            WizardStep.Preview => HasGmailConnection && HasStamp,
+            WizardStep.Preview => _validRows.Count > 0,
             WizardStep.Confirm => false,
             _ => false,
         };

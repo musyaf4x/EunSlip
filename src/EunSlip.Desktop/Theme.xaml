@@ -164,7 +164,9 @@
         <Setter Property="Background" Value="{StaticResource FogBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource AshBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Padding" Value="10,8" />
+        <Setter Property="Padding" Value="10,6" />
+        <Setter Property="MinHeight" Value="34" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="CaretBrush" Value="{StaticResource CarbonInkBrush}" />
         <Setter Property="Template">
             <Setter.Value>
@@ -175,7 +177,8 @@
                             CornerRadius="{StaticResource RadiusSm}">
                         <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"
                                       Focusable="False" HorizontalScrollBarVisibility="Hidden"
-                                      VerticalScrollBarVisibility="Hidden" />
+                                      VerticalScrollBarVisibility="Hidden"
+                                      VerticalAlignment="Center" />
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -183,6 +186,10 @@
         <Style.Triggers>
             <Trigger Property="IsKeyboardFocused" Value="True">
                 <Setter Property="BorderBrush" Value="{StaticResource CarbonInkBrush}" />
+            </Trigger>
+            <Trigger Property="AcceptsReturn" Value="True">
+                <Setter Property="VerticalContentAlignment" Value="Top" />
+                <Setter Property="MinHeight" Value="80" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Foreground" Value="{StaticResource GraphiteBrush}" />
@@ -195,9 +202,12 @@
         <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="Foreground" Value="{StaticResource CarbonInkBrush}" />
+        <Setter Property="Background" Value="{StaticResource FogBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource AshBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Padding" Value="8,6" />
+        <Setter Property="Padding" Value="10,6" />
+        <Setter Property="MinHeight" Value="34" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
     </Style>
 
     <!-- ===== Card ===== -->

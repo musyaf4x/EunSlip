@@ -13,11 +13,12 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <StackPanel Grid.Row="0" Margin="40,32,40,0">
-            <TextBlock Text="Riwayat Batch" Style="{StaticResource DisplayHeading}" FontSize="28" />
+        <StackPanel Grid.Row="0" Margin="40,36,40,0">
+            <TextBlock Text="Riwayat Batch" Style="{StaticResource DisplayHeading}" FontSize="26" />
             <Border Background="{StaticResource MistBrush}" Height="1" Margin="0,16,0,0" />
         </StackPanel>
 
@@ -39,46 +40,41 @@
                        VerticalAlignment="Center" Margin="16,0,0,0" />
         </StackPanel>
 
-        <!-- Master/detail -->
-        <Grid Grid.Row="2" Margin="40,16,40,16">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1.6*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+        <!-- Batch list -->
+        <Border Grid.Row="2" Style="{StaticResource Card}" Padding="0" Margin="40,16,40,8">
+            <DataGrid ItemsSource="{Binding Batches}" Style="{StaticResource EditorialDataGrid}"
+                      AutoGenerateColumns="False" IsReadOnly="True"
+                      SelectedItem="{Binding SelectedBatch}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="PERIODE" Binding="{Binding Period}" Width="120" />
+                    <DataGridTextColumn Header="TANGGAL" Binding="{Binding PaymentDate}" Width="130" />
+                    <DataGridTextColumn Header="PENERIMA" Binding="{Binding RecipientCount}" Width="90" />
+                    <DataGridTextColumn Header="KIRIM" Binding="{Binding SentCount}" Width="70" />
+                    <DataGridTextColumn Header="GAGAL" Binding="{Binding FailedCount}" Width="70" />
+                    <DataGridTextColumn Header="STATUS" Binding="{Binding Status}" Width="*" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
 
-            <Border Grid.Column="0" Style="{StaticResource Card}" Padding="0" Margin="0,0,12,0">
-                <DataGrid ItemsSource="{Binding Batches}" Style="{StaticResource EditorialDataGrid}"
-                          AutoGenerateColumns="False" IsReadOnly="True"
-                          SelectedItem="{Binding SelectedBatch}">
+        <!-- Detail recipients -->
+        <Border Grid.Row="3" Style="{StaticResource Card}" Padding="0" Margin="40,0,40,32" MinHeight="120">
+            <Grid>
+                <DataGrid ItemsSource="{Binding SelectedRecipients}" Style="{StaticResource EditorialDataGrid}"
+                          AutoGenerateColumns="False" IsReadOnly="True" MinHeight="120">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="PERIODE" Binding="{Binding Period}" Width="100" />
-                        <DataGridTextColumn Header="TANGGAL" Binding="{Binding PaymentDate}" Width="110" />
-                        <DataGridTextColumn Header="PENERIMA" Binding="{Binding RecipientCount}" Width="80" />
-                        <DataGridTextColumn Header="KIRIM" Binding="{Binding SentCount}" Width="64" />
-                        <DataGridTextColumn Header="GAGAL" Binding="{Binding FailedCount}" Width="60" />
-                        <DataGridTextColumn Header="STATUS" Binding="{Binding Status}" Width="*" />
+                        <DataGridTextColumn Header="NIK" Binding="{Binding NikHint}" Width="140" />
+                        <DataGridTextColumn Header="STATUS" Binding="{Binding Status}" Width="120" />
+                        <DataGridTextColumn Header="DIPERBARUI" Binding="{Binding LastUpdatedAtUtc}" Width="*" />
                     </DataGrid.Columns>
                 </DataGrid>
-            </Border>
-
-            <Border Grid.Column="1" Style="{StaticResource Card}" Padding="0" Margin="12,0,0,0">
-                <Grid>
-                    <DataGrid ItemsSource="{Binding SelectedRecipients}" Style="{StaticResource EditorialDataGrid}"
-                              AutoGenerateColumns="False" IsReadOnly="True">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="NIK" Binding="{Binding NikHint}" Width="90" />
-                            <DataGridTextColumn Header="STATUS" Binding="{Binding Status}" Width="*" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-                    <TextBlock Text="Pilih batch untuk melihat detail penerima."
-                               Style="{StaticResource MutedText}" Margin="16"
-                               Visibility="{Binding SelectedBatch, Converter={StaticResource NullToVis}}" />
-                </Grid>
-            </Border>
-        </Grid>
+                <TextBlock Text="Pilih batch di atas untuk melihat detail penerima."
+                           Style="{StaticResource MutedText}" Margin="20"
+                           Visibility="{Binding SelectedBatch, Converter={StaticResource NullToVis}}" />
+            </Grid>
+        </Border>
 
         <!-- Delete confirmation -->
-        <Border Grid.Row="3" Background="{StaticResource FogBrush}" BorderBrush="{StaticResource EmberRedBrush}"
+        <Border Grid.Row="4" Background="{StaticResource FogBrush}" BorderBrush="{StaticResource EmberRedBrush}"
                 BorderThickness="2,0,0,0" Padding="20,12" Margin="40,0,40,32"
                 Visibility="{Binding ConfirmDelete, Converter={StaticResource BoolToVis}}">
             <StackPanel Orientation="Horizontal">
