@@ -144,6 +144,7 @@ public partial class App : Application
                 }
             }
         });
+        services.AddSingleton(sp => (GmailAuthorization)sp.GetRequiredService<IGmailAuthorization>());
         _ = services.AddSingleton<IMimeMessageBuilder, MimeMessageBuilder>();
         _ = services.AddSingleton<IGmailSender, GmailSender>();
         _ = services.AddSingleton<IGmailRetrySender, GmailRetrySender>();
