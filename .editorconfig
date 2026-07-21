@@ -14,7 +14,11 @@ dotnet_diagnostic.IDE0021.severity = none
 dotnet_diagnostic.IDE0022.severity = none
 dotnet_diagnostic.IDE0026.severity = none
 dotnet_diagnostic.IDE0027.severity = none
+# if-return vs ternary: both allowed
+dotnet_diagnostic.IDE0046.severity = none
 
 [tests/**.cs]
 # Underscored test names are intentional (Method_Condition_Expectation)
 dotnet_diagnostic.CA1707.severity = none
+# Assert.* return values are commonly ignored in tests
+dotnet_diagnostic.IDE0058.severity = none
