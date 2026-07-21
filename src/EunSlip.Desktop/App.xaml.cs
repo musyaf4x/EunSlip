@@ -61,13 +61,22 @@ public partial class App : Application
         _services = BuildServices(paths);
         Services = _services;
 
-        _services.GetRequiredService<IAppRepository>().Initialize();
+        IAppRepository repository = _services.GetRequiredService<IAppRepository>();
+        repository.Initialize();
         _services.GetRequiredService<ITempFileService>().CleanupLeftovers();
-
+        PrepareInterruptedBatches(_services.GetRequiredService<IRecoveryService>());
         MainWindow = _services.GetRequiredService<MainWindow>();
         MainWindow.Show();
 
         base.OnStartup(e);
+    }
+
+    private static void PrepareInterruptedBatches(IRecoveryService recovery)
+    {
+        foreach (Guid batchId in recovery.DetectInterruptedBatches())
+        {
+            recovery.PrepareForRecovery(batchId);
+        }
     }
 
     private static ServiceProvider BuildServices(AppPaths paths)

@@ -1,7 +1,9 @@
 using System.Collections.ObjectModel;
+using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EunSlip.Core.Batches;
+using EunSlip.Core.Common;
 using EunSlip.Core.Payroll;
 using EunSlip.Core.Persistence;
 using EunSlip.Core.Security;
@@ -21,10 +23,12 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
 
     private readonly IPayrollWorkbookReader _reader;
     private readonly IBatchCoordinator _coordinator;
+    private readonly IPayslipPdfGenerator _pdfGenerator;
     private readonly IGmailAuthorization _gmail;
     private readonly ISharedFileStore _stampStore;
     private readonly IAppRepository _repository;
     private readonly ISecretStore _secretStore;
+    private readonly ITempFileService _tempFiles;
     private readonly ILogger<PayrollWizardViewModel> _logger;
 
     [ObservableProperty]
@@ -98,18 +102,22 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
     public PayrollWizardViewModel(
         IPayrollWorkbookReader reader,
         IBatchCoordinator coordinator,
+        IPayslipPdfGenerator pdfGenerator,
         IGmailAuthorization gmail,
         ISharedFileStore stampStore,
         IAppRepository repository,
         ISecretStore secretStore,
+        ITempFileService tempFiles,
         ILogger<PayrollWizardViewModel> logger)
     {
         _reader = reader;
         _coordinator = coordinator;
+        _pdfGenerator = pdfGenerator;
         _gmail = gmail;
         _stampStore = stampStore;
         _repository = repository;
         _secretStore = secretStore;
+        _tempFiles = tempFiles;
         _logger = logger;
     }
 
@@ -203,6 +211,47 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
     }
 
     private bool CanBack() => StepIndex > 0 && !IsOnSendStep;
+
+    [RelayCommand(CanExecute = nameof(CanOpenPreview))]
+    private void OpenPreview()
+    {
+        if (_validRows.Count == 0)
+        {
+            return;
+        }
+
+        string? stampPath = _stampStore.GetActiveStampPath();
+        if (string.IsNullOrEmpty(stampPath))
+        {
+            ErrorMessage = Strings.Get("ValidationBlockingMessage");
+            return;
+        }
+
+        PayrollRow first = _validRows[0];
+        string tempDir = _tempFiles.CreateBatchTempDirectory(_batchId);
+        string fileName = PayrollFormatting.BuildPayslipFileName(Period, first.Nik);
+        string pdfPath = Path.Combine(tempDir, fileName);
+
+        try
+        {
+            _pdfGenerator.Generate(
+                new PayslipRequest(new BatchContext(Period, DateOnly.FromDateTime(PaymentDate!.Value)), first, stampPath),
+                pdfPath);
+
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(pdfPath)
+            {
+                UseShellExecute = true,
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Preview generation failed");
+            ErrorMessage = Strings.Get("UnexpectedErrorMessage");
+        }
+    }
+
+    private bool CanOpenPreview() =>
+        CurrentStep == WizardStep.Preview && _validRows.Count > 0;
 
     [RelayCommand(CanExecute = nameof(CanConfirmSend))]
     private async Task ConfirmSendAsync()

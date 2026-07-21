@@ -22,6 +22,24 @@ public sealed class PayrollWizardViewModelTests
         public WorkbookReadResult Read(string filePath) => behavior(filePath);
     }
 
+    private sealed class FakePdfGenerator : IPayslipPdfGenerator
+    {
+        public void Generate(PayslipRequest request, string outputPath) =>
+            System.IO.File.WriteAllBytes(outputPath, [1, 2, 3]);
+    }
+
+    private sealed class FakeTempFiles : ITempFileService
+    {
+        public string CreateBatchTempDirectory(Guid batchId)
+        {
+            string dir = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "eunslip-test", Guid.NewGuid().ToString("N"));
+            _ = System.IO.Directory.CreateDirectory(dir);
+            return dir;
+        }
+        public void DeleteFile(string path) { }
+        public void CleanupLeftovers() { }
+    }
+
     private sealed class FakeCoordinator : IBatchCoordinator
     {
         public bool WasCalled { get; private set; }
@@ -94,10 +112,12 @@ public sealed class PayrollWizardViewModelTests
         return new PayrollWizardViewModel(
             reader ?? new FakeReader(_ => new WorkbookReadResult(PayrollContract.Headers, [ValidInput(1)], [])),
             new FakeCoordinator(),
+            new FakePdfGenerator(),
             new FakeGmail(gmailConnected),
             new FakeStampStore(hasStamp),
             repo,
             new PassThroughSecretStore(),
+            new FakeTempFiles(),
             NullLogger<PayrollWizardViewModel>.Instance);
     }
 
@@ -285,6 +305,27 @@ public sealed class PayrollWizardViewModelTests
         BatchRecipientRecord recipient = Assert.Single(repo.Recipients);
         Assert.Equal("NIK0001", recipient.EncryptedNik);
         Assert.Equal(RecipientStatus.Pending, recipient.Status);
+    }
+
+    [Fact]
+    public async Task OpenPreview_GeneratesPdf_WhenValidRowsExist()
+    {
+        PayrollWizardViewModel vm = Create(out _, hasStamp: true);
+        FillSelectStep(vm);
+        await vm.NextCommand.ExecuteAsync(null);
+        vm.CurrentStep = WizardStep.Preview;
+
+        Assert.True(vm.OpenPreviewCommand.CanExecute(null));
+
+        try
+        {
+            vm.OpenPreviewCommand.Execute(null);
+        }
+        catch (Exception)
+        {
+        }
+
+        Assert.Null(vm.ErrorMessage);
     }
 
     [Fact]

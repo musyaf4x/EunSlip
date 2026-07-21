@@ -39,6 +39,7 @@
         </DataTemplate>
         <DataTemplate x:Key="PreviewStep" DataType="{x:Type vm:PayrollWizardViewModel}">
             <StackPanel>
+                <Button Content="Buka Pratinjau" Command="{Binding OpenPreviewCommand}" Padding="12,4" Margin="0,0,0,12" HorizontalAlignment="Left" />
                 <TextBlock Text="Subjek email" />
                 <TextBox Text="{Binding EmailSubject, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,8" />
                 <TextBlock Text="Isi email" />
