@@ -27,14 +27,14 @@
     <SolidColorBrush x:Key="EmberRedBrush" Color="{StaticResource EmberRedColor}" />
 
     <!-- ===== Typography ===== -->
-    <FontFamily x:Key="DisplaySerifFont">Georgia, Cambria, Times New Roman</FontFamily>
-    <FontFamily x:Key="BodyFont">Segoe UI Variable, Segoe UI, system-ui</FontFamily>
+    <FontFamily x:Key="DisplaySerifFont">Segoe UI Variable, Segoe UI</FontFamily>
+    <FontFamily x:Key="BodyFont">Segoe UI Variable, Segoe UI</FontFamily>
 
     <Style x:Key="DisplayHeading" TargetType="TextBlock">
-        <Setter Property="FontFamily" Value="{StaticResource DisplaySerifFont}" />
-        <Setter Property="FontStyle" Value="Italic" />
-        <Setter Property="FontSize" Value="32" />
-        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+        <Setter Property="FontStyle" Value="Normal" />
+        <Setter Property="FontSize" Value="26" />
+        <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Foreground" Value="{StaticResource CarbonInkBrush}" />
         <Setter Property="TextOptions.TextFormattingMode" Value="Ideal" />
     </Style>

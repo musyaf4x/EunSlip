@@ -30,8 +30,9 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <!-- Nav rail (carbon ink panel) -->
-        <Border Grid.Column="0" Background="{StaticResource CarbonInkBrush}">
+        <!-- Nav rail (white with hairline border) -->
+        <Border Grid.Column="0" Background="{StaticResource PaperWhiteBrush}"
+                BorderBrush="{StaticResource MistBrush}" BorderThickness="0,0,1,0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -41,10 +42,10 @@
 
                 <!-- Brand -->
                 <StackPanel Grid.Row="0" Margin="24,28,24,24">
-                    <TextBlock Text="EunSlip" FontFamily="{StaticResource DisplaySerifFont}"
-                               FontStyle="Italic" FontSize="26" Foreground="{StaticResource PaperWhiteBrush}" />
+                    <TextBlock Text="EunSlip" FontFamily="{StaticResource BodyFont}"
+                               FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource CarbonInkBrush}" />
                     <TextBlock Text="PAYROLL DELIVERY" FontFamily="{StaticResource BodyFont}"
-                               FontSize="10" FontStretch="Condensed" FontWeight="SemiBold"
+                               FontSize="10" FontWeight="SemiBold"
                                Foreground="{StaticResource GraphiteBrush}" Margin="0,4,0,0"
                                TextOptions.TextFormattingMode="Display" />
                 </StackPanel>
@@ -52,37 +53,27 @@
                 <!-- Nav buttons -->
                 <StackPanel Grid.Row="1" Margin="16,0">
                     <Button Content="{Binding NavHome}" Command="{Binding GoHomeCommand}"
-                            Style="{StaticResource GhostButton}" Foreground="{StaticResource FogBrush}"
-                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
-                            Padding="12,10" Margin="0,2" />
+                            Style="{StaticResource NavButton}" Margin="0,2" />
                     <Button Content="{Binding NavPayrollProcess}" Command="{Binding GoPayrollCommand}"
-                            Style="{StaticResource GhostButton}" Foreground="{StaticResource FogBrush}"
-                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
-                            Padding="12,10" Margin="0,2" />
+                            Style="{StaticResource NavButton}" Margin="0,2" />
                     <Button Content="{Binding NavHistory}" Command="{Binding GoHistoryCommand}"
-                            Style="{StaticResource GhostButton}" Foreground="{StaticResource FogBrush}"
-                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
-                            Padding="12,10" Margin="0,2" />
+                            Style="{StaticResource NavButton}" Margin="0,2" />
                     <Button Content="{Binding NavSettings}" Command="{Binding GoSettingsCommand}"
-                            Style="{StaticResource GhostButton}" Foreground="{StaticResource FogBrush}"
-                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
-                            Padding="12,10" Margin="0,2" />
+                            Style="{StaticResource NavButton}" Margin="0,2" />
                     <Button Content="{Binding NavAbout}" Command="{Binding GoAboutCommand}"
-                            Style="{StaticResource GhostButton}" Foreground="{StaticResource FogBrush}"
-                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
-                            Padding="12,10" Margin="0,2" />
+                            Style="{StaticResource NavButton}" Margin="0,2" />
                 </StackPanel>
 
                 <!-- Vierth Labs trademark footer -->
                 <StackPanel Grid.Row="2" Margin="24,16,24,24">
-                    <Border BorderBrush="#2a322e" BorderThickness="0,1,0,0" Margin="0,0,0,12" />
+                    <Border BorderBrush="{StaticResource MistBrush}" BorderThickness="0,1,0,0" Margin="0,0,0,12" />
                     <Image Source="/Assets/vierth.png" Height="22" HorizontalAlignment="Left"
                            RenderOptions.BitmapScalingMode="HighQuality" />
                     <TextBlock Text="DEVELOPED BY VIERTH LABS" FontFamily="{StaticResource BodyFont}"
                                FontSize="9" FontWeight="SemiBold" Foreground="{StaticResource GraphiteBrush}"
                                Margin="0,6,0,0" TextOptions.TextFormattingMode="Display" />
                     <TextBlock Text="© 2026 Vierth Labs" FontFamily="{StaticResource BodyFont}"
-                               FontSize="9" Foreground="{StaticResource PewterBrush}" Margin="0,2,0,0" />
+                               FontSize="9" Foreground="{StaticResource GraphiteBrush}" Margin="0,2,0,0" />
                 </StackPanel>
             </Grid>
         </Border>

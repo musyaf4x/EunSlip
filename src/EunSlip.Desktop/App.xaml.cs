@@ -29,6 +29,13 @@ public partial class App : Application
 
     protected override void OnStartup(StartupEventArgs e)
     {
+        DispatcherUnhandledException += (_, args) =>
+        {
+            File.AppendAllText(
+                Path.Combine(Path.GetTempPath(), "eunslip-crash.log"),
+                $"[{DateTimeOffset.UtcNow:O}] {args.Exception}\n\n");
+        };
+
         AppPaths paths = new(AppPaths.DefaultRoot);
 
         try
