@@ -8,6 +8,13 @@ public partial class SettingsView : UserControl
     public SettingsView()
     {
         InitializeComponent();
+        Loaded += async (_, _) =>
+        {
+            if (DataContext is ViewModels.SettingsViewModel vm)
+            {
+                await vm.LoadedCommand.ExecuteAsync(null);
+            }
+        };
     }
 
     private void PickStamp_Click(object sender, System.Windows.RoutedEventArgs e)

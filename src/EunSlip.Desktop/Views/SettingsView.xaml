@@ -1,6 +1,14 @@
 <UserControl x:Class="EunSlip.Desktop.Views.SettingsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <x:Array x:Key="Languages" Type="{x:Type sys:String}">
+            <sys:String>id-ID</sys:String>
+            <sys:String>en-US</sys:String>
+        </x:Array>
+    </UserControl.Resources>
     <ScrollViewer Padding="32">
         <StackPanel>
             <TextBlock Text="Pengaturan" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,16" />
@@ -9,20 +17,24 @@
             <TextBlock Text="{Binding ConnectedGmail, StringFormat='Akun: {0}'}" Margin="0,0,0,4" />
             <TextBlock Text="{Binding HasGmailConnection, StringFormat='Terkoneksi: {0}'}" Margin="0,0,0,8" />
             <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-                <Button Content="Hubungkan" Padding="12,4" Margin="0,0,8,0" />
+                <Button Content="Hubungkan" Command="{Binding ConnectGmailCommand}" Padding="12,4" Margin="0,0,8,0" />
                 <Button Content="Putuskan" Command="{Binding DisconnectGmailCommand}" Padding="12,4" />
             </StackPanel>
 
             <TextBlock Text="Stamp" FontWeight="SemiBold" Margin="0,0,0,4" />
             <TextBlock Text="{Binding HasStamp, StringFormat='Stamp aktif: {0}'}" Margin="0,0,0,8" />
-            <Button Content="Pilih gambar stamp..." Click="PickStamp_Click" Padding="12,4" Margin="0,0,0,16" />
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                <Button Content="Pilih gambar stamp..." Click="PickStamp_Click" Padding="12,4" Margin="0,0,8,0" />
+                <Button Content="Hapus Stamp" Command="{Binding RemoveStampCommand}" Padding="12,4" />
+            </StackPanel>
 
             <TextBlock Text="Bahasa" FontWeight="SemiBold" Margin="0,0,0,4" />
-            <ComboBox SelectedIndex="0" Width="200" HorizontalAlignment="Left">
-                <ComboBoxItem Content="Indonesia" />
-                <ComboBoxItem Content="English" />
-            </ComboBox>
-            <TextBlock Text="Perubahan bahasa diterapkan setelah mulai ulang." Foreground="#888" Margin="0,8,0,0" />
+            <ComboBox SelectedItem="{Binding SelectedLanguage}" ItemsSource="{StaticResource Languages}"
+                      Width="200" HorizontalAlignment="Left" Margin="0,0,0,4" />
+            <TextBlock Text="Perubahan bahasa diterapkan setelah mulai ulang." Foreground="#888" Margin="0,4,0,0"
+                       Visibility="{Binding LanguageChangedRequiresRestart, Converter={StaticResource BoolToVis}}" />
+
+            <TextBlock Text="{Binding StatusMessage}" Foreground="#555" Margin="0,16,0,0" />
         </StackPanel>
     </ScrollViewer>
 </UserControl>
