@@ -6,6 +6,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/EunSlip.Core.Tests/EunSlip.Core.Tests.csproj" />
+    <Project Path="tests/EunSlip.Desktop.Tests/EunSlip.Desktop.Tests.csproj" />
     <Project Path="tests/EunSlip.Infrastructure.Tests/EunSlip.Infrastructure.Tests.csproj" />
   </Folder>
 </Solution>
