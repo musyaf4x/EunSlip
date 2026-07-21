@@ -1,5 +1,6 @@
 using System.Net.Mail;
 using EunSlip.Core.Payroll;
+using EunSlip.Core.Persistence;
 
 namespace EunSlip.Core.Validation;
 
@@ -227,7 +228,7 @@ public static class PayrollValidator
         PayrollRow row, IReadOnlySet<string>? previouslySentNiks, List<PayrollIssue> issues)
     {
         if (previouslySentNiks is not null
-            && previouslySentNiks.Any(n => string.Equals(n, row.Nik, StringComparison.OrdinalIgnoreCase)))
+            && previouslySentNiks.Any(n => string.Equals(n, NikHint.LastFour(row.Nik), StringComparison.OrdinalIgnoreCase)))
         {
             issues.Add(new PayrollIssue(
                 IssueSeverity.Warning, "PreviouslySent", null, row.Nik, "NIK", row.Nik, null));

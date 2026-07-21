@@ -3,6 +3,7 @@ using EunSlip.Core.Payroll;
 using EunSlip.Core.Persistence;
 using EunSlip.Core.Security;
 using EunSlip.Core.Sending;
+using EunSlip.Core.Validation;
 using EunSlip.Desktop.ViewModels;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -163,6 +164,38 @@ public sealed class PayrollWizardViewModelTests
 
         Assert.Equal(WizardStep.Select, vm.CurrentStep);
         Assert.NotNull(vm.ErrorMessage);
+    }
+
+    [Fact]
+    public async Task Next_OnSelect_ReaderBlockingIssue_StaysOnSelect()
+    {
+        PayrollIssue blocking = new(IssueSeverity.Blocking, "CachedValueMissing", 2, null,
+            "Total Potongan", null, null);
+        PayrollWizardViewModel vm = Create(
+            new FakeReader(_ => new WorkbookReadResult(PayrollContract.Headers, [ValidInput(1)], [blocking])));
+        FillSelectStep(vm);
+
+        await vm.NextCommand.ExecuteAsync(null);
+
+        Assert.Equal(WizardStep.Select, vm.CurrentStep);
+        Assert.NotNull(vm.ErrorMessage);
+    }
+
+    [Fact]
+    public async Task Next_OnSelect_WithWarnings_AdvancesButBlocksUntilConfirmed()
+    {
+        PayrollRowInput row = ValidInput(1) with { Total = 1m };
+        PayrollWizardViewModel vm = Create(
+            new FakeReader(_ => new WorkbookReadResult(PayrollContract.Headers, [row], [])));
+        FillSelectStep(vm);
+        await vm.NextCommand.ExecuteAsync(null);
+
+        Assert.Equal(WizardStep.Validate, vm.CurrentStep);
+        Assert.True(vm.HasWarnings);
+        Assert.False(vm.NextCommand.CanExecute(null));
+
+        vm.WarningConfirmed = true;
+        Assert.True(vm.NextCommand.CanExecute(null));
     }
 
     [Fact]

@@ -326,7 +326,7 @@ public sealed class PayrollValidatorTests
     [Fact]
     public void PreviouslySentNik_IsWarning()
     {
-        HashSet<string> previouslySent = ["NIK0001"];
+        HashSet<string> previouslySent = ["0001"];
 
         ValidationResult result = PayrollValidator.Validate(
             PayrollContract.Headers, [ValidRow(1)], previouslySent);
@@ -397,7 +397,7 @@ public sealed class PayrollValidatorTests
     [Fact]
     public void PreviouslySentNik_MatchesCaseInsensitively()
     {
-        HashSet<string> previouslySent = ["nik0001"];
+        HashSet<string> previouslySent = ["0001"];
 
         ValidationResult result = PayrollValidator.Validate(
             PayrollContract.Headers, [ValidRow(1)], previouslySent);

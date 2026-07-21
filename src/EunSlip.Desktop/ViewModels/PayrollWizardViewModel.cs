@@ -52,6 +52,13 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
     private string? _errorMessage;
 
     [ObservableProperty]
+    private bool _hasWarnings;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(NextCommand))]
+    private bool _warningConfirmed;
+
+    [ObservableProperty]
     private string? _statusMessage;
 
     [ObservableProperty]
@@ -129,6 +136,8 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
         Results.Clear();
         _validation = null;
         _validRows = [];
+        HasWarnings = false;
+        WarningConfirmed = false;
         CurrentRecipient = 0;
         TotalRecipients = 0;
         SentCount = 0;
@@ -175,7 +184,8 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
                 !string.IsNullOrWhiteSpace(SelectedFilePath) &&
                 !string.IsNullOrWhiteSpace(Period) &&
                 PaymentDate is not null,
-            WizardStep.Validate => _validation?.CanProceed ?? false,
+            WizardStep.Validate => (_validation?.CanProceed ?? false)
+                && (!HasWarnings || WarningConfirmed),
             WizardStep.Preview => HasGmailConnection && HasStamp,
             WizardStep.Confirm => true,
             _ => false,
@@ -256,25 +266,33 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
         try
         {
             WorkbookReadResult read = _reader.Read(SelectedFilePath!);
-            ValidationResult validation = PayrollValidator.Validate(read.Headers, read.Rows);
+            IReadOnlyList<string> previouslySentNiks = _repository.FindPreviouslySentNiks(Period);
+            ValidationResult validation = PayrollValidator.Validate(
+                read.Headers, read.Rows,
+                previouslySentNiks.Count == 0 ? null : new HashSet<string>(previouslySentNiks, StringComparer.OrdinalIgnoreCase));
             _validation = validation;
+
+            IReadOnlyList<PayrollIssue> allIssues =
+                [.. read.ReadIssues, .. validation.Issues];
 
             foreach (PayrollRowInput row in read.Rows)
             {
                 ValidationRows.Add(new ValidationRowViewModel(
                     row.RowNumber, row.Nik ?? string.Empty, row.Nama ?? string.Empty,
-                    row.Email ?? string.Empty, validation.Issues.FirstOrDefault(i => i.RowNumber == row.RowNumber)));
+                    row.Email ?? string.Empty, allIssues.FirstOrDefault(i => i.RowNumber == row.RowNumber)));
             }
 
             _validRows = validation.ValidRows;
             OnPropertyChanged(nameof(RecipientCount));
 
-            if (!validation.CanProceed)
+            bool blockingReadIssue = read.ReadIssues.Any(i => i.Severity == IssueSeverity.Blocking);
+            if (!validation.CanProceed || blockingReadIssue)
             {
                 ErrorMessage = Strings.Get("ValidationBlockingMessage");
                 return;
             }
 
+            HasWarnings = validation.Issues.Any(i => i.Severity == IssueSeverity.Warning);
             _batchId = CreateBatchRecord();
             CurrentStep = WizardStep.Validate;
         }
@@ -301,7 +319,7 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
         Guid batchId = Guid.NewGuid();
         _repository.CreateBatch(new PayrollBatchRecord(
             batchId, Period, DateOnly.FromDateTime(PaymentDate!.Value), fingerprint,
-            BatchStatus.Ready, DateTimeOffset.UtcNow, null, null, true, _validRows.Count, 0, 0));
+            BatchStatus.Ready, DateTimeOffset.UtcNow, null, null, WarningConfirmed, _validRows.Count, 0, 0));
 
         foreach (PayrollRow row in _validRows)
         {
