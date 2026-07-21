@@ -14,6 +14,9 @@ dotnet_diagnostic.IDE0021.severity = none
 dotnet_diagnostic.IDE0022.severity = none
 dotnet_diagnostic.IDE0026.severity = none
 dotnet_diagnostic.IDE0027.severity = none
+# Windows-only desktop app; platform-guard annotations are noise against the single deployment target
+dotnet_diagnostic.CA1416.severity = none
+dotnet_diagnostic.CA1422.severity = none
 # if-return vs ternary: both allowed
 dotnet_diagnostic.IDE0046.severity = none
 
