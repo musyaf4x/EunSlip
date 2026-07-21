@@ -69,6 +69,8 @@
                     <Run Text="dari" />
                     <Run Text="{Binding TotalRecipients}" />
                 </TextBlock>
+                <TextBlock Text="{Binding CurrentNik, StringFormat='NIK: {0}'}" />
+                <TextBlock Text="{Binding CurrentName, StringFormat='Nama: {0}'}" />
                 <TextBlock Text="{Binding CurrentAttempt, StringFormat='Percobaan: {0}'}" />
                 <TextBlock Text="{Binding SentCount, StringFormat='Terkirim: {0}'}" />
                 <TextBlock Text="{Binding FailedCount, StringFormat='Gagal: {0}'}" />

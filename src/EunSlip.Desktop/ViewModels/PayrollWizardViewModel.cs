@@ -92,6 +92,12 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
     [ObservableProperty]
     private int _currentAttempt;
 
+    [ObservableProperty]
+    private string? _currentNik;
+
+    [ObservableProperty]
+    private string? _currentName;
+
     public ObservableCollection<ValidationRowViewModel> ValidationRows { get; } = [];
     public ObservableCollection<RecipientResult> Results { get; } = [];
 
@@ -161,6 +167,7 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
         ConnectedGmail = account?.Email;
         HasGmailConnection = account is not null;
         HasStamp = _stampStore.GetActiveStampPath() is not null;
+        LoadEmailTemplate();
     }
 
     [RelayCommand(CanExecute = nameof(CanNext))]
@@ -253,6 +260,26 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
     private bool CanOpenPreview() =>
         CurrentStep == WizardStep.Preview && _validRows.Count > 0;
 
+    private void PersistEmailTemplate()
+    {
+        _repository.SetSetting("LastEmailSubject", EmailSubject);
+        _repository.SetSetting("LastEmailBody", EmailBody);
+    }
+
+    private void LoadEmailTemplate()
+    {
+        string? subject = _repository.GetSetting("LastEmailSubject");
+        string? body = _repository.GetSetting("LastEmailBody");
+        if (!string.IsNullOrEmpty(subject))
+        {
+            EmailSubject = subject;
+        }
+        if (!string.IsNullOrEmpty(body))
+        {
+            EmailBody = body;
+        }
+    }
+
     [RelayCommand(CanExecute = nameof(CanConfirmSend))]
     private async Task ConfirmSendAsync()
     {
@@ -281,6 +308,7 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
             }
             SentCount = result.SentCount;
             FailedCount = result.FailedCount;
+            PersistEmailTemplate();
             CurrentStep = WizardStep.Results;
         }
         catch (Exception ex)
@@ -305,6 +333,8 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
         SentCount = progress.Succeeded;
         FailedCount = progress.Failed;
         CurrentAttempt = progress.CurrentAttempt;
+        CurrentNik = progress.Nik;
+        CurrentName = progress.Name;
     }
 
     private async Task RunValidationAsync()

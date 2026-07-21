@@ -236,7 +236,7 @@ public sealed class SqliteAppRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void ResetDatabase_ClearsAllDataButKeepsSchema()
+    public void ResetDatabase_ClearsHistoryButPreservesPreservedSettings()
     {
         _repo.CreateBatch(NewBatch());
         _repo.SetSetting("UiLanguage", "id-ID");
@@ -244,7 +244,28 @@ public sealed class SqliteAppRepositoryTests : IDisposable
         _repo.ResetDatabase();
 
         Assert.Empty(_repo.ListBatches());
-        Assert.Null(_repo.GetSetting("UiLanguage"));
+        Assert.Equal("id-ID", _repo.GetSetting("UiLanguage"));
+        Assert.True(_repo.CheckIntegrity());
+    }
+
+    [Fact]
+    public void ResetDatabase_PreservesGmailAndStampAndLanguageSettings()
+    {
+        _repo.CreateBatch(NewBatch());
+        _repo.SetSetting("UiLanguage", "en-US");
+        _repo.SetSetting("ActiveStampRelativePath", "stamp/stamp.png");
+        _repo.SetSetting("ConnectedGoogleEmail", "g@e.co");
+        _repo.SetSetting("OAuthClientSecret", "envelope");
+        _repo.SetSetting("LastEmailSubject", "Subjek");
+
+        _repo.ResetDatabase();
+
+        Assert.Empty(_repo.ListBatches());
+        Assert.Equal("en-US", _repo.GetSetting("UiLanguage"));
+        Assert.Equal("stamp/stamp.png", _repo.GetSetting("ActiveStampRelativePath"));
+        Assert.Equal("g@e.co", _repo.GetSetting("ConnectedGoogleEmail"));
+        Assert.Equal("envelope", _repo.GetSetting("OAuthClientSecret"));
+        Assert.Equal("Subjek", _repo.GetSetting("LastEmailSubject"));
         Assert.True(_repo.CheckIntegrity());
     }
 

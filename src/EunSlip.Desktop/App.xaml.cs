@@ -63,12 +63,29 @@ public partial class App : Application
 
         IAppRepository repository = _services.GetRequiredService<IAppRepository>();
         repository.Initialize();
+        ApplyStoredLanguage(repository);
         _services.GetRequiredService<ITempFileService>().CleanupLeftovers();
         PrepareInterruptedBatches(_services.GetRequiredService<IRecoveryService>());
         MainWindow = _services.GetRequiredService<MainWindow>();
         MainWindow.Show();
 
         base.OnStartup(e);
+    }
+
+    private static void ApplyStoredLanguage(IAppRepository repository)
+    {
+        string? language = repository.GetSetting("UiLanguage");
+        if (!string.IsNullOrEmpty(language))
+        {
+            try
+            {
+                System.Globalization.CultureInfo.CurrentUICulture =
+                    System.Globalization.CultureInfo.GetCultureInfo(language);
+            }
+            catch (System.Globalization.CultureNotFoundException)
+            {
+            }
+        }
     }
 
     private static void PrepareInterruptedBatches(IRecoveryService recovery)

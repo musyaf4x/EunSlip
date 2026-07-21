@@ -29,6 +29,9 @@ public sealed class SqliteAppRepository(string connectionString) : IAppRepositor
     {
         using SqliteConnection connection = OpenConnection();
         using SqliteTransaction transaction = connection.BeginTransaction();
+
+        Dictionary<string, string> preservedSettings = BackupPreservedSettings(connection, transaction);
+
         using SqliteCommand command = connection.CreateCommand();
         command.Transaction = transaction;
         command.CommandText =
@@ -44,7 +47,54 @@ public sealed class SqliteAppRepository(string connectionString) : IAppRepositor
         _ = resetVersion.ExecuteNonQuery();
 
         Migrate(connection, transaction);
+        RestoreSettings(connection, transaction, preservedSettings);
         transaction.Commit();
+    }
+
+    private static readonly HashSet<string> PreservedSettingKeys =
+        new(StringComparer.Ordinal)
+        {
+            "UiLanguage",
+            "LastEmailSubject",
+            "LastEmailBody",
+            "ActiveStampRelativePath",
+            "ConnectedGoogleEmail",
+            "OAuthClientSecret",
+        };
+
+    private static Dictionary<string, string> BackupPreservedSettings(
+        SqliteConnection connection, SqliteTransaction transaction)
+    {
+        Dictionary<string, string> settings = [];
+        using SqliteCommand command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = "SELECT Key, Value FROM ApplicationSettings;";
+        using SqliteDataReader reader = command.ExecuteReader();
+        while (reader.Read())
+        {
+            string key = reader.GetString(0);
+            if (PreservedSettingKeys.Contains(key))
+            {
+                settings[key] = reader.GetString(1);
+            }
+        }
+        return settings;
+    }
+
+    private static void RestoreSettings(
+        SqliteConnection connection, SqliteTransaction transaction,
+        Dictionary<string, string> settings)
+    {
+        foreach (KeyValuePair<string, string> setting in settings)
+        {
+            using SqliteCommand command = connection.CreateCommand();
+            command.Transaction = transaction;
+            command.CommandText =
+                "INSERT INTO ApplicationSettings (Key, Value) VALUES (@key, @value);";
+            command.Parameters.AddWithValue("@key", setting.Key);
+            command.Parameters.AddWithValue("@value", setting.Value);
+            _ = command.ExecuteNonQuery();
+        }
     }
 
     public string? GetSetting(string key)
