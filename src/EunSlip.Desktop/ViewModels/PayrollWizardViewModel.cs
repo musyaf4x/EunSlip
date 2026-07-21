@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using EunSlip.Core.Batches;
 using EunSlip.Core.Payroll;
 using EunSlip.Core.Persistence;
+using EunSlip.Core.Security;
 using EunSlip.Core.Sending;
 using EunSlip.Core.Validation;
 using EunSlip.Desktop.Localization;
@@ -23,6 +24,7 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
     private readonly IGmailAuthorization _gmail;
     private readonly ISharedFileStore _stampStore;
     private readonly IAppRepository _repository;
+    private readonly ISecretStore _secretStore;
     private readonly ILogger<PayrollWizardViewModel> _logger;
 
     [ObservableProperty]
@@ -92,6 +94,7 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
         IGmailAuthorization gmail,
         ISharedFileStore stampStore,
         IAppRepository repository,
+        ISecretStore secretStore,
         ILogger<PayrollWizardViewModel> logger)
     {
         _reader = reader;
@@ -99,6 +102,7 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
         _gmail = gmail;
         _stampStore = stampStore;
         _repository = repository;
+        _secretStore = secretStore;
         _logger = logger;
     }
 
@@ -298,6 +302,18 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
         _repository.CreateBatch(new PayrollBatchRecord(
             batchId, Period, DateOnly.FromDateTime(PaymentDate!.Value), fingerprint,
             BatchStatus.Ready, DateTimeOffset.UtcNow, null, null, true, _validRows.Count, 0, 0));
+
+        foreach (PayrollRow row in _validRows)
+        {
+            _repository.AddRecipient(new BatchRecipientRecord(
+                Guid.NewGuid(), batchId,
+                _secretStore.Protect(row.Nik),
+                _secretStore.Protect(row.Email),
+                NikHint.LastFour(row.Nik),
+                RecipientStatus.Pending,
+                DateTimeOffset.UtcNow));
+        }
+
         return batchId;
     }
 

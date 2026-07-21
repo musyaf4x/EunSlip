@@ -65,6 +65,41 @@ public sealed class EunSlipLoggingTests : IDisposable
         Assert.DoesNotContain("x@y.z", content);
     }
 
+    [Fact]
+    public void LoggerFactory_RedactsPluralAndPrefixedEmailProperty()
+    {
+        AppPaths paths = new(_root);
+        paths.EnsureCreated();
+
+        using (ILoggerFactory factory = EunSlipLogging.CreateLoggerFactory(paths))
+        {
+            ILogger logger = factory.CreateLogger("test");
+            logger.LogInformation("send {ToEmail} {Emails}", "a@b.c", "x@y.z");
+        }
+
+        string[] files = Directory.GetFiles(paths.LogsDirectory, "*.log");
+        string content = File.ReadAllText(files[0]);
+        Assert.DoesNotContain("a@b.c", content);
+        Assert.DoesNotContain("x@y.z", content);
+    }
+
+    [Fact]
+    public void LoggerFactory_RedactsExceptionMessage()
+    {
+        AppPaths paths = new(_root);
+        paths.EnsureCreated();
+
+        using (ILoggerFactory factory = EunSlipLogging.CreateLoggerFactory(paths))
+        {
+            ILogger logger = factory.CreateLogger("test");
+            logger.LogError(new System.Exception("failed for a@b.co"), "send error");
+        }
+
+        string[] files = Directory.GetFiles(paths.LogsDirectory, "*.log");
+        string content = File.ReadAllText(files[0]);
+        Assert.DoesNotContain("a@b.c", content);
+    }
+
     public void Dispose()
     {
         if (Directory.Exists(_root))

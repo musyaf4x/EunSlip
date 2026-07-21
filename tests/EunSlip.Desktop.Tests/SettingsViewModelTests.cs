@@ -107,7 +107,9 @@ public sealed class SettingsViewModelTests
     public async Task ConnectGmail_WithClientSecret_Connects()
     {
         SettingsViewModel vm = Create(out FakeRepository repo);
-        repo.Settings["OAuthClientSecret"] = "{ \"installed\": {} }";
+        byte[] envelope = EunSlip.Infrastructure.Security.DpapiKeyProtector.ProtectToken(
+            System.Text.Encoding.UTF8.GetBytes("{ \"installed\": {} }"));
+        repo.Settings["OAuthClientSecret"] = Convert.ToBase64String(envelope);
 
         await vm.ConnectGmailCommand.ExecuteAsync(null);
 

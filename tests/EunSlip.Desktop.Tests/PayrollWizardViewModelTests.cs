@@ -1,6 +1,7 @@
 using EunSlip.Core.Batches;
 using EunSlip.Core.Payroll;
 using EunSlip.Core.Persistence;
+using EunSlip.Core.Security;
 using EunSlip.Core.Sending;
 using EunSlip.Desktop.ViewModels;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -52,6 +53,7 @@ public sealed class PayrollWizardViewModelTests
     private sealed class FakeRepository : IAppRepository
     {
         public List<PayrollBatchRecord> Batches { get; } = [];
+        public List<BatchRecipientRecord> Recipients { get; } = [];
         public void Initialize() { }
         public bool CheckIntegrity() => true;
         public void ResetDatabase() { }
@@ -61,8 +63,8 @@ public sealed class PayrollWizardViewModelTests
         public PayrollBatchRecord? GetBatch(Guid id) => Batches.FirstOrDefault(b => b.Id == id);
         public IReadOnlyList<PayrollBatchRecord> ListBatches() => Batches;
         public void UpdateBatchStatus(Guid id, BatchStatus status, DateTimeOffset? startedAt, DateTimeOffset? completedAt) { }
-        public Guid AddRecipient(BatchRecipientRecord recipient) => recipient.Id;
-        public IReadOnlyList<BatchRecipientRecord> ListRecipients(Guid batchId) => [];
+        public Guid AddRecipient(BatchRecipientRecord recipient) { Recipients.Add(recipient); return recipient.Id; }
+        public IReadOnlyList<BatchRecipientRecord> ListRecipients(Guid batchId) => [.. Recipients.Where(r => r.BatchId == batchId)];
         public void UpdateRecipientStatus(Guid recipientId, RecipientStatus status, DateTimeOffset updatedAt) { }
         public void AddAttempt(SendAttemptRecord attempt) { }
         public void CompleteAttempt(Guid attemptId, AttemptStatus status, DateTimeOffset completedAt, string? errorCategory, string? errorMessage, string? gmailMessageId) { }
@@ -73,15 +75,28 @@ public sealed class PayrollWizardViewModelTests
         public void DeleteBatch(Guid id) { }
     }
 
+    private sealed class PassThroughSecretStore : ISecretStore
+    {
+        public string Protect(string plaintext) => plaintext;
+        public string Unprotect(string envelope) => envelope;
+    }
+
     private static PayrollWizardViewModel Create(
         IPayrollWorkbookReader? reader = null, bool gmailConnected = true, bool hasStamp = true)
+        => Create(out _, reader, gmailConnected, hasStamp);
+
+    private static PayrollWizardViewModel Create(
+        out FakeRepository repo,
+        IPayrollWorkbookReader? reader = null, bool gmailConnected = true, bool hasStamp = true)
     {
+        repo = new FakeRepository();
         return new PayrollWizardViewModel(
             reader ?? new FakeReader(_ => new WorkbookReadResult(PayrollContract.Headers, [ValidInput(1)], [])),
             new FakeCoordinator(),
             new FakeGmail(gmailConnected),
             new FakeStampStore(hasStamp),
-            new FakeRepository(),
+            repo,
+            new PassThroughSecretStore(),
             NullLogger<PayrollWizardViewModel>.Instance);
     }
 
@@ -223,6 +238,20 @@ public sealed class PayrollWizardViewModelTests
         vm.CurrentStep = WizardStep.Send;
 
         Assert.False(vm.CanGoNext);
+    }
+
+    [Fact]
+    public async Task Next_OnSelect_PersistsRecipientsToRepository()
+    {
+        PayrollWizardViewModel vm = Create(out FakeRepository repo);
+        FillSelectStep(vm);
+
+        await vm.NextCommand.ExecuteAsync(null);
+
+        Assert.NotEmpty(repo.Recipients);
+        BatchRecipientRecord recipient = Assert.Single(repo.Recipients);
+        Assert.Equal("NIK0001", recipient.EncryptedNik);
+        Assert.Equal(RecipientStatus.Pending, recipient.Status);
     }
 
     [Fact]

@@ -5,21 +5,27 @@ namespace EunSlip.Infrastructure.Gmail;
 
 public sealed class GmailAuthorization(
     DpapiTokenDataStore tokenStore,
-    string clientSecretJson) : IGmailAuthorization
+    Func<CancellationToken, Task<string?>> clientSecretProvider) : IGmailAuthorization
 {
     private const string UserIdentifier = "user";
 
     internal Google.Apis.Auth.OAuth2.UserCredential? Credential { get; private set; }
 
-    public async Task<GoogleAccount?> ConnectAsync(string clientSecretJson, CancellationToken cancellationToken)
+    public Task<GoogleAccount?> ConnectAsync(string clientSecretJson, CancellationToken cancellationToken)
     {
         ClientSecrets secrets = LoadSecrets(clientSecretJson);
-        return await AuthorizeAsync(secrets, cancellationToken);
+        return AuthorizeAsync(secrets, cancellationToken);
     }
 
     public async Task<GoogleAccount?> RestoreAsync(CancellationToken cancellationToken)
     {
-        ClientSecrets secrets = LoadSecrets(clientSecretJson);
+        string? secretJson = await clientSecretProvider(cancellationToken);
+        if (string.IsNullOrWhiteSpace(secretJson))
+        {
+            return null;
+        }
+
+        ClientSecrets secrets = LoadSecrets(secretJson);
         return await AuthorizeAsync(secrets, cancellationToken);
     }
 

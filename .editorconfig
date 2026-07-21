@@ -25,6 +25,7 @@ dotnet_diagnostic.IDE0290.severity = none
 dotnet_diagnostic.CA1822.severity = none
 dotnet_diagnostic.IDE0390.severity = none
 dotnet_diagnostic.IDE0072.severity = none
+dotnet_diagnostic.CA2201.severity = none
 # if-return vs ternary: both allowed
 dotnet_diagnostic.IDE0046.severity = none
 

@@ -6,7 +6,7 @@ using MimeKit;
 
 namespace EunSlip.Infrastructure.Gmail;
 
-public sealed class GmailSender(GmailAuthorization authorization, IMimeMessageBuilder mimeBuilder) : IGmailSender
+public sealed partial class GmailSender(GmailAuthorization authorization, IMimeMessageBuilder mimeBuilder) : IGmailSender
 {
     private static readonly string[] Scopes = [GmailService.Scope.GmailSend, "openid", "email"];
 
@@ -78,6 +78,12 @@ public sealed class GmailSender(GmailAuthorization authorization, IMimeMessageBu
             .TrimEnd('=');
     }
 
-    private static string Sanitize(string message) =>
-        message.Length > 200 ? message[..200] : message;
+    private static string Sanitize(string message)
+    {
+        string cleaned = EmailPattern().Replace(message, "[email]");
+        return cleaned.Length > 200 ? cleaned[..200] : cleaned;
+    }
+
+    [System.Text.RegularExpressions.GeneratedRegex(@"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")]
+    private static partial System.Text.RegularExpressions.Regex EmailPattern();
 }

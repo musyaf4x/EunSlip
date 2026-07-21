@@ -1,8 +1,10 @@
+using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EunSlip.Core.Payroll;
 using EunSlip.Core.Persistence;
 using EunSlip.Core.Sending;
+using EunSlip.Infrastructure.Security;
 using Microsoft.Extensions.Logging;
 
 namespace EunSlip.Desktop.ViewModels;
@@ -69,8 +71,8 @@ public sealed partial class SettingsViewModel(
     [RelayCommand]
     private async Task ConnectGmailAsync()
     {
-        string? clientSecret = _repository.GetSetting(SettingClientSecret);
-        if (string.IsNullOrWhiteSpace(clientSecret))
+        byte[]? secretEnvelope = LoadSecretEnvelope();
+        if (secretEnvelope is null)
         {
             StatusMessage = "Kredensial OAuth belum dikonfigurasi. Hubungi IT.";
             return;
@@ -78,6 +80,8 @@ public sealed partial class SettingsViewModel(
 
         try
         {
+            byte[] secretBytes = DpapiKeyProtector.UnprotectToken(secretEnvelope);
+            string clientSecret = Encoding.UTF8.GetString(secretBytes);
             GoogleAccount? account = await _gmail.ConnectAsync(clientSecret, CancellationToken.None);
             ConnectedGmail = account?.Email;
             HasGmailConnection = account is not null;
@@ -87,6 +91,25 @@ public sealed partial class SettingsViewModel(
         {
             _logger.LogError(ex, "Gmail connect failed");
             StatusMessage = "Gagal menghubungkan Gmail.";
+        }
+    }
+
+    private byte[]? LoadSecretEnvelope()
+    {
+        string? stored = _repository.GetSetting(SettingClientSecret);
+        if (string.IsNullOrWhiteSpace(stored))
+        {
+            return null;
+        }
+
+        try
+        {
+            return Convert.FromBase64String(stored);
+        }
+        catch (FormatException)
+        {
+            _logger.LogWarning("OAuth client secret envelope is malformed");
+            return null;
         }
     }
 

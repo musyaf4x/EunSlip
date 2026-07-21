@@ -92,9 +92,32 @@ public partial class App : Application
         services.AddSingleton<ISharedFileStore, SharedFileStore>();
         services.AddSingleton<ITempFileService, TempFileService>();
         services.AddSingleton<IGmailAuthorization>(sp =>
-            new GmailAuthorization(
+        {
+            IAppRepository repo = sp.GetRequiredService<IAppRepository>();
+            return new GmailAuthorization(
                 new DpapiTokenDataStore(paths.OAuthDirectory),
-                clientSecretJson: string.Empty));
+                ResolveClientSecretAsync);
+
+            async Task<string?> ResolveClientSecretAsync(CancellationToken ct)
+            {
+                string? stored = repo.GetSetting("OAuthClientSecret");
+                if (string.IsNullOrWhiteSpace(stored))
+                {
+                    return null;
+                }
+
+                try
+                {
+                    byte[] envelope = Convert.FromBase64String(stored);
+                    byte[] secret = DpapiKeyProtector.UnprotectToken(envelope);
+                    return System.Text.Encoding.UTF8.GetString(secret);
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        });
         _ = services.AddSingleton<IMimeMessageBuilder, MimeMessageBuilder>();
         _ = services.AddSingleton<IGmailSender, GmailSender>();
         _ = services.AddSingleton<IGmailRetrySender, GmailRetrySender>();

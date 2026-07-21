@@ -31,7 +31,10 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Dirs]
 ; Shared data root lives outside program files so upgrades/uninstall preserve it.
-; Grant ordinary local users write access (compensating control for machine-scope DPAPI, spec §13).
+; ACL: users-modify across all subdirs. This is the spec-accepted (§13/§23 risk 4)
+; machine-shared security scope — the trusted-accounting-computer assumption.
+; Compensating controls: AES-GCM + DPAPI(LocalMachine) encrypt NIK/email/tokens
+; at rest, so users-modify grants filesystem access but not plaintext.
 Name: "{commonappdata}\EunSlip"; Permissions: users-modify
 Name: "{commonappdata}\EunSlip\database"; Permissions: users-modify
 Name: "{commonappdata}\EunSlip\stamp"; Permissions: users-modify
