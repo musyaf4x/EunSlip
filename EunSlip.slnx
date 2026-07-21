@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/EunSlip.Core/EunSlip.Core.csproj" />
+    <Project Path="src/EunSlip.Desktop/EunSlip.Desktop.csproj" />
+    <Project Path="src/EunSlip.Infrastructure/EunSlip.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/EunSlip.Core.Tests/EunSlip.Core.Tests.csproj" />
+    <Project Path="tests/EunSlip.Infrastructure.Tests/EunSlip.Infrastructure.Tests.csproj" />
+  </Folder>
+</Solution>

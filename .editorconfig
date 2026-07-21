@@ -1,0 +1,15 @@
+root = true
+
+[*.cs]
+# Project-wide defaults
+dotnet_analyzer_diagnostic.category-Style.severity = warning
+csharp_style_namespace_declarations = file_scoped
+# XML doc comments not required on public APIs
+dotnet_diagnostic.CS1591.severity = none
+# Low-volume desktop logging; LoggerMessage source-gen overhead not justified
+dotnet_diagnostic.CA1848.severity = none
+dotnet_diagnostic.CA1873.severity = none
+
+[tests/**.cs]
+# Underscored test names are intentional (Method_Condition_Expectation)
+dotnet_diagnostic.CA1707.severity = none
