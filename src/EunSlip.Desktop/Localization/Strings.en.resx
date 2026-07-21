@@ -83,4 +83,20 @@
   <data name="Nav_About" xml:space="preserve">
     <value>About</value>
   </data>
+  <data name="WizardStep_Select" xml:space="preserve"><value>Step 1 — Select Payroll</value></data>
+  <data name="WizardStep_Validate" xml:space="preserve"><value>Step 2 — Validate</value></data>
+  <data name="WizardStep_Preview" xml:space="preserve"><value>Step 3 — Preview &amp; Email</value></data>
+  <data name="WizardStep_Confirm" xml:space="preserve"><value>Step 4 — Confirm</value></data>
+  <data name="WizardStep_Send" xml:space="preserve"><value>Step 5 — Sending</value></data>
+  <data name="WizardStep_Results" xml:space="preserve"><value>Step 6 — Results</value></data>
+  <data name="ValidationBlockingMessage" xml:space="preserve"><value>There are blocking errors. Fix the data in Excel and upload again.</value></data>
+  <data name="WorkbookUnreadableMessage" xml:space="preserve"><value>The Excel file cannot be read. Ensure it is a valid .xlsx.</value></data>
+  <data name="UnexpectedErrorMessage" xml:space="preserve"><value>An unexpected error occurred. Retry or contact IT.</value></data>
+  <data name="SendingInProgress" xml:space="preserve"><value>Sending is in progress. Do not close the application.</value></data>
+  <data name="SendFailedMessage" xml:space="preserve"><value>Sending failed. Check history and retry failed recipients.</value></data>
+  <data name="ConfirmCannotStop" xml:space="preserve"><value>Sending cannot be stopped after confirmation.</value></data>
+  <data name="ButtonNext" xml:space="preserve"><value>Next</value></data>
+  <data name="ButtonBack" xml:space="preserve"><value>Back</value></data>
+  <data name="ButtonConfirmSend" xml:space="preserve"><value>Confirm &amp; Send</value></data>
+  <data name="ButtonOpenPreview" xml:space="preserve"><value>Open Preview</value></data>
 </root>

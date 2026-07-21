@@ -1,0 +1,149 @@
+<UserControl x:Class="EunSlip.Desktop.Views.WizardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:EunSlip.Desktop.ViewModels">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <DataTemplate x:Key="SelectStep" DataType="{x:Type vm:PayrollWizardViewModel}">
+            <StackPanel Margin="0,8,0,0">
+                <TextBlock Text="File Excel (.xlsx)" />
+                <Grid Margin="0,4,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox Text="{Binding SelectedFilePath, UpdateSourceTrigger=PropertyChanged}"
+                             IsReadOnly="True" Margin="0,0,8,0" />
+                    <Button Content="Pilih..." Grid.Column="1" Click="PickFile_Click" Padding="12,4" />
+                </Grid>
+                <TextBlock Text="Periode payroll (mis. JULY 2025)" />
+                <TextBox Text="{Binding Period, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,8" />
+                <TextBlock Text="Tanggal pembayaran" />
+                <DatePicker SelectedDate="{Binding PaymentDate}" Margin="0,4,0,8" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="ValidateStep" DataType="{x:Type vm:PayrollWizardViewModel}">
+            <StackPanel>
+                <TextBlock Text="{Binding RecipientCount, StringFormat='Penerima valid: {0}'}" Margin="0,0,0,8" />
+                <DataGrid ItemsSource="{Binding ValidationRows}" AutoGenerateColumns="False"
+                          IsReadOnly="True" HeadersVisibility="Column" Height="300">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Baris" Binding="{Binding RowNumber}" Width="50" />
+                        <DataGridTextColumn Header="NIK" Binding="{Binding Nik}" Width="100" />
+                        <DataGridTextColumn Header="Nama" Binding="{Binding Name}" Width="*" />
+                        <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="200" />
+                        <DataGridTextColumn Header="Masalah" Binding="{Binding IssueSummary}" Width="180" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="PreviewStep" DataType="{x:Type vm:PayrollWizardViewModel}">
+            <StackPanel>
+                <TextBlock Text="Subjek email" />
+                <TextBox Text="{Binding EmailSubject, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,8" />
+                <TextBlock Text="Isi email" />
+                <TextBox Text="{Binding EmailBody, UpdateSourceTrigger=PropertyChanged}"
+                         AcceptsReturn="True" TextWrapping="Wrap" Height="160" Margin="0,4,0,8" />
+                <TextBlock Text="{Binding RecipientCount, StringFormat='Jumlah penerima: {0}'}" />
+                <TextBlock Text="{Binding ConnectedGmail, StringFormat='Gmail: {0}'}" />
+                <TextBlock Text="{Binding HasStamp, StringFormat='Stamp siap: {0}'}" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="ConfirmStep" DataType="{x:Type vm:PayrollWizardViewModel}">
+            <StackPanel>
+                <TextBlock Text="{Binding RecipientCount, StringFormat='Penerima: {0}'}" Margin="0,0,0,8" />
+                <TextBlock Text="{Binding ConnectedGmail, StringFormat='Gmail: {0}'}" Margin="0,0,0,8" />
+                <TextBlock Text="{Binding Period, StringFormat='Periode: {0}'}" Margin="0,0,0,8" />
+                <TextBlock Text="Pengiriman tidak dapat dihentikan setelah konfirmasi."
+                           FontWeight="SemiBold" Foreground="#C62828" Margin="0,0,0,16" />
+                <Button Content="Konfirmasi &amp; Kirim" Command="{Binding ConfirmSendCommand}"
+                        Padding="16,8" HorizontalAlignment="Left" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="SendStep" DataType="{x:Type vm:PayrollWizardViewModel}">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="{Binding StatusMessage}" FontSize="16" Margin="0,0,0,16" />
+                <TextBlock>
+                    <Run Text="{Binding CurrentRecipient}" />
+                    <Run Text="dari" />
+                    <Run Text="{Binding TotalRecipients}" />
+                </TextBlock>
+                <TextBlock Text="{Binding CurrentAttempt, StringFormat='Percobaan: {0}'}" />
+                <TextBlock Text="{Binding SentCount, StringFormat='Terkirim: {0}'}" />
+                <TextBlock Text="{Binding FailedCount, StringFormat='Gagal: {0}'}" />
+                <TextBlock Text="Jangan tutup aplikasi." Foreground="#888" Margin="0,16,0,0" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="ResultsStep" DataType="{x:Type vm:PayrollWizardViewModel}">
+            <StackPanel>
+                <TextBlock Text="{Binding SentCount, StringFormat='Terkirim: {0}'}" FontSize="16" />
+                <TextBlock Text="{Binding FailedCount, StringFormat='Gagal: {0}'}" FontSize="16" Margin="0,0,0,12" />
+                <DataGrid ItemsSource="{Binding Results}" AutoGenerateColumns="False"
+                          IsReadOnly="True" HeadersVisibility="Column" Height="300">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="NIK" Binding="{Binding Nik}" Width="100" />
+                        <DataGridTextColumn Header="Nama" Binding="{Binding Name}" Width="*" />
+                        <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="200" />
+                        <DataGridTextColumn Header="Percobaan" Binding="{Binding AttemptsMade}" Width="70" />
+                        <DataGridTextColumn Header="Alasan" Binding="{Binding ErrorMessage}" Width="200" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <TextBlock Text="{Binding StepTitle}" FontSize="18" FontWeight="SemiBold" />
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="#C62828" Margin="0,4,0,0"
+                       Visibility="{Binding HasError, Converter={StaticResource BoolToVis}}" />
+        </StackPanel>
+
+        <ContentControl Grid.Row="1" Content="{Binding}">
+            <ContentControl.Style>
+                <Style TargetType="ContentControl">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CurrentStep}" Value="Select">
+                            <Setter Property="ContentTemplate" Value="{StaticResource SelectStep}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding CurrentStep}" Value="Validate">
+                            <Setter Property="ContentTemplate" Value="{StaticResource ValidateStep}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding CurrentStep}" Value="Preview">
+                            <Setter Property="ContentTemplate" Value="{StaticResource PreviewStep}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding CurrentStep}" Value="Confirm">
+                            <Setter Property="ContentTemplate" Value="{StaticResource ConfirmStep}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding CurrentStep}" Value="Send">
+                            <Setter Property="ContentTemplate" Value="{StaticResource SendStep}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding CurrentStep}" Value="Results">
+                            <Setter Property="ContentTemplate" Value="{StaticResource ResultsStep}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContentControl.Style>
+        </ContentControl>
+
+        <Grid Grid.Row="2" Margin="0,16,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Content="Kembali" Command="{Binding BackCommand}" Grid.Column="1"
+                    Margin="0,0,8,0" Padding="16,6"
+                    Visibility="{Binding CanGoBack, Converter={StaticResource BoolToVis}}" />
+            <Button Content="Lanjut" Command="{Binding NextCommand}" Grid.Column="2"
+                    Padding="16,6"
+                    Visibility="{Binding CanGoNext, Converter={StaticResource BoolToVis}}" />
+        </Grid>
+    </Grid>
+</UserControl>

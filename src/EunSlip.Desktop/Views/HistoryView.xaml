@@ -1,0 +1,32 @@
+<UserControl x:Class="EunSlip.Desktop.Views.HistoryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
+    <ScrollViewer Padding="32">
+        <StackPanel>
+            <TextBlock Text="Riwayat Batch" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,16" />
+            <DataGrid ItemsSource="{Binding Batches}" AutoGenerateColumns="False"
+                      IsReadOnly="True" HeadersVisibility="Column" Height="400">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Periode" Binding="{Binding Period}" Width="100" />
+                    <DataGridTextColumn Header="Tanggal" Binding="{Binding PaymentDate}" Width="120" />
+                    <DataGridTextColumn Header="Penerima" Binding="{Binding RecipientCount}" Width="70" />
+                    <DataGridTextColumn Header="Terkirim" Binding="{Binding SentCount}" Width="70" />
+                    <DataGridTextColumn Header="Gagal" Binding="{Binding FailedCount}" Width="60" />
+                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100" />
+                    <DataGridTemplateColumn Header="Aksi" Width="80">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Hapus" Command="{Binding DataContext.DeleteBatchCommand,
+                                    RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding}" Padding="6,2" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

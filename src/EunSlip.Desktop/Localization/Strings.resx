@@ -84,4 +84,20 @@
   <data name="Nav_About" xml:space="preserve">
     <value>Tentang Aplikasi</value>
   </data>
+  <data name="WizardStep_Select" xml:space="preserve"><value>Langkah 1 — Pilih Payroll</value></data>
+  <data name="WizardStep_Validate" xml:space="preserve"><value>Langkah 2 — Validasi</value></data>
+  <data name="WizardStep_Preview" xml:space="preserve"><value>Langkah 3 — Pratinjau &amp; Email</value></data>
+  <data name="WizardStep_Confirm" xml:space="preserve"><value>Langkah 4 — Konfirmasi</value></data>
+  <data name="WizardStep_Send" xml:space="preserve"><value>Langkah 5 — Mengirim</value></data>
+  <data name="WizardStep_Results" xml:space="preserve"><value>Langkah 6 — Hasil</value></data>
+  <data name="ValidationBlockingMessage" xml:space="preserve"><value>Ada kesalahan pemblokir. Perbaiki data di Excel lalu unggah ulang.</value></data>
+  <data name="WorkbookUnreadableMessage" xml:space="preserve"><value>Berkas Excel tidak dapat dibaca. Pastikan format .xlsx yang valid.</value></data>
+  <data name="UnexpectedErrorMessage" xml:space="preserve"><value>Terjadi kesalahan tak terduga. Coba lagi atau hubungi IT.</value></data>
+  <data name="SendingInProgress" xml:space="preserve"><value>Pengiriman sedang berlangsung. Jangan tutup aplikasi.</value></data>
+  <data name="SendFailedMessage" xml:space="preserve"><value>Pengiriman gagal. Periksa riwayat dan coba kirim ulang yang gagal.</value></data>
+  <data name="ConfirmCannotStop" xml:space="preserve"><value>Pengiriman tidak dapat dihentikan setelah konfirmasi.</value></data>
+  <data name="ButtonNext" xml:space="preserve"><value>Lanjut</value></data>
+  <data name="ButtonBack" xml:space="preserve"><value>Kembali</value></data>
+  <data name="ButtonConfirmSend" xml:space="preserve"><value>Konfirmasi &amp; Kirim</value></data>
+  <data name="ButtonOpenPreview" xml:space="preserve"><value>Buka Pratinjau</value></data>
 </root>

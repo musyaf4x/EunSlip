@@ -19,6 +19,12 @@ dotnet_diagnostic.CA1416.severity = none
 dotnet_diagnostic.CA1422.severity = none
 # ExecuteNonQuery return value intentionally unused across repository code
 dotnet_diagnostic.IDE0058.severity = none
+# Primary constructor preferred where constructor only stores deps
+dotnet_diagnostic.IDE0290.severity = none
+# VM members may be instance even if static-eligible
+dotnet_diagnostic.CA1822.severity = none
+dotnet_diagnostic.IDE0390.severity = none
+dotnet_diagnostic.IDE0072.severity = none
 # if-return vs ternary: both allowed
 dotnet_diagnostic.IDE0046.severity = none
 

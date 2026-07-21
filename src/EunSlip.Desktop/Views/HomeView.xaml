@@ -1,0 +1,14 @@
+<UserControl x:Class="EunSlip.Desktop.Views.HomeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer Padding="32">
+        <StackPanel>
+            <TextBlock Text="Beranda" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,16" />
+            <TextBlock Text="{Binding ConnectedGmail, StringFormat='Gmail: {0}'}" Margin="0,0,0,4" />
+            <TextBlock Text="{Binding HasGmailConnection, StringFormat='Terkoneksi: {0}'}" Margin="0,0,0,4" />
+            <TextBlock Text="{Binding HasStamp, StringFormat='Stamp siap: {0}'}" Margin="0,0,0,16" />
+            <TextBlock Text="{Binding InterruptedBatchNotice, StringFormat='Batch terputus: {0}'}"
+                       Foreground="Orange" Margin="0,0,0,16" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
