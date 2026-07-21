@@ -195,7 +195,7 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
             WizardStep.Validate => (_validation?.CanProceed ?? false)
                 && (!HasWarnings || WarningConfirmed),
             WizardStep.Preview => HasGmailConnection && HasStamp,
-            WizardStep.Confirm => true,
+            WizardStep.Confirm => false,
             _ => false,
         };
     }

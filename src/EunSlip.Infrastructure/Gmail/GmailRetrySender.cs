@@ -10,19 +10,24 @@ public sealed class GmailRetrySender(IGmailSender sender, IRetryDelay? delay = n
     public async Task<RetrySendOutcome> SendWithRetryAsync(
         SendRequest request, CancellationToken cancellationToken)
     {
-        int attempts = 0;
+        List<AttemptDetail> details = [];
         string? lastErrorCategory = null;
         string? lastErrorMessage = null;
 
-        while (attempts < GmailRetryPolicy.MaxAttempts)
+        for (int attempt = 1; attempt <= GmailRetryPolicy.MaxAttempts; attempt++)
         {
-            attempts++;
+            DateTimeOffset startedAt = DateTimeOffset.UtcNow;
             SendOutcome outcome = await _sender.SendAsync(request, cancellationToken);
+            DateTimeOffset completedAt = DateTimeOffset.UtcNow;
+
+            details.Add(new AttemptDetail(
+                attempt, outcome.Result, startedAt, completedAt,
+                outcome.GmailMessageId, outcome.ErrorCategory, outcome.ErrorMessage));
 
             if (outcome.Result == SendResult.Sent)
             {
                 return new RetrySendOutcome(
-                    SendResult.Sent, outcome.GmailMessageId, attempts, null, null);
+                    SendResult.Sent, outcome.GmailMessageId, attempt, null, null, details);
             }
 
             lastErrorCategory = outcome.ErrorCategory;
@@ -33,21 +38,14 @@ public sealed class GmailRetrySender(IGmailSender sender, IRetryDelay? delay = n
                 break;
             }
 
-            if (attempts < GmailRetryPolicy.MaxAttempts)
+            if (attempt < GmailRetryPolicy.MaxAttempts)
             {
-                TimeSpan wait = GmailRetryPolicy.Backoff(attempts, outcome.RetryAfterSeconds);
-                try
-                {
-                    await _delay.WaitAsync(wait, cancellationToken);
-                }
-                catch (OperationCanceledException)
-                {
-                    break;
-                }
+                TimeSpan wait = GmailRetryPolicy.Backoff(attempt, outcome.RetryAfterSeconds);
+                await _delay.WaitAsync(wait, cancellationToken);
             }
         }
 
         return new RetrySendOutcome(
-            SendResult.Failed, null, attempts, lastErrorCategory, lastErrorMessage);
+            SendResult.Failed, null, details.Count, lastErrorCategory, lastErrorMessage, details);
     }
 }

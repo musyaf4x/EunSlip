@@ -103,23 +103,25 @@ public sealed class BatchCoordinator(
 
             RetrySendOutcome outcome = await _sender.SendWithRetryAsync(sendRequest, cancellationToken);
 
-            AttemptStatus attemptStatus = outcome.Result == SendResult.Sent
-                ? AttemptStatus.Sent : AttemptStatus.Failed;
+            DateTimeOffset recipientCompletedAt = DateTimeOffset.UtcNow;
 
-            DateTimeOffset completedAt = DateTimeOffset.UtcNow;
-            Guid attemptId = Guid.NewGuid();
-            _repository.AddAttempt(new SendAttemptRecord(
-                attemptId, recipientRecord.Id, outcome.AttemptsMade, request.AttemptKind,
-                DateTimeOffset.UtcNow, completedAt, attemptStatus,
-                outcome.ErrorCategory, outcome.ErrorMessage, outcome.GmailMessageId));
+            foreach (AttemptDetail detail in outcome.Attempts)
+            {
+                Guid attemptId = Guid.NewGuid();
+                _repository.AddAttempt(new SendAttemptRecord(
+                    attemptId, recipientRecord.Id, detail.AttemptNumber, request.AttemptKind,
+                    detail.StartedAtUtc, detail.CompletedAtUtc,
+                    detail.Result == SendResult.Sent ? AttemptStatus.Sent : AttemptStatus.Failed,
+                    detail.ErrorCategory, detail.ErrorMessage, detail.GmailMessageId));
+            }
 
             if (outcome.Result == SendResult.Sent)
             {
-                _repository.UpdateRecipientStatus(recipientRecord.Id, RecipientStatus.Sent, completedAt);
+                _repository.UpdateRecipientStatus(recipientRecord.Id, RecipientStatus.Sent, recipientCompletedAt);
             }
             else
             {
-                _repository.UpdateRecipientStatus(recipientRecord.Id, RecipientStatus.Failed, completedAt);
+                _repository.UpdateRecipientStatus(recipientRecord.Id, RecipientStatus.Failed, recipientCompletedAt);
             }
 
             request.Progress.Report(new BatchProgress(

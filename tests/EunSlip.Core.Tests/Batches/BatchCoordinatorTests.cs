@@ -120,12 +120,20 @@ public sealed class BatchCoordinatorTests
         return batchId;
     }
 
+    private static RetrySendOutcome Sent(string gmailId) =>
+        new(SendResult.Sent, gmailId, 1, null, null,
+            [new(1, SendResult.Sent, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, gmailId, null, null)]);
+
+    private static RetrySendOutcome Failed(int attempts = 3, string category = "EmailSendFailed", string message = "bounce") =>
+        new(SendResult.Failed, null, attempts, category, message,
+            [.. Enumerable.Range(1, attempts).Select(n =>
+                new AttemptDetail(n, SendResult.Failed, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, null, category, message))]);
+
     [Fact]
     public async Task AllSucceed_MarksBatchCompletedAndAttemptsRecorded()
     {
         PayrollRow[] rows = [Row("NIK0001"), Row("NIK0002")];
-        var (coordinator, repo, _, _) = Setup(
-            new FakeSender(_ => new RetrySendOutcome(SendResult.Sent, "msg-1", 1, null, null)));
+        var (coordinator, repo, _, _) = Setup(new FakeSender(_ => Sent("msg-1")));
         Guid batchId = SeedBatch(repo, rows);
 
         BatchRunResult result = await coordinator.RunBatchAsync(Request(batchId, rows), CancellationToken.None);
@@ -143,8 +151,8 @@ public sealed class BatchCoordinatorTests
         PayrollRow[] rows = [Row("NIK0001"), Row("NIK0002")];
         var (coordinator, repo, _, _) = Setup(
             new FakeSender(req => req.AttachmentFileName.Contains("NIK0001")
-                ? new RetrySendOutcome(SendResult.Failed, null, 3, "EmailSendFailed", "bounce")
-                : new RetrySendOutcome(SendResult.Sent, "msg-2", 1, null, null)));
+                ? Failed(3, "EmailSendFailed", "bounce")
+                : Sent("msg-2")));
         Guid batchId = SeedBatch(repo, rows);
 
         BatchRunResult result = await coordinator.RunBatchAsync(Request(batchId, rows), CancellationToken.None);
@@ -156,19 +164,26 @@ public sealed class BatchCoordinatorTests
     }
 
     [Fact]
-    public async Task RecordsAttemptWithAttemptsMadeFromSender()
+    public async Task RecordsAttempt_PerAttemptRow()
     {
         PayrollRow[] rows = [Row("NIK0001")];
+        AttemptDetail[] details =
+        [
+            new(1, SendResult.Failed, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, null, "EmailSendFailed", "timeout"),
+            new(2, SendResult.Failed, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, null, "EmailSendFailed", "timeout"),
+            new(3, SendResult.Failed, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, null, "EmailSendFailed", "timeout"),
+        ];
         var (coordinator, repo, _, _) = Setup(
-            new FakeSender(_ => new RetrySendOutcome(SendResult.Failed, null, 3, "EmailSendFailed", "timeout")));
+            new FakeSender(_ => new RetrySendOutcome(SendResult.Failed, null, 3, "EmailSendFailed", "timeout", details)));
         Guid batchId = SeedBatch(repo, rows);
 
         await coordinator.RunBatchAsync(Request(batchId, rows), CancellationToken.None);
 
-        SendAttemptRecord attempt = Assert.Single(repo.Attempts);
-        Assert.Equal(3, attempt.AttemptNumber);
-        Assert.Equal(AttemptStatus.Failed, attempt.Status);
-        Assert.Equal("EmailSendFailed", attempt.ErrorCategory);
+        Assert.Equal(3, repo.Attempts.Count);
+        Assert.Equal(1, repo.Attempts[0].AttemptNumber);
+        Assert.Equal(3, repo.Attempts[2].AttemptNumber);
+        Assert.All(repo.Attempts, a => Assert.Equal(AttemptStatus.Failed, a.Status));
+        Assert.Equal("EmailSendFailed", repo.Attempts[0].ErrorCategory);
     }
 
     [Fact]
@@ -178,7 +193,7 @@ public sealed class BatchCoordinatorTests
         FakeRepository repo = new();
         BatchCoordinator coordinator = new(
             new FakePdfGenerator(),
-            new FakeSender(_ => new RetrySendOutcome(SendResult.Sent, "m", 1, null, null)),
+            new FakeSender(_ => Sent("m")),
             repo, new PassThroughSecretStore(),
             new FakeStampStore(null!),
             new RealTempFiles(), NullLogger<BatchCoordinator>.Instance);
@@ -191,8 +206,7 @@ public sealed class BatchCoordinatorTests
     [Fact]
     public async Task EmptyRows_ReturnsEmptyResult()
     {
-        var (coordinator, repo, _, _) = Setup(
-            new FakeSender(_ => new RetrySendOutcome(SendResult.Sent, "m", 1, null, null)));
+        var (coordinator, repo, _, _) = Setup(new FakeSender(_ => Sent("m")));
         Guid batchId = SeedBatch(repo, []);
 
         BatchRunResult result = await coordinator.RunBatchAsync(Request(batchId, []), CancellationToken.None);
@@ -208,7 +222,7 @@ public sealed class BatchCoordinatorTests
         FakeSender sender = new(req =>
         {
             capturedPath = req.AttachmentPath;
-            return new RetrySendOutcome(SendResult.Sent, "m", 1, null, null);
+            return Sent("m");
         });
         var (coordinator, repo, _, _) = Setup(sender);
         Guid batchId = SeedBatch(repo, rows);
