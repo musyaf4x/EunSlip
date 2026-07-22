@@ -74,4 +74,33 @@ public sealed class ThemeContractTests
             Assert.Contains($"AutomationProperties.AutomationId=\"{id}\"", combined, StringComparison.Ordinal);
         }
     }
+
+    [Fact]
+    public void MainWindow_StartsMaximized()
+    {
+        string xaml = ReadRepositoryFile("src", "EunSlip.Desktop", "MainWindow.xaml");
+
+        Assert.Contains("WindowState=\"Maximized\"", xaml, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void SettingsView_KeepsCompleteGoogleCloudSetupTutorial()
+    {
+        string xaml = ReadRepositoryFile("src", "EunSlip.Desktop", "Views", "SettingsView.xaml");
+
+        foreach (string instruction in new[]
+        {
+            "PANDUAN SETUP GOOGLE CLOUD &amp; OAUTH",
+            "1. Buka ",
+            "2. APIs &amp; Services",
+            "3. OAuth consent screen",
+            "4. Credentials",
+            "5. Download ",
+            "6. Buka isi file client_secret.json",
+            "7. Klik ",
+        })
+        {
+            Assert.Contains(instruction, xaml, StringComparison.Ordinal);
+        }
+    }
 }
