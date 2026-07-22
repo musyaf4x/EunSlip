@@ -25,4 +25,19 @@ public sealed class GmailAuthorizationTests
 
         Assert.Null(account);
     }
+
+    [Fact]
+    public void ParseUserInfoEmail_ReadsOpenIdEmailClaim()
+    {
+        string? email = GmailAuthorization.ParseUserInfoEmail(
+            "{\"sub\":\"opaque-id\",\"email\":\"owner@example.test\"}");
+
+        Assert.Equal("owner@example.test", email);
+    }
+
+    [Fact]
+    public void ParseUserInfoEmail_MissingEmailClaim_ReturnsNull()
+    {
+        Assert.Null(GmailAuthorization.ParseUserInfoEmail("{\"sub\":\"opaque-id\"}"));
+    }
 }
