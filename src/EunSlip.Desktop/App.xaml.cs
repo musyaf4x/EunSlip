@@ -72,7 +72,7 @@ public partial class App : Application
         repository.Initialize();
         ApplyStoredLanguage(repository);
         _services.GetRequiredService<ITempFileService>().CleanupLeftovers();
-        PrepareInterruptedBatches(_services.GetRequiredService<IRecoveryService>());
+        _services.GetRequiredService<IRecoveryService>().MarkDetectedBatchesInterrupted();
         MainWindow = _services.GetRequiredService<MainWindow>();
         MainWindow.Show();
 
@@ -92,14 +92,6 @@ public partial class App : Application
             catch (System.Globalization.CultureNotFoundException)
             {
             }
-        }
-    }
-
-    private static void PrepareInterruptedBatches(IRecoveryService recovery)
-    {
-        foreach (Guid batchId in recovery.DetectInterruptedBatches())
-        {
-            recovery.PrepareForRecovery(batchId);
         }
     }
 

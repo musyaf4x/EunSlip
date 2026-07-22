@@ -104,6 +104,20 @@ public sealed class RecoveryServiceTests
     }
 
     [Fact]
+    public void MarkDetectedBatchesInterrupted_ChangesBatchStatusWithoutPreparingRecipients()
+    {
+        var (service, repository) = Setup();
+        Guid batchId = SeedBatch(repository, "fp", ("NIK0001", RecipientStatus.Sending));
+
+        IReadOnlyList<Guid> marked = service.MarkDetectedBatchesInterrupted();
+
+        Assert.Single(marked, batchId);
+        Assert.Equal(BatchStatus.Interrupted, repository.GetBatch(batchId)!.Status);
+        Assert.Empty(repository.SendingResets);
+        Assert.Equal(RecipientStatus.Sending, repository.ListRecipients(batchId)[0].Status);
+    }
+
+    [Fact]
     public void PrepareForRecovery_MarksInterruptedAndResetsSendingRecipients()
     {
         var (svc, repo) = Setup();

@@ -5,6 +5,7 @@ namespace EunSlip.Core.Recovery;
 public interface IRecoveryService
 {
     IReadOnlyList<Guid> DetectInterruptedBatches();
+    IReadOnlyList<Guid> MarkDetectedBatchesInterrupted();
     void PrepareForRecovery(Guid batchId);
     RecoveryGate VerifyFingerprint(Guid batchId, BatchContext context, IReadOnlyList<PayrollRow> rows);
     IReadOnlyList<string> SelectRetryFailedNiks(Guid batchId);

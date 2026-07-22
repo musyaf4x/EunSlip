@@ -41,6 +41,7 @@ public sealed class HistoryViewModelTests
         public List<Guid> Prepared { get; } = [];
         public List<Guid> FailedNikQueries { get; } = [];
         public IReadOnlyList<Guid> DetectInterruptedBatches() => [];
+        public IReadOnlyList<Guid> MarkDetectedBatchesInterrupted() => [];
         public void PrepareForRecovery(Guid batchId) => Prepared.Add(batchId);
         public RecoveryGate VerifyFingerprint(Guid batchId, BatchContext context, IReadOnlyList<PayrollRow> rows) =>
             new(RecoveryGateResult.Match, "fp", "fp");

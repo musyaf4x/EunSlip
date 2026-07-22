@@ -14,6 +14,17 @@ public sealed class RecoveryService(IAppRepository repository, ISecretStore secr
         return _repository.FindInterruptedBatches();
     }
 
+    public IReadOnlyList<Guid> MarkDetectedBatchesInterrupted()
+    {
+        IReadOnlyList<Guid> batchIds = _repository.FindInterruptedBatches();
+        foreach (Guid batchId in batchIds)
+        {
+            _repository.UpdateBatchStatus(batchId, BatchStatus.Interrupted, null, null);
+        }
+
+        return batchIds;
+    }
+
     public void PrepareForRecovery(Guid batchId)
     {
         ReconcileCommittedSends(batchId);
