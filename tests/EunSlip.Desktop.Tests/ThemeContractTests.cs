@@ -125,6 +125,16 @@ public sealed class ThemeContractTests
     }
 
     [Fact]
+    public void VierthLabsLogo_IsTwentyFivePercentLargerAcrossBrandingSurfaces()
+    {
+        string shell = ReadRepositoryFile("src", "EunSlip.Desktop", "MainWindow.xaml");
+        string about = ReadRepositoryFile("src", "EunSlip.Desktop", "Views", "AboutView.xaml");
+
+        Assert.Contains("Source=\"/Assets/vierth.png\" Height=\"28\"", shell, StringComparison.Ordinal);
+        Assert.Contains("Source=\"/Assets/vierth.png\" Height=\"35\"", about, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void DesktopExecutable_UsesMultiSizeIconDerivedFromBackgroundLogo()
     {
         string project = ReadRepositoryFile("src", "EunSlip.Desktop", "EunSlip.Desktop.csproj");
