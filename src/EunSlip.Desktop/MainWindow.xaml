@@ -5,6 +5,7 @@
         xmlns:v="clr-namespace:EunSlip.Desktop.Views"
         Title="EunSlip" Width="1180" Height="760" MinWidth="1024" MinHeight="680"
         Background="{StaticResource PaperWhiteBrush}"
+        Icon="/Assets/eunslip.ico"
         WindowState="Maximized"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
@@ -42,14 +43,25 @@
                 </Grid.RowDefinitions>
 
                 <!-- Brand -->
-                <StackPanel Grid.Row="0" Margin="24,28,24,24">
-                    <TextBlock Text="EUNSLIP" FontFamily="{StaticResource BodyFont}"
-                               FontSize="22" FontWeight="Bold" Foreground="{StaticResource CarbonInkBrush}" />
-                    <TextBlock Text="PAYROLL DELIVERY" FontFamily="{StaticResource BodyFont}"
-                               FontSize="10" FontWeight="SemiBold"
-                               Foreground="{StaticResource GraphiteBrush}" Margin="0,4,0,0"
-                               TextOptions.TextFormattingMode="Display" />
-                </StackPanel>
+                <Grid Grid.Row="0" Margin="24,28,24,24">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Image Grid.Column="0" Source="/Assets/eunslip-logo-black-01.png"
+                           Width="40" Height="40" Stretch="Uniform"
+                           AutomationProperties.Name="EunSlip logo"
+                           RenderOptions.BitmapScalingMode="HighQuality" />
+                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                        <TextBlock Text="EUNSLIP" FontFamily="{StaticResource BodyFont}"
+                                   FontSize="22" FontWeight="Bold" Foreground="{StaticResource CarbonInkBrush}" />
+                        <TextBlock Text="PAYROLL DELIVERY" FontFamily="{StaticResource BodyFont}"
+                                   FontSize="10" FontWeight="SemiBold"
+                                   Foreground="{StaticResource GraphiteBrush}" Margin="0,4,0,0"
+                                   TextOptions.TextFormattingMode="Display" />
+                    </StackPanel>
+                </Grid>
 
                 <!-- Nav buttons -->
                 <StackPanel Grid.Row="1" Margin="16,0">
