@@ -27,8 +27,11 @@
     <SolidColorBrush x:Key="EmberRedBrush" Color="{StaticResource EmberRedColor}" />
 
     <!-- ===== Typography ===== -->
-    <FontFamily x:Key="DisplaySerifFont">Segoe UI Variable, Segoe UI</FontFamily>
-    <FontFamily x:Key="BodyFont">Segoe UI Variable, Segoe UI</FontFamily>
+    <FontFamily x:Key="DisplaySerifFont">Segoe UI</FontFamily>
+    <FontFamily x:Key="BodyFont">Segoe UI</FontFamily>
+    <FontFamily x:Key="TechnicalFont">Consolas</FontFamily>
+
+    <Thickness x:Key="PagePadding">40,32</Thickness>
 
     <Style x:Key="DisplayHeading" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
@@ -41,8 +44,8 @@
 
     <Style x:Key="SectionHeading" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
-        <Setter Property="FontSize" Value="22" />
-        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="Foreground" Value="{StaticResource CarbonInkBrush}" />
     </Style>
 
@@ -56,47 +59,70 @@
 
     <Style x:Key="BodyText" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="15" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="Foreground" Value="{StaticResource CarbonInkBrush}" />
     </Style>
 
     <Style x:Key="MutedText" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
-        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontSize" Value="14" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="Foreground" Value="{StaticResource GraphiteBrush}" />
     </Style>
 
     <Style x:Key="MicroLabel" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
-        <Setter Property="FontSize" Value="11" />
-        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="{StaticResource GraphiteBrush}" />
+    </Style>
+
+    <Style x:Key="PageFrame" TargetType="Grid">
+        <Setter Property="Margin" Value="{StaticResource PagePadding}" />
+    </Style>
+
+    <Style x:Key="PageTitle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+        <Setter Property="FontSize" Value="30" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="{StaticResource CarbonInkBrush}" />
+    </Style>
+
+    <Style x:Key="PageSubtitle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="LineHeight" Value="22" />
         <Setter Property="Foreground" Value="{StaticResource GraphiteBrush}" />
     </Style>
 
     <!-- ===== Geometry / Radii ===== -->
     <CornerRadius x:Key="RadiusSm">4</CornerRadius>
     <CornerRadius x:Key="RadiusMd">8</CornerRadius>
+    <CornerRadius x:Key="RadiusPill">999</CornerRadius>
 
     <!-- ===== Base Button (ghost, uppercase label) ===== -->
     <Style x:Key="GhostButton" TargetType="Button">
         <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
-        <Setter Property="FontSize" Value="13" />
-        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="Foreground" Value="{StaticResource CarbonInkBrush}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="MinHeight" Value="40" />
+        <Setter Property="Padding" Value="16,9" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{StaticResource RadiusSm}"
                             Padding="{TemplateBinding Padding}">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="Center"
                                           TextBlock.FontFamily="{TemplateBinding FontFamily}"
                                           TextBlock.FontSize="{TemplateBinding FontSize}"
                                           TextBlock.FontWeight="{TemplateBinding FontWeight}"
@@ -142,6 +168,19 @@
         </Style.Triggers>
     </Style>
 
+    <Style x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource OutlinedButton}">
+        <Setter Property="Foreground" Value="{StaticResource EmberRedBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource EmberRedBrush}" />
+    </Style>
+
+    <Style x:Key="StatusBadge" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource FogBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource AshBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{StaticResource RadiusPill}" />
+        <Setter Property="Padding" Value="10,5" />
+    </Style>
+
     <!-- ===== Nav Rail Button ===== -->
     <Style x:Key="NavButton" TargetType="Button" BasedOn="{StaticResource GhostButton}">
         <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -165,7 +204,7 @@
         <Setter Property="BorderBrush" Value="{StaticResource AshBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Padding" Value="10,6" />
-        <Setter Property="MinHeight" Value="34" />
+        <Setter Property="MinHeight" Value="40" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="CaretBrush" Value="{StaticResource CarbonInkBrush}" />
         <Setter Property="Template">
@@ -206,7 +245,7 @@
         <Setter Property="BorderBrush" Value="{StaticResource AshBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Padding" Value="10,6" />
-        <Setter Property="MinHeight" Value="34" />
+        <Setter Property="MinHeight" Value="40" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
     </Style>
 
@@ -222,7 +261,7 @@
     <!-- ===== DataGrid ===== -->
     <Style x:Key="EditorialDataGrid" TargetType="DataGrid">
         <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
-        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontSize" Value="14" />
         <Setter Property="Foreground" Value="{StaticResource CarbonInkBrush}" />
         <Setter Property="Background" Value="{StaticResource PaperWhiteBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource MistBrush}" />
@@ -232,14 +271,14 @@
         <Setter Property="GridLinesVisibility" Value="Horizontal" />
         <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource MistBrush}" />
         <Setter Property="HeadersVisibility" Value="Column" />
-        <Setter Property="ColumnHeaderHeight" Value="36" />
-        <Setter Property="RowHeight" Value="32" />
+        <Setter Property="ColumnHeaderHeight" Value="42" />
+        <Setter Property="RowHeight" Value="40" />
         <Setter Property="ColumnHeaderStyle">
             <Setter.Value>
                 <Style TargetType="DataGridColumnHeader">
                     <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
-                    <Setter Property="FontSize" Value="11" />
-                    <Setter Property="FontWeight" Value="SemiBold" />
+                    <Setter Property="FontSize" Value="12" />
+                    <Setter Property="FontWeight" Value="Bold" />
                     <Setter Property="Foreground" Value="{StaticResource GraphiteBrush}" />
                     <Setter Property="Background" Value="{StaticResource PaperWhiteBrush}" />
                     <Setter Property="BorderBrush" Value="{StaticResource MistBrush}" />
@@ -289,6 +328,7 @@
         <Setter Property="BorderBrush" Value="{StaticResource AshBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Padding" Value="10,8" />
+        <Setter Property="MinHeight" Value="40" />
     </Style>
 
 </ResourceDictionary>
