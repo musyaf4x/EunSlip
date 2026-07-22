@@ -1,6 +1,10 @@
 using System.Globalization;
+using System.IO;
 using System.Windows;
+using System.Windows.Threading;
+using EunSlip.Desktop.ViewModels;
 using EunSlip.Desktop.Views;
+using EunSlip.Infrastructure.FileSystem;
 
 namespace EunSlip.Desktop.Tests;
 
@@ -26,7 +30,23 @@ public sealed class ViewSmokeTests
                 _ = new WizardView();
                 _ = new HistoryView();
                 _ = new SettingsView();
-                _ = new AboutView();
+                AboutView aboutView = new()
+                {
+                    DataContext = new AboutViewModel(new AppPaths(Path.GetTempPath())),
+                };
+                Window aboutHost = new()
+                {
+                    Content = aboutView,
+                    ShowInTaskbar = false,
+                    Width = 1024,
+                    Height = 768,
+                };
+                aboutHost.Show();
+                aboutHost.UpdateLayout();
+                Dispatcher.CurrentDispatcher.Invoke(
+                    static () => { },
+                    DispatcherPriority.ApplicationIdle);
+                aboutHost.Close();
 
                 CultureInfo originalUiCulture = CultureInfo.CurrentUICulture;
                 try
