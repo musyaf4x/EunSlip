@@ -113,14 +113,15 @@ public sealed class ThemeContractTests
         string project = ReadRepositoryFile("src", "EunSlip.Desktop", "EunSlip.Desktop.csproj");
         string shell = ReadRepositoryFile("src", "EunSlip.Desktop", "MainWindow.xaml");
         string about = ReadRepositoryFile("src", "EunSlip.Desktop", "Views", "AboutView.xaml");
+        string sourceLogo = RepositoryPath("logo", "eunslip-logo-black-01.png");
+        string runtimeLogo = RepositoryPath("src", "EunSlip.Desktop", "Assets", "eunslip-logo-black-01.png");
 
-        Assert.Contains(
-            "<Resource Include=\"..\\..\\logo\\eunslip-logo-black-01.png\" Link=\"Assets\\eunslip-logo-black-01.png\" />",
-            project,
-            StringComparison.Ordinal);
+        Assert.Contains("<Resource Include=\"Assets\\eunslip-logo-black-01.png\" />", project, StringComparison.Ordinal);
         Assert.Contains("Source=\"/Assets/eunslip-logo-black-01.png\"", shell, StringComparison.Ordinal);
         Assert.Contains("Source=\"/Assets/eunslip-logo-black-01.png\"", about, StringComparison.Ordinal);
-        Assert.True(File.Exists(RepositoryPath("logo", "eunslip-logo-black-01.png")));
+        Assert.True(File.Exists(sourceLogo));
+        Assert.True(File.Exists(runtimeLogo));
+        Assert.Equal(File.ReadAllBytes(sourceLogo), File.ReadAllBytes(runtimeLogo));
     }
 
     [Fact]
@@ -129,16 +130,16 @@ public sealed class ThemeContractTests
         string project = ReadRepositoryFile("src", "EunSlip.Desktop", "EunSlip.Desktop.csproj");
         string shell = ReadRepositoryFile("src", "EunSlip.Desktop", "MainWindow.xaml");
         string sourceLogo = RepositoryPath("logo", "eunslip-logo-bg-01.png");
+        string windowLogo = RepositoryPath("src", "EunSlip.Desktop", "Assets", "eunslip-logo-bg-01.png");
         string iconPath = RepositoryPath("src", "EunSlip.Desktop", "Assets", "eunslip.ico");
 
         Assert.Contains("<ApplicationIcon>Assets\\eunslip.ico</ApplicationIcon>", project, StringComparison.Ordinal);
-        Assert.Contains(
-            "<Resource Include=\"..\\..\\logo\\eunslip-logo-bg-01.png\" Link=\"Assets\\eunslip-logo-bg-01.png\" />",
-            project,
-            StringComparison.Ordinal);
+        Assert.Contains("<Resource Include=\"Assets\\eunslip-logo-bg-01.png\" />", project, StringComparison.Ordinal);
         Assert.Contains("Icon=\"/Assets/eunslip-logo-bg-01.png\"", shell, StringComparison.Ordinal);
         Assert.True(File.Exists(sourceLogo));
+        Assert.True(File.Exists(windowLogo));
         Assert.True(File.Exists(iconPath));
+        Assert.Equal(File.ReadAllBytes(sourceLogo), File.ReadAllBytes(windowLogo));
 
         byte[] icon = File.ReadAllBytes(iconPath);
         Assert.True(icon.Length > 6);
