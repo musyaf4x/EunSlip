@@ -19,7 +19,6 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <AssemblyName>EunSlip</AssemblyName>
     <Version>1.0.0</Version>
     <TargetFramework>net10.0-windows</TargetFramework>
     <Nullable>enable</Nullable>

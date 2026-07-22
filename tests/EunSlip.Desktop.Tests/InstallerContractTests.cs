@@ -48,12 +48,18 @@ public sealed class InstallerContractTests
     }
 
     [Fact]
-    public void DesktopProject_PublishesRequiredExecutableNameAndVersion()
+    public void Packaging_PreservesWpfAssemblyIdentityAndCreatesRequiredExecutableAlias()
     {
         string project = ReadRepositoryFile("src", "EunSlip.Desktop", "EunSlip.Desktop.csproj");
+        string build = ReadRepositoryFile("scripts", "Build-Installer.ps1");
 
-        Assert.Contains("<AssemblyName>EunSlip</AssemblyName>", project, StringComparison.Ordinal);
+        Assert.DoesNotContain("<AssemblyName>EunSlip</AssemblyName>", project, StringComparison.Ordinal);
+        Assert.DoesNotContain("<TargetName>EunSlip</TargetName>", project, StringComparison.Ordinal);
         Assert.Contains("<Version>1.0.0</Version>", project, StringComparison.Ordinal);
+        Assert.Contains("$desktopBaseName = 'EunSlip.Desktop'", build, StringComparison.Ordinal);
+        Assert.Contains("$releaseBaseName = 'EunSlip'", build, StringComparison.Ordinal);
+        Assert.Contains("Copy-Item", build, StringComparison.Ordinal);
+        Assert.Contains("EunSlip.exe", build, StringComparison.Ordinal);
     }
 
     [Fact]

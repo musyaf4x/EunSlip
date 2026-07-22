@@ -54,6 +54,14 @@ if ([string]::IsNullOrWhiteSpace($OutputDirectory)) {
 }
 
 $compiler = Resolve-IsccPath -RequestedPath $IsccPath
+$artifactsRoot = [IO.Path]::GetFullPath((Join-Path $repositoryRoot 'artifacts')).TrimEnd('\') + '\'
+$publishFullPath = [IO.Path]::GetFullPath($publishDirectory)
+if (-not $publishFullPath.StartsWith($artifactsRoot, [StringComparison]::OrdinalIgnoreCase)) {
+    throw "Refusing to clean publish directory outside artifacts: $publishFullPath"
+}
+if (Test-Path -LiteralPath $publishFullPath) {
+    Remove-Item -LiteralPath $publishFullPath -Recurse -Force
+}
 New-Item -ItemType Directory -Path $publishDirectory -Force | Out-Null
 New-Item -ItemType Directory -Path $OutputDirectory -Force | Out-Null
 
@@ -67,10 +75,16 @@ Invoke-Checked -FilePath 'dotnet' -ArgumentList @(
     '-p:PublishSingleFile=false'
 )
 
-$publishedExecutable = Join-Path $publishDirectory 'EunSlip.exe'
-if (-not (Test-Path -LiteralPath $publishedExecutable -PathType Leaf)) {
-    throw "Self-contained publish did not produce $publishedExecutable."
+$desktopBaseName = 'EunSlip.Desktop'
+$releaseBaseName = 'EunSlip'
+foreach ($extension in @('.exe', '.deps.json', '.runtimeconfig.json')) {
+    $source = Join-Path $publishDirectory "$desktopBaseName$extension"
+    if (-not (Test-Path -LiteralPath $source -PathType Leaf)) {
+        throw "Self-contained publish did not produce $source."
+    }
+    Copy-Item -LiteralPath $source -Destination (Join-Path $publishDirectory "$releaseBaseName$extension") -Force
 }
+$publishedExecutable = Join-Path $publishDirectory 'EunSlip.exe'
 
 $installerBaseName = 'EunSlip-Setup-x64'
 Invoke-Checked -FilePath $compiler -ArgumentList @(
