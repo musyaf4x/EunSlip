@@ -11,6 +11,7 @@ As an EunSlip operator, I want consistent product branding in the application an
 | Sidebar and About use the supplied black EunSlip logo | `ThemeContractTests.Branding_UsesSuppliedEunSlipLogoInShellAndAbout` | Failed before logo resources and UI references existed | Passed after the exact source logo was packaged in `Assets` |
 | Executable uses a multi-size icon derived from `eunslip-logo-bg-01.png` | `ThemeContractTests.DesktopExecutable_UsesMultiSizeIconDerivedFromBackgroundLogo` | Failed before `ApplicationIcon` and the generated ICO existed | Passed with a six-size ICO and matching window artwork |
 | Logo resources resolve when compiled XAML constructs the window | `ViewSmokeTests.AllViews_ConstructWithCompiledThemeOnStaThread` | Failed when linked and root-relative resources could not be located | Passed after packaging physical resources and using assembly-qualified pack URIs |
+| Vierth Labs branding is approximately 25% larger | `ThemeContractTests.VierthLabsLogo_IsTwentyFivePercentLargerAcrossBrandingSurfaces` | Failed with the original 22px and 28px heights | Passed with 28px in the sidebar footer and 35px on About |
 
 Targeted verification:
 
@@ -21,11 +22,12 @@ Targeted verification:
 ## Final Verification
 
 - `dotnet build EunSlip.slnx --no-restore`: succeeded with 0 warnings and 0 errors.
-- `dotnet test EunSlip.slnx --no-build --no-restore`: 245 passed, 0 failed, 0 skipped.
-- Counts: Core 85, Infrastructure 93, Desktop 67.
+- `dotnet test EunSlip.slnx --no-build --no-restore`: 246 passed, 0 failed, 0 skipped.
+- Counts: Core 85, Infrastructure 93, Desktop 68.
 
 ## Implementation Notes
 
 - The supplied black transparent logo is used in the sidebar and About identity card.
 - `eunslip-logo-bg-01.png` is the source artwork for both the WPF window icon and the generated Windows executable icon.
 - The ICO contains 16, 32, 48, 64, 128, and 256 pixel variants.
+- Vierth Labs branding is 28px in the sidebar footer and 35px on About, a 25-27% increase.
