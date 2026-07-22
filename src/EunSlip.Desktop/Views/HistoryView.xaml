@@ -52,12 +52,13 @@
                               ItemsSource="{Binding Batches}"
                               Style="{StaticResource EditorialDataGrid}"
                               AutoGenerateColumns="False" IsReadOnly="True"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                               SelectedItem="{Binding SelectedBatch}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="PERIODE" Binding="{Binding Period}" Width="100" />
-                            <DataGridTextColumn Header="STATUS" Binding="{Binding Status, Converter={StaticResource StatusText}}" Width="75" />
-                            <DataGridTextColumn Header="KIRIM" Binding="{Binding SentCount}" Width="55" />
-                            <DataGridTextColumn Header="GAGAL" Binding="{Binding FailedCount}" Width="80" />
+                            <DataGridTextColumn Header="PERIODE" Binding="{Binding Period}" Width="14*" />
+                            <DataGridTextColumn Header="STATUS" Binding="{Binding Status, Converter={StaticResource StatusText}}" Width="10*" />
+                            <DataGridTextColumn Header="KIRIM" Binding="{Binding SentCount}" Width="7*" />
+                            <DataGridTextColumn Header="GAGAL" Binding="{Binding FailedCount}" Width="9*" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>

@@ -88,8 +88,11 @@ public sealed class WorkflowViewContractTests
 
         Assert.Contains("<ColumnDefinition Width=\"310\" />", xaml, StringComparison.Ordinal);
         Assert.Contains("<StackPanel Grid.Row=\"1\" Orientation=\"Horizontal\"", xaml, StringComparison.Ordinal);
-        Assert.Contains("Header=\"PERIODE\" Binding=\"{Binding Period}\" Width=\"100\"", xaml, StringComparison.Ordinal);
-        Assert.Contains("Header=\"GAGAL\" Binding=\"{Binding FailedCount}\" Width=\"80\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("ScrollViewer.HorizontalScrollBarVisibility=\"Disabled\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Header=\"PERIODE\" Binding=\"{Binding Period}\" Width=\"14*\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Header=\"STATUS\" Binding=\"{Binding Status, Converter={StaticResource StatusText}}\" Width=\"10*\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Header=\"KIRIM\" Binding=\"{Binding SentCount}\" Width=\"7*\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Header=\"GAGAL\" Binding=\"{Binding FailedCount}\" Width=\"9*\"", xaml, StringComparison.Ordinal);
         Assert.Contains("Header=\"RINGKASAN\"", xaml, StringComparison.Ordinal);
         Assert.Contains("Header=\"SELESAI\" Binding=\"{Binding LatestAttemptCompletedAtUtc}\" Width=\"96\"", xaml, StringComparison.Ordinal);
     }
