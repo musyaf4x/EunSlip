@@ -99,4 +99,9 @@
   <data name="ButtonBack" xml:space="preserve"><value>Back</value></data>
   <data name="ButtonConfirmSend" xml:space="preserve"><value>Confirm &amp; Send</value></data>
   <data name="ButtonOpenPreview" xml:space="preserve"><value>Open Preview</value></data>
+  <data name="StatusChecking" xml:space="preserve"><value>Checking…</value></data>
+  <data name="StatusReady" xml:space="preserve"><value>Ready</value></data>
+  <data name="StatusNotReady" xml:space="preserve"><value>Not ready</value></data>
+  <data name="HomeNoRecentBatch" xml:space="preserve"><value>No payroll batch yet.</value></data>
+  <data name="HomeInterruptedBatch" xml:space="preserve"><value>Batch {0} was interrupted and must be recovered from History.</value></data>
 </root>

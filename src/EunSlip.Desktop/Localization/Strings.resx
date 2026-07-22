@@ -100,4 +100,9 @@
   <data name="ButtonBack" xml:space="preserve"><value>Kembali</value></data>
   <data name="ButtonConfirmSend" xml:space="preserve"><value>Konfirmasi &amp; Kirim</value></data>
   <data name="ButtonOpenPreview" xml:space="preserve"><value>Buka Pratinjau</value></data>
+  <data name="StatusChecking" xml:space="preserve"><value>Memeriksa…</value></data>
+  <data name="StatusReady" xml:space="preserve"><value>Siap</value></data>
+  <data name="StatusNotReady" xml:space="preserve"><value>Belum siap</value></data>
+  <data name="HomeNoRecentBatch" xml:space="preserve"><value>Belum ada batch payroll.</value></data>
+  <data name="HomeInterruptedBatch" xml:space="preserve"><value>Batch {0} terputus dan perlu dipulihkan dari Riwayat.</value></data>
 </root>

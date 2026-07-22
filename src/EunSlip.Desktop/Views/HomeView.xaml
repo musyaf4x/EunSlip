@@ -4,58 +4,95 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
     </UserControl.Resources>
-    <ScrollViewer Background="{StaticResource PaperWhiteBrush}" VerticalScrollBarVisibility="Auto">
-        <Grid Margin="40,36">
+
+    <ScrollViewer Background="{StaticResource PaperWhiteBrush}"
+                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid Style="{StaticResource PageFrame}" MaxWidth="1040" HorizontalAlignment="Stretch">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <!-- Header -->
-            <StackPanel Grid.Row="0">
-                <TextBlock Text="Selamat datang di EunSlip" Style="{StaticResource DisplayHeading}" FontSize="28" />
-                <TextBlock Text="Pengiriman slip gaji karyawan — aman, terenkripsi, terverifikasi."
-                           Style="{StaticResource MutedText}" Margin="0,6,0,0" />
-                <Border Background="{StaticResource MistBrush}" Height="1" Margin="0,20,0,0" />
+            <Border Grid.Row="0" Background="{StaticResource ObsidianBrush}"
+                    CornerRadius="8" Padding="32">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="EUNSLIP PAYROLL DELIVERY" Foreground="{StaticResource PaperWhiteBrush}"
+                                   FontFamily="{StaticResource BodyFont}" FontSize="12" FontWeight="Bold" />
+                        <TextBlock Text="Proses slip gaji dengan alur yang terverifikasi."
+                                   Style="{StaticResource PageTitle}" Foreground="{StaticResource PaperWhiteBrush}"
+                                   TextWrapping="Wrap" Margin="0,12,24,0" />
+                        <TextBlock Text="Validasi data, tinjau hasil, lalu kirim melalui Gmail payroll."
+                                   Style="{StaticResource PageSubtitle}" Foreground="{StaticResource MistBrush}"
+                                   TextWrapping="Wrap" Margin="0,8,24,0" />
+                    </StackPanel>
+                    <Button Grid.Column="1" Content="PROSES PAYROLL"
+                            Command="{Binding DataContext.GoPayrollCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                            Background="{StaticResource PaperWhiteBrush}" Foreground="{StaticResource CarbonInkBrush}"
+                            Style="{StaticResource PrimaryButton}" Padding="20,12"
+                            VerticalAlignment="Center" />
+                </Grid>
+            </Border>
+
+            <StackPanel Grid.Row="1" Margin="0,28,0,16">
+                <TextBlock Text="KESIAPAN SISTEM" Style="{StaticResource MicroLabel}" />
+                <TextBlock Text="Pastikan prasyarat pengiriman tersedia."
+                           Style="{StaticResource SectionHeading}" Margin="0,8,0,0" />
             </StackPanel>
 
-            <!-- Status cards -->
-            <UniformGrid Grid.Row="1" Columns="3" Rows="1" Margin="0,24,0,0">
-                <Border Style="{StaticResource Card}" Margin="0,0,12,0">
+            <UniformGrid Grid.Row="2" Columns="3" Rows="1">
+                <Border Style="{StaticResource Card}" Margin="0,0,8,0">
                     <StackPanel>
-                        <TextBlock Text="GMAIL" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
-                        <TextBlock Text="{Binding HasGmailConnection, Mode=OneWay, StringFormat='Terkoneksi: {0}'}"
-                                   Style="{StaticResource BodyText}" FontWeight="SemiBold" />
-                        <TextBlock Text="{Binding ConnectedGmail, Mode=OneWay}" Style="{StaticResource MutedText}"
-                                   Margin="0,4,0,0" TextTrimming="CharacterEllipsis" />
-                    </StackPanel>
-                </Border>
-                <Border Style="{StaticResource Card}" Margin="6,0">
-                    <StackPanel>
-                        <TextBlock Text="STAMP" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
-                        <TextBlock Text="{Binding HasStamp, Mode=OneWay, StringFormat='Aktif: {0}'}"
-                                   Style="{StaticResource BodyText}" FontWeight="SemiBold" />
-                        <TextBlock Text="Konfigurasi di Pengaturan" Style="{StaticResource MutedText}" Margin="0,4,0,0" />
-                    </StackPanel>
-                </Border>
-                <Border Style="{StaticResource Card}" Margin="12,0,0,0">
-                    <StackPanel>
-                        <TextBlock Text="BATCH" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
-                        <TextBlock Text="{Binding RecentBatchSummary, Mode=OneWay}"
-                                   Style="{StaticResource BodyText}" FontWeight="SemiBold"
+                        <TextBlock Text="GMAIL" Style="{StaticResource MicroLabel}" />
+                        <TextBlock Text="{Binding GmailStatusText}" Style="{StaticResource SectionHeading}"
+                                   Margin="0,12,0,4" />
+                        <TextBlock Text="{Binding ConnectedGmail}" Style="{StaticResource MutedText}"
                                    TextTrimming="CharacterEllipsis" />
-                        <TextBlock Text="Batch terbaru" Style="{StaticResource MutedText}" Margin="0,4,0,0" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource Card}" Margin="4,0">
+                    <StackPanel>
+                        <TextBlock Text="STAMP" Style="{StaticResource MicroLabel}" />
+                        <TextBlock Text="{Binding StampStatusText}" Style="{StaticResource SectionHeading}"
+                                   Margin="0,12,0,4" />
+                        <TextBlock Text="Dikelola melalui Pengaturan" Style="{StaticResource MutedText}" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource Card}" Margin="8,0,0,0">
+                    <StackPanel>
+                        <TextBlock Text="BAHASA" Style="{StaticResource MicroLabel}" />
+                        <TextBlock Text="{Binding ActiveLanguage}" Style="{StaticResource SectionHeading}"
+                                   Margin="0,12,0,4" />
+                        <TextBlock Text="Aktif setelah aplikasi dimulai" Style="{StaticResource MutedText}" />
                     </StackPanel>
                 </Border>
             </UniformGrid>
 
-            <!-- Interrupted notice -->
-            <Border Grid.Row="2" Background="{StaticResource FogBrush}"
-                    BorderBrush="{StaticResource EmberRedBrush}" BorderThickness="2,0,0,0"
-                    Padding="16,12" Margin="0,24,0,0"
-                    Visibility="{Binding InterruptedBatchNotice, Mode=OneWay, Converter={StaticResource BoolToVis}}">
-                <TextBlock Text="{Binding InterruptedBatchNotice, Mode=OneWay}" Style="{StaticResource BodyText}" />
+            <Border Grid.Row="3" Background="{StaticResource FogBrush}"
+                    BorderBrush="{StaticResource EmberRedBrush}" BorderThickness="3,0,0,0"
+                    Padding="18,16" Margin="0,20,0,0"
+                    Visibility="{Binding HasInterruptedBatch, Converter={StaticResource BoolToVis}}">
+                <StackPanel>
+                    <TextBlock Text="TINDAKAN DIPERLUKAN" Style="{StaticResource MicroLabel}"
+                               Foreground="{StaticResource EmberRedBrush}" />
+                    <TextBlock Text="{Binding InterruptedBatchNotice}" Style="{StaticResource BodyText}"
+                               TextWrapping="Wrap" Margin="0,6,0,0" />
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Row="4" Style="{StaticResource Card}" Margin="0,20,0,0">
+                <StackPanel>
+                    <TextBlock Text="BATCH TERBARU" Style="{StaticResource MicroLabel}" />
+                    <TextBlock Text="{Binding RecentBatchSummary}" Style="{StaticResource SectionHeading}"
+                               TextWrapping="Wrap" Margin="0,10,0,0" />
+                </StackPanel>
             </Border>
         </Grid>
     </ScrollViewer>
