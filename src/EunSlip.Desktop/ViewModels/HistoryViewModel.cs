@@ -35,10 +35,16 @@ public sealed partial class HistoryViewModel(
     {
         try
         {
+            Guid? selectedBatchId = SelectedBatch?.Id;
             Batches.Clear();
             foreach (PayrollBatchRecord batch in _repository.ListBatches())
             {
                 Batches.Add(batch);
+            }
+
+            if (selectedBatchId is Guid id)
+            {
+                SelectedBatch = Batches.FirstOrDefault(batch => batch.Id == id);
             }
         }
         catch (Exception ex)

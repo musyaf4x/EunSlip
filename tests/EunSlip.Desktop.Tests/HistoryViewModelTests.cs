@@ -84,6 +84,22 @@ public sealed class HistoryViewModelTests
     }
 
     [Fact]
+    public void Loaded_PreservesSelectionByBatchIdAcrossRefresh()
+    {
+        HistoryViewModel vm = Create(out FakeRepository repo, out _);
+        PayrollBatchRecord original = Batch(Guid.NewGuid());
+        repo.CreateBatch(original);
+        vm.LoadedCommand.Execute(null);
+        vm.SelectedBatch = vm.Batches[0];
+        repo.Batches[0] = original with { Status = BatchStatus.Interrupted };
+
+        vm.LoadedCommand.Execute(null);
+
+        Assert.Same(vm.Batches[0], vm.SelectedBatch);
+        Assert.Equal(BatchStatus.Interrupted, vm.SelectedBatch!.Status);
+    }
+
+    [Fact]
     public void SelectingBatch_LoadsRecipients()
     {
         HistoryViewModel vm = Create(out FakeRepository repo, out _);
