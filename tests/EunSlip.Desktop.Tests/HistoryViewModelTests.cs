@@ -12,6 +12,7 @@ public sealed class HistoryViewModelTests
     {
         public List<PayrollBatchRecord> Batches { get; } = [];
         public List<BatchRecipientRecord> Recipients { get; } = [];
+        public List<SendAttemptRecord> Attempts { get; } = [];
         public HashSet<Guid> Deleted { get; } = [];
         public void Initialize() { }
         public bool CheckIntegrity() => true;
@@ -25,9 +26,16 @@ public sealed class HistoryViewModelTests
         public Guid AddRecipient(BatchRecipientRecord r) { Recipients.Add(r); return r.Id; }
         public IReadOnlyList<BatchRecipientRecord> ListRecipients(Guid batchId) =>
             [.. Recipients.Where(r => r.BatchId == batchId)];
-        public IReadOnlyList<SendAttemptRecord> ListAttempts(Guid batchId) => [];
+        public IReadOnlyList<SendAttemptRecord> ListAttempts(Guid batchId)
+        {
+            HashSet<Guid> recipientIds = [.. Recipients.Where(recipient => recipient.BatchId == batchId)
+                .Select(recipient => recipient.Id)];
+            return [.. Attempts.Where(attempt => recipientIds.Contains(attempt.RecipientId))
+                .OrderByDescending(attempt => attempt.StartedAtUtc)
+                .ThenByDescending(attempt => attempt.AttemptNumber)];
+        }
         public void UpdateRecipientStatus(Guid recipientId, RecipientStatus status, DateTimeOffset updatedAt) { }
-        public void AddAttempt(SendAttemptRecord attempt) { }
+        public void AddAttempt(SendAttemptRecord attempt) => Attempts.Add(attempt);
         public void CompleteAttempt(Guid attemptId, AttemptStatus status, DateTimeOffset completedAt, string? errorCategory, string? errorMessage, string? gmailMessageId) { }
         public AttemptStatus? GetLatestAttemptStatus(Guid recipientId) => null;
         public IReadOnlyList<Guid> FindInterruptedBatches() => [];
@@ -57,7 +65,7 @@ public sealed class HistoryViewModelTests
     {
         repo = new FakeRepository();
         recovery = new FakeRecovery();
-        return new HistoryViewModel(repo, recovery, NullLogger<HistoryViewModel>.Instance);
+        return new HistoryViewModel(repo, NullLogger<HistoryViewModel>.Instance);
     }
 
     private static PayrollBatchRecord Batch(Guid id) => new(
@@ -91,32 +99,53 @@ public sealed class HistoryViewModelTests
     }
 
     [Fact]
-    public void RetryFailed_ReportsFailedCount()
+    public void SelectingBatch_ProjectsLatestAttemptWithoutExposingEncryptedValues()
     {
-        HistoryViewModel vm = Create(out FakeRepository repo, out _);
+        HistoryViewModel vm = Create(out FakeRepository repository, out _);
         PayrollBatchRecord batch = Batch(Guid.NewGuid());
-        repo.CreateBatch(batch);
+        repository.CreateBatch(batch);
+        Guid recipientId = repository.AddRecipient(new BatchRecipientRecord(Guid.NewGuid(), batch.Id,
+            "encrypted-nik", "encrypted-email", "0004", RecipientStatus.Failed, DateTimeOffset.UtcNow));
+        repository.Attempts.Add(new SendAttemptRecord(Guid.NewGuid(), recipientId, 1, AttemptType.Normal,
+            DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, AttemptStatus.Failed, "Network", "technical", null));
         vm.LoadedCommand.Execute(null);
+
         vm.SelectedBatch = batch;
 
-        vm.RetryFailedCommand.Execute(batch);
-
-        Assert.Contains("1 penerima gagal", vm.StatusMessage);
+        HistoryRecipientViewModel detail = Assert.Single(vm.SelectedRecipients);
+        Assert.Equal("0004", detail.NikHint);
+        Assert.Equal(AttemptType.Normal, detail.LatestAttemptType);
+        Assert.Equal("Network", detail.ErrorCategory);
+        Assert.DoesNotContain("encrypted", detail.ErrorSummary, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
-    public void Recover_PrepareForRecoveryAndReloads()
+    public void Actions_AreEnabledOnlyForMatchingBatchStates()
     {
-        HistoryViewModel vm = Create(out FakeRepository repo, out FakeRecovery recovery);
-        PayrollBatchRecord batch = Batch(Guid.NewGuid());
-        repo.CreateBatch(batch);
-        vm.LoadedCommand.Execute(null);
-        vm.SelectedBatch = batch;
+        HistoryViewModel vm = Create(out _, out _);
+        PayrollBatchRecord retryable = Batch(Guid.NewGuid());
+        PayrollBatchRecord interrupted = retryable with { Id = Guid.NewGuid(), Status = BatchStatus.Interrupted };
+        PayrollBatchRecord clean = retryable with { Id = Guid.NewGuid(), FailedCount = 0 };
 
-        vm.RecoverCommand.Execute(batch);
+        Assert.True(vm.RetryFailedCommand.CanExecute(retryable));
+        Assert.False(vm.RetryFailedCommand.CanExecute(clean));
+        Assert.False(vm.RecoverCommand.CanExecute(retryable));
+        Assert.True(vm.RecoverCommand.CanExecute(interrupted));
+    }
 
-        Assert.Contains(batch.Id, recovery.Prepared);
-        Assert.Contains("pemulihan", vm.StatusMessage);
+    [Fact]
+    public void RecoveryAction_RequestsWizardNavigationWithoutPreparingBatch()
+    {
+        HistoryViewModel vm = Create(out _, out FakeRecovery recovery);
+        PayrollBatchRecord interrupted = Batch(Guid.NewGuid()) with { Status = BatchStatus.Interrupted };
+        PayrollWizardEntry? requested = null;
+        vm.ResumeRequested += entry => requested = entry;
+
+        vm.RecoverCommand.Execute(interrupted);
+
+        Assert.Equal(PayrollRunMode.RecoveryRetry, requested!.Mode);
+        Assert.Equal(interrupted.Id, requested.BatchId);
+        Assert.Empty(recovery.Prepared);
     }
 
     [Fact]

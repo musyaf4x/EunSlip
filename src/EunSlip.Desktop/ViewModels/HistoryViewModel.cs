@@ -2,20 +2,21 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EunSlip.Core.Persistence;
-using EunSlip.Core.Recovery;
+using EunSlip.Desktop.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace EunSlip.Desktop.ViewModels;
 
 public sealed partial class HistoryViewModel(
-    IAppRepository repository, IRecoveryService recovery, ILogger<HistoryViewModel> logger) : ViewModelBase
+    IAppRepository repository, ILogger<HistoryViewModel> logger) : ViewModelBase
 {
     private readonly IAppRepository _repository = repository;
-    private readonly IRecoveryService _recovery = recovery;
     private readonly ILogger<HistoryViewModel> _logger = logger;
 
     public ObservableCollection<PayrollBatchRecord> Batches { get; } = [];
-    public ObservableCollection<BatchRecipientRecord> SelectedRecipients { get; } = [];
+    public ObservableCollection<HistoryRecipientViewModel> SelectedRecipients { get; } = [];
+
+    public event Action<PayrollWizardEntry>? ResumeRequested;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(RetryFailedCommand))]
@@ -56,47 +57,41 @@ public sealed partial class HistoryViewModel(
 
         try
         {
+            Dictionary<Guid, SendAttemptRecord> latestAttempts = _repository.ListAttempts(value.Id)
+                .GroupBy(attempt => attempt.RecipientId)
+                .ToDictionary(group => group.Key, group => group
+                    .OrderByDescending(attempt => attempt.StartedAtUtc)
+                    .ThenByDescending(attempt => attempt.AttemptNumber)
+                    .First());
+
             foreach (BatchRecipientRecord recipient in _repository.ListRecipients(value.Id))
             {
-                SelectedRecipients.Add(recipient);
+                _ = latestAttempts.TryGetValue(recipient.Id, out SendAttemptRecord? latest);
+                SelectedRecipients.Add(new HistoryRecipientViewModel(recipient, latest));
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to load batch recipients");
+            _logger.LogError(ex, "Failed to load batch recipient details");
+            StatusMessage = Strings.Get("HistoryDetailLoadFailed");
         }
     }
 
-    [RelayCommand(CanExecute = nameof(CanActOnSelectedBatch))]
-    private void RetryFailed(PayrollBatchRecord batch)
+    [RelayCommand(CanExecute = nameof(CanRetryFailed))]
+    private void RetryFailed(PayrollBatchRecord? batch)
     {
-        try
+        if (batch is not null)
         {
-            IReadOnlyList<string> failedNiks = _recovery.SelectRetryFailedNiks(batch.Id);
-            StatusMessage = failedNiks.Count == 0
-                ? "Tidak ada penerima gagal untuk dikirim ulang."
-                : $"{failedNiks.Count} penerima gagal siap dikirim ulang. Pilih file payroll yang sama untuk melanjutkan.";
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Retry-failed selection failed");
-            StatusMessage = "Gagal menyiapkan kirim ulang.";
+            ResumeRequested?.Invoke(PayrollWizardEntry.FailedRetry(batch.Id));
         }
     }
 
-    [RelayCommand(CanExecute = nameof(CanActOnSelectedBatch))]
-    private void Recover(PayrollBatchRecord batch)
+    [RelayCommand(CanExecute = nameof(CanRecover))]
+    private void Recover(PayrollBatchRecord? batch)
     {
-        try
+        if (batch is not null)
         {
-            _recovery.PrepareForRecovery(batch.Id);
-            StatusMessage = "Batch disiapkan untuk pemulihan. Pilih file payroll yang sama untuk melanjutkan.";
-            Loaded();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Recovery preparation failed");
-            StatusMessage = "Gagal menyiapkan pemulihan.";
+            ResumeRequested?.Invoke(PayrollWizardEntry.RecoveryRetry(batch.Id));
         }
     }
 
@@ -137,4 +132,10 @@ public sealed partial class HistoryViewModel(
     }
 
     private bool CanActOnSelectedBatch(PayrollBatchRecord batch) => batch is not null;
+
+    private static bool CanRetryFailed(PayrollBatchRecord? batch) =>
+        batch is { Status: BatchStatus.Completed, FailedCount: > 0 };
+
+    private static bool CanRecover(PayrollBatchRecord? batch) =>
+        batch is { Status: BatchStatus.Interrupted };
 }

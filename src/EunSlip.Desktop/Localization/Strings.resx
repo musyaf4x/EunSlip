@@ -106,4 +106,6 @@
   <data name="HomeNoRecentBatch" xml:space="preserve"><value>Belum ada batch payroll.</value></data>
   <data name="HomeInterruptedBatch" xml:space="preserve"><value>Batch {0} terputus dan perlu dipulihkan dari Riwayat.</value></data>
   <data name="SettingsStampRemoved" xml:space="preserve"><value>Stamp dihapus.</value></data>
+  <data name="HistoryDeliveryFailedSummary" xml:space="preserve"><value>Pengiriman gagal. Periksa kategori dan log untuk detail teknis.</value></data>
+  <data name="HistoryDetailLoadFailed" xml:space="preserve"><value>Detail batch tidak dapat dimuat.</value></data>
 </root>
