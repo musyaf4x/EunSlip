@@ -52,7 +52,8 @@
 
                 <!-- Nav buttons -->
                 <StackPanel Grid.Row="1" Margin="16,0">
-                    <Button Content="{Binding NavHome}" Command="{Binding GoHomeCommand}" Margin="0,2">
+                    <Button AutomationProperties.AutomationId="NavHome"
+                            Content="{Binding NavHome}" Command="{Binding GoHomeCommand}" Margin="0,2">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
                                 <Style.Triggers>
@@ -64,7 +65,8 @@
                             </Style>
                         </Button.Style>
                     </Button>
-                    <Button Content="{Binding NavPayrollProcess}" Command="{Binding GoPayrollCommand}" Margin="0,2">
+                    <Button AutomationProperties.AutomationId="NavPayroll"
+                            Content="{Binding NavPayrollProcess}" Command="{Binding GoPayrollCommand}" Margin="0,2">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
                                 <Style.Triggers>
@@ -76,7 +78,8 @@
                             </Style>
                         </Button.Style>
                     </Button>
-                    <Button Content="{Binding NavHistory}" Command="{Binding GoHistoryCommand}" Margin="0,2">
+                    <Button AutomationProperties.AutomationId="NavHistory"
+                            Content="{Binding NavHistory}" Command="{Binding GoHistoryCommand}" Margin="0,2">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
                                 <Style.Triggers>
@@ -88,7 +91,8 @@
                             </Style>
                         </Button.Style>
                     </Button>
-                    <Button Content="{Binding NavSettings}" Command="{Binding GoSettingsCommand}" Margin="0,2">
+                    <Button AutomationProperties.AutomationId="NavSettings"
+                            Content="{Binding NavSettings}" Command="{Binding GoSettingsCommand}" Margin="0,2">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
                                 <Style.Triggers>
@@ -100,7 +104,8 @@
                             </Style>
                         </Button.Style>
                     </Button>
-                    <Button Content="{Binding NavAbout}" Command="{Binding GoAboutCommand}" Margin="0,2">
+                    <Button AutomationProperties.AutomationId="NavAbout"
+                            Content="{Binding NavAbout}" Command="{Binding GoAboutCommand}" Margin="0,2">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
                                 <Style.Triggers>

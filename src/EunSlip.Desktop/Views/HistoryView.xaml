@@ -48,7 +48,8 @@
                         <TextBlock Text="Pilih proses untuk melihat detail pengiriman."
                                    Style="{StaticResource MutedText}" Margin="0,6,0,0" />
                     </StackPanel>
-                    <DataGrid Grid.Row="1" ItemsSource="{Binding Batches}"
+                    <DataGrid Grid.Row="1" AutomationProperties.AutomationId="BatchGrid"
+                              ItemsSource="{Binding Batches}"
                               Style="{StaticResource EditorialDataGrid}"
                               AutoGenerateColumns="False" IsReadOnly="True"
                               SelectedItem="{Binding SelectedBatch}">
@@ -79,19 +80,23 @@
                                        Style="{StaticResource MutedText}" Margin="0,6,0,0" />
                         </StackPanel>
                         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,14,0,0">
-                            <Button Content="KIRIM ULANG GAGAL" Command="{Binding RetryFailedCommand}"
+                            <Button AutomationProperties.AutomationId="RetryFailed"
+                                    Content="KIRIM ULANG GAGAL" Command="{Binding RetryFailedCommand}"
                                     CommandParameter="{Binding SelectedBatch}" Style="{StaticResource OutlinedButton}"
                                     Margin="0,0,8,0" />
-                            <Button Content="PULIHKAN" Command="{Binding RecoverCommand}"
+                            <Button AutomationProperties.AutomationId="RecoverInterrupted"
+                                    Content="PULIHKAN" Command="{Binding RecoverCommand}"
                                     CommandParameter="{Binding SelectedBatch}" Style="{StaticResource OutlinedButton}"
                                     Margin="0,0,8,0" />
-                            <Button Content="HAPUS" Command="{Binding RequestDeleteCommand}"
+                            <Button AutomationProperties.AutomationId="RequestDelete"
+                                    Content="HAPUS" Command="{Binding RequestDeleteCommand}"
                                     CommandParameter="{Binding SelectedBatch}" Style="{StaticResource DangerButton}" />
                         </StackPanel>
                     </Grid>
 
                     <Grid Grid.Row="1">
-                        <DataGrid ItemsSource="{Binding SelectedRecipients}"
+                        <DataGrid AutomationProperties.AutomationId="RecipientGrid"
+                                  ItemsSource="{Binding SelectedRecipients}"
                                   Style="{StaticResource EditorialDataGrid}"
                                   AutoGenerateColumns="False" IsReadOnly="True"
                                   Visibility="{Binding SelectedBatch, Converter={StaticResource NullToVis}}">
@@ -126,9 +131,11 @@
                 <TextBlock Text="Hapus permanen batch ini? Riwayat tidak dapat dikembalikan."
                            Style="{StaticResource BodyText}" VerticalAlignment="Center" />
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button Content="HAPUS PERMANEN" Command="{Binding ConfirmDeleteBatchCommand}"
+                    <Button AutomationProperties.AutomationId="ConfirmDelete"
+                            Content="HAPUS PERMANEN" Command="{Binding ConfirmDeleteBatchCommand}"
                             Style="{StaticResource DangerButton}" Margin="0,0,8,0" />
-                    <Button Content="BATAL" Command="{Binding CancelDeleteCommand}"
+                    <Button AutomationProperties.AutomationId="CancelDelete"
+                            Content="BATAL" Command="{Binding CancelDeleteCommand}"
                             Style="{StaticResource OutlinedButton}" />
                 </StackPanel>
             </Grid>

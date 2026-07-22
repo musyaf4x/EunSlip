@@ -55,4 +55,23 @@ public sealed class ThemeContractTests
             Assert.DoesNotContain("StringFormat='Aktif: {0}'", xaml, StringComparison.Ordinal);
         }
     }
+
+    [Fact]
+    public void ShellAndStaticPages_DefineStableAutomationIds()
+    {
+        string combined = string.Join("\n",
+            ReadRepositoryFile("src", "EunSlip.Desktop", "MainWindow.xaml"),
+            ReadRepositoryFile("src", "EunSlip.Desktop", "Views", "HomeView.xaml"),
+            ReadRepositoryFile("src", "EunSlip.Desktop", "Views", "SettingsView.xaml"));
+
+        foreach (string id in new[]
+        {
+            "NavHome", "NavPayroll", "NavHistory", "NavSettings", "NavAbout",
+            "StartPayroll", "ConnectGmail", "DisconnectGmail", "OAuthSecretInput",
+            "SaveOAuthSecret", "PickStamp", "RequestRemoveStamp", "LanguageSelector",
+        })
+        {
+            Assert.Contains($"AutomationProperties.AutomationId=\"{id}\"", combined, StringComparison.Ordinal);
+        }
+    }
 }

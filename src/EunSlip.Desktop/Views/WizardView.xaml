@@ -43,9 +43,12 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <TextBox Text="{Binding SelectedFilePath, UpdateSourceTrigger=PropertyChanged}"
+                            <TextBox AutomationProperties.AutomationId="PayrollFilePath"
+                                     AutomationProperties.Name="File payroll"
+                                     Text="{Binding SelectedFilePath, UpdateSourceTrigger=PropertyChanged}"
                                      IsReadOnly="True" Style="{StaticResource FieldInput}" Margin="0,0,10,0" />
-                            <Button Grid.Column="1" Content="PILIH FILE .XLSX" Click="PickFile_Click"
+                            <Button Grid.Column="1" AutomationProperties.AutomationId="PickPayrollFile"
+                                    Content="PILIH FILE .XLSX" Click="PickFile_Click"
                                     Style="{StaticResource OutlinedButton}" />
                         </Grid>
 
@@ -57,12 +60,16 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel>
                                 <TextBlock Text="PERIODE PAYROLL" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
-                                <TextBox Text="{Binding Period, UpdateSourceTrigger=PropertyChanged}"
+                                <TextBox AutomationProperties.AutomationId="PayrollPeriod"
+                                         AutomationProperties.Name="Periode payroll"
+                                         Text="{Binding Period, UpdateSourceTrigger=PropertyChanged}"
                                          Style="{StaticResource FieldInput}" />
                             </StackPanel>
                             <StackPanel Grid.Column="2">
                                 <TextBlock Text="TANGGAL PEMBAYARAN" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
-                                <DatePicker SelectedDate="{Binding PaymentDate}" Style="{StaticResource FieldPicker}" />
+                                <DatePicker AutomationProperties.AutomationId="PaymentDate"
+                                            AutomationProperties.Name="Tanggal pembayaran"
+                                            SelectedDate="{Binding PaymentDate}" Style="{StaticResource FieldPicker}" />
                             </StackPanel>
                         </Grid>
                     </StackPanel>
@@ -92,7 +99,8 @@
                     </Border>
                 </StackPanel>
                 <Border Grid.Row="1" Style="{StaticResource Card}" Padding="0">
-                    <DataGrid ItemsSource="{Binding ValidationRows}" Style="{StaticResource EditorialDataGrid}"
+                    <DataGrid AutomationProperties.AutomationId="ValidationGrid"
+                              ItemsSource="{Binding ValidationRows}" Style="{StaticResource EditorialDataGrid}"
                               AutoGenerateColumns="False" IsReadOnly="True">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="BARIS" Binding="{Binding RowNumber}" Width="60" />
@@ -134,7 +142,8 @@
                             <TextBlock Text="PRATINJAU SLIP" Style="{StaticResource MicroLabel}" />
                             <TextBlock Text="Buka satu contoh PDF sebelum pengiriman."
                                        Style="{StaticResource MutedText}" Margin="0,8,0,14" TextWrapping="Wrap" />
-                            <Button Content="BUKA PRATINJAU PDF" Click="OpenPreview_Click"
+                            <Button AutomationProperties.AutomationId="PreviewPdf"
+                                    Content="BUKA PRATINJAU PDF" Click="OpenPreview_Click"
                                     IsEnabled="{Binding CanGeneratePreview}"
                                     Style="{StaticResource OutlinedButton}" HorizontalAlignment="Stretch" />
                         </StackPanel>
@@ -209,7 +218,8 @@
                         <TextBlock Text="Pengiriman tidak dapat dihentikan setelah konfirmasi."
                                    Style="{StaticResource BodyText}" TextWrapping="Wrap" />
                     </Border>
-                    <Button Content="KONFIRMASI &amp; KIRIM" Command="{Binding ConfirmSendCommand}"
+                    <Button AutomationProperties.AutomationId="ConfirmSend"
+                            Content="KONFIRMASI &amp; KIRIM" Command="{Binding ConfirmSendCommand}"
                             Style="{StaticResource PrimaryButton}" HorizontalAlignment="Stretch" />
                 </StackPanel>
             </Grid>
@@ -280,7 +290,8 @@
                     </StackPanel>
                 </Border>
                 <Border Grid.Row="1" Style="{StaticResource Card}" Padding="0">
-                    <DataGrid ItemsSource="{Binding Results}" Style="{StaticResource EditorialDataGrid}"
+                    <DataGrid AutomationProperties.AutomationId="ResultsGrid"
+                              ItemsSource="{Binding Results}" Style="{StaticResource EditorialDataGrid}"
                               AutoGenerateColumns="False" IsReadOnly="True">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="NIK" Binding="{Binding Nik}" Width="110" />
@@ -407,10 +418,12 @@
             </Grid.ColumnDefinitions>
             <TextBlock Text="Periksa kembali data sebelum melanjutkan."
                        Style="{StaticResource MutedText}" VerticalAlignment="Center" />
-            <Button Grid.Column="1" Content="KEMBALI" Command="{Binding BackCommand}"
+            <Button Grid.Column="1" AutomationProperties.AutomationId="WizardBack"
+                    Content="KEMBALI" Command="{Binding BackCommand}"
                     Style="{StaticResource OutlinedButton}" Margin="0,0,8,0"
                     Visibility="{Binding CanGoBack, Converter={StaticResource BoolToVis}}" />
-            <Button Grid.Column="2" Content="LANJUT" Command="{Binding NextCommand}"
+            <Button Grid.Column="2" AutomationProperties.AutomationId="WizardNext"
+                    Content="LANJUT" Command="{Binding NextCommand}"
                     Style="{StaticResource PrimaryButton}"
                     Visibility="{Binding CanGoNext, Converter={StaticResource BoolToVis}}" />
         </Grid>

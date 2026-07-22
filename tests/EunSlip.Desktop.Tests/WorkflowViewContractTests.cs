@@ -93,4 +93,23 @@ public sealed class WorkflowViewContractTests
         Assert.Contains("Header=\"RINGKASAN\"", xaml, StringComparison.Ordinal);
         Assert.Contains("Header=\"SELESAI\" Binding=\"{Binding LatestAttemptCompletedAtUtc}\" Width=\"96\"", xaml, StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void WorkflowViews_DefineStableAutomationIds()
+    {
+        string combined = string.Join("\n",
+            ReadFile("src", "EunSlip.Desktop", "Views", "WizardView.xaml"),
+            ReadFile("src", "EunSlip.Desktop", "Views", "HistoryView.xaml"));
+
+        foreach (string id in new[]
+        {
+            "PayrollFilePath", "PickPayrollFile", "PayrollPeriod", "PaymentDate",
+            "ValidationGrid", "PreviewPdf", "ConfirmSend", "WizardBack", "WizardNext", "ResultsGrid",
+            "BatchGrid", "RecipientGrid", "RetryFailed", "RecoverInterrupted",
+            "RequestDelete", "ConfirmDelete", "CancelDelete",
+        })
+        {
+            Assert.Contains($"AutomationProperties.AutomationId=\"{id}\"", combined, StringComparison.Ordinal);
+        }
+    }
 }

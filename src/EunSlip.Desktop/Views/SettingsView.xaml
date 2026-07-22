@@ -41,7 +41,8 @@
                     <TextBlock Text="{Binding ConnectedGmail}" Style="{StaticResource MutedText}"
                                TextTrimming="CharacterEllipsis" />
                     <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
-                        <Button Command="{Binding ConnectGmailCommand}" Margin="0,0,8,0">
+                        <Button AutomationProperties.AutomationId="ConnectGmail"
+                                Command="{Binding ConnectGmailCommand}" Margin="0,0,8,0">
                             <Button.Style>
                                 <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
                                     <Setter Property="Content" Value="HUBUNGKAN" />
@@ -54,7 +55,8 @@
                                 </Style>
                             </Button.Style>
                         </Button>
-                        <Button Content="PUTUSKAN" Command="{Binding DisconnectGmailCommand}"
+                        <Button AutomationProperties.AutomationId="DisconnectGmail"
+                                Content="PUTUSKAN" Command="{Binding DisconnectGmailCommand}"
                                 Style="{StaticResource OutlinedButton}" />
                     </StackPanel>
                 </StackPanel>
@@ -66,9 +68,11 @@
                     <TextBlock Text="{Binding StampStatusText}" Style="{StaticResource SectionHeading}"
                                Margin="0,12,0,20" />
                     <StackPanel Orientation="Horizontal">
-                        <Button Content="PILIH GAMBAR" Click="PickStamp_Click"
+                        <Button AutomationProperties.AutomationId="PickStamp"
+                                Content="PILIH GAMBAR" Click="PickStamp_Click"
                                 Style="{StaticResource OutlinedButton}" Margin="0,0,8,0" />
-                        <Button Content="HAPUS" Command="{Binding RequestRemoveStampCommand}"
+                        <Button AutomationProperties.AutomationId="RequestRemoveStamp"
+                                Content="HAPUS" Command="{Binding RequestRemoveStampCommand}"
                                 Style="{StaticResource DangerButton}" />
                     </StackPanel>
                     <Border Background="{StaticResource FogBrush}" Padding="12" Margin="0,12,0,0"
@@ -92,10 +96,13 @@
                     <TextBlock Text="OAUTH CLIENT" Style="{StaticResource MicroLabel}" />
                     <TextBlock Text="{Binding OauthStatusText}" Style="{StaticResource SectionHeading}"
                                Margin="0,12,0,12" />
-                    <TextBox Text="{Binding OauthClientSecretJson, UpdateSourceTrigger=PropertyChanged}"
+                    <TextBox AutomationProperties.AutomationId="OAuthSecretInput"
+                             AutomationProperties.Name="OAuth client secret JSON"
+                             Text="{Binding OauthClientSecretJson, UpdateSourceTrigger=PropertyChanged}"
                              Style="{StaticResource FieldInput}" AcceptsReturn="True" MinHeight="64"
                              TextWrapping="Wrap" />
-                    <Button Content="SIMPAN KREDENSIAL" Command="{Binding SaveOAuthSecretCommand}"
+                    <Button AutomationProperties.AutomationId="SaveOAuthSecret"
+                            Content="SIMPAN KREDENSIAL" Command="{Binding SaveOAuthSecretCommand}"
                             Style="{StaticResource PrimaryButton}" HorizontalAlignment="Left"
                             Margin="0,12,0,0" />
                     <Expander Header="PANDUAN SETUP" Margin="0,12,0,0">
@@ -110,7 +117,9 @@
                     <TextBlock Text="BAHASA" Style="{StaticResource MicroLabel}" />
                     <TextBlock Text="Bahasa antarmuka" Style="{StaticResource SectionHeading}"
                                Margin="0,12,0,12" />
-                    <ComboBox ItemsSource="{StaticResource Languages}"
+                    <ComboBox AutomationProperties.AutomationId="LanguageSelector"
+                              AutomationProperties.Name="Bahasa antarmuka"
+                              ItemsSource="{StaticResource Languages}"
                               SelectedItem="{Binding SelectedLanguage}"
                               Style="{StaticResource FieldCombo}" />
                     <TextBlock Text="Perubahan bahasa diterapkan setelah aplikasi dimulai ulang."

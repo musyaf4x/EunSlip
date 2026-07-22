@@ -33,7 +33,8 @@
                                    Style="{StaticResource PageSubtitle}" Foreground="{StaticResource MistBrush}"
                                    TextWrapping="Wrap" Margin="0,8,24,0" />
                     </StackPanel>
-                    <Button Grid.Column="1" Content="PROSES PAYROLL"
+                <Button Grid.Column="1" AutomationProperties.AutomationId="StartPayroll"
+                        Content="PROSES PAYROLL"
                             Command="{Binding DataContext.GoPayrollCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                             Background="{StaticResource PaperWhiteBrush}" Foreground="{StaticResource CarbonInkBrush}"
                             Style="{StaticResource PrimaryButton}" Padding="20,12"
