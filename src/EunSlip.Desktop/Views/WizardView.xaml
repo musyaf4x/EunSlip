@@ -5,194 +5,283 @@
              xmlns:c="clr-namespace:EunSlip.Desktop.Converters">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
-        <c:NullToBoolConverter x:Key="NullToBool" />
         <c:InverseBoolToVisibilityConverter x:Key="InverseBoolToVis" />
 
+        <Style x:Key="ProgressStep" TargetType="Border">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="{StaticResource MistBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="{StaticResource RadiusPill}" />
+            <Setter Property="Padding" Value="12,8" />
+        </Style>
+
         <DataTemplate x:Key="SelectStep" DataType="{x:Type vm:PayrollWizardViewModel}">
-            <Grid MaxWidth="720" Margin="0,8,0,0">
+            <Grid MaxWidth="820">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <!-- File -->
-                <StackPanel Grid.Row="0" Margin="0,0,0,24">
-                    <TextBlock Text="FILE EXCEL (.XLSX)" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBox Text="{Binding SelectedFilePath, UpdateSourceTrigger=PropertyChanged}"
-                                 IsReadOnly="True" Style="{StaticResource FieldInput}" Margin="0,0,8,0" />
-                        <Button Content="PILIH FILE" Grid.Column="1" Click="PickFile_Click"
-                                Style="{StaticResource OutlinedButton}" Padding="16,8" />
-                    </Grid>
-                </StackPanel>
-
-                <!-- Period + date side by side -->
-                <Grid Grid.Row="1" Margin="0,0,0,24">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="16" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Text="PERIODE PAYROLL" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
-                        <TextBox Text="{Binding Period, UpdateSourceTrigger=PropertyChanged}"
-                                 Style="{StaticResource FieldInput}" />
+                <Border Grid.Row="0" Style="{StaticResource Card}" Margin="0,0,0,16"
+                        Visibility="{Binding IsResumeMode, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <TextBlock Text="MODE TINDAK LANJUT" Style="{StaticResource MicroLabel}" />
+                        <TextBlock Text="{Binding RunMode}" Style="{StaticResource SectionHeading}" Margin="0,6,0,0" />
+                        <TextBlock Text="Gunakan file payroll asli. Fingerprint akan diverifikasi sebelum penerima dipilih."
+                                   Style="{StaticResource MutedText}" Margin="0,6,0,0" />
                     </StackPanel>
-                    <StackPanel Grid.Column="2">
-                        <TextBlock Text="TANGGAL PEMBAYARAN" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
-                        <DatePicker SelectedDate="{Binding PaymentDate}" Style="{StaticResource FieldPicker}" />
-                    </StackPanel>
-                </Grid>
+                </Border>
 
-                <TextBlock Grid.Row="2" Style="{StaticResource MutedText}"
-                           Text="Contoh periode: JULY 2025. Tanggal pembayaran akan tampil di slip dengan format Indonesia." />
+                <Border Grid.Row="1" Style="{StaticResource Card}">
+                    <StackPanel>
+                        <TextBlock Text="FILE PAYROLL" Style="{StaticResource MicroLabel}" />
+                        <Grid Margin="0,10,0,22">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding SelectedFilePath, UpdateSourceTrigger=PropertyChanged}"
+                                     IsReadOnly="True" Style="{StaticResource FieldInput}" Margin="0,0,10,0" />
+                            <Button Grid.Column="1" Content="PILIH FILE .XLSX" Click="PickFile_Click"
+                                    Style="{StaticResource OutlinedButton}" />
+                        </Grid>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="16" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="PERIODE PAYROLL" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
+                                <TextBox Text="{Binding Period, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource FieldInput}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="TANGGAL PEMBAYARAN" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
+                                <DatePicker SelectedDate="{Binding PaymentDate}" Style="{StaticResource FieldPicker}" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <TextBlock Grid.Row="2" Text="Periode dan tanggal harus sama dengan file sumber untuk menjaga konsistensi slip."
+                           Style="{StaticResource MutedText}" Margin="0,12,0,0" />
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="ValidateStep" DataType="{x:Type vm:PayrollWizardViewModel}">
-            <StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-                    <TextBlock Style="{StaticResource BodyText}">
-                        <Run Text="Penerima valid: " />
-                        <Run Text="{Binding RecipientCount, Mode=OneWay}" FontWeight="SemiBold" Foreground="{StaticResource CarbonInkBrush}" />
-                    </TextBlock>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                    <Border Style="{StaticResource StatusBadge}" Margin="0,0,8,0">
+                        <TextBlock Style="{StaticResource LabelText}">
+                            <Run Text="PENERIMA  " /><Run Text="{Binding RecipientCount}" />
+                        </TextBlock>
+                    </Border>
+                    <Border Style="{StaticResource StatusBadge}"
+                            Visibility="{Binding IsResumeMode, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="PENERIMA MEMENUHI SYARAT" Style="{StaticResource LabelText}" />
+                    </Border>
                 </StackPanel>
-                <Border Style="{StaticResource Card}" Padding="0">
+                <Border Grid.Row="1" Style="{StaticResource Card}" Padding="0">
                     <DataGrid ItemsSource="{Binding ValidationRows}" Style="{StaticResource EditorialDataGrid}"
-                              AutoGenerateColumns="False" IsReadOnly="True" MinHeight="320">
+                              AutoGenerateColumns="False" IsReadOnly="True">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="BARIS" Binding="{Binding RowNumber}" Width="60" />
-                            <DataGridTextColumn Header="NIK" Binding="{Binding Nik}" Width="120" />
+                            <DataGridTextColumn Header="NIK" Binding="{Binding Nik}" Width="110" />
                             <DataGridTextColumn Header="NAMA" Binding="{Binding Name}" Width="*" />
                             <DataGridTextColumn Header="EMAIL" Binding="{Binding Email}" Width="*" />
-                            <DataGridTextColumn Header="MASALAH" Binding="{Binding IssueSummary}" Width="220" />
+                            <DataGridTextColumn Header="MASALAH" Binding="{Binding IssueSummary}" Width="210" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </Border>
-            </StackPanel>
+                <CheckBox Grid.Row="2" IsChecked="{Binding WarningConfirmed}" Margin="0,14,0,0"
+                          Content="Saya telah meninjau peringatan dan mengonfirmasi data dapat diproses."
+                          Visibility="{Binding HasWarnings, Converter={StaticResource BoolToVis}}" />
+            </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="PreviewStep" DataType="{x:Type vm:PayrollWizardViewModel}">
-            <StackPanel MaxWidth="720">
-                <Button Content="BUKA PRATINJAU PDF" Command="{Binding OpenPreviewCommand}"
-                        Style="{StaticResource OutlinedButton}" Padding="20,10" Margin="0,0,0,24"
-                        HorizontalAlignment="Left" />
-                <TextBlock Text="SUBJEK EMAIL" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
-                <TextBox Text="{Binding EmailSubject, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource FieldInput}" Margin="0,0,0,20" />
-                <TextBlock Text="ISI EMAIL" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
-                <TextBox Text="{Binding EmailBody, UpdateSourceTrigger=PropertyChanged}"
-                         AcceptsReturn="True" TextWrapping="Wrap" Height="160"
-                         Style="{StaticResource FieldInput}" Margin="0,0,0,20" />
-                <Border Background="{StaticResource FogBrush}" Padding="16,10" CornerRadius="4" Margin="0,0,0,0">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Style="{StaticResource MutedText}" Margin="0,0,16,0">
-                            <Run Text="Penerima: " /><Run Text="{Binding RecipientCount, Mode=OneWay}" Foreground="{StaticResource CarbonInkBrush}" />
-                        </TextBlock>
-                        <TextBlock Style="{StaticResource MutedText}" Margin="0,0,16,0">
-                            <Run Text="Gmail: " /><Run Text="{Binding HasGmailConnection, Mode=OneWay}" Foreground="{StaticResource CarbonInkBrush}" />
-                        </TextBlock>
-                        <TextBlock Style="{StaticResource MutedText}">
-                            <Run Text="Stamp: " /><Run Text="{Binding HasStamp, Mode=OneWay}" Foreground="{StaticResource CarbonInkBrush}" />
-                        </TextBlock>
+            <Grid MaxWidth="900">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <TextBlock Text="EMAIL PENGANTAR" Style="{StaticResource MicroLabel}" />
+                        <TextBlock Text="SUBJEK" Style="{StaticResource LabelText}" Margin="0,16,0,8" />
+                        <TextBox Text="{Binding EmailSubject, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource FieldInput}" />
+                        <TextBlock Text="ISI EMAIL" Style="{StaticResource LabelText}" Margin="0,18,0,8" />
+                        <TextBox Text="{Binding EmailBody, UpdateSourceTrigger=PropertyChanged}"
+                                 AcceptsReturn="True" TextWrapping="Wrap" MinHeight="180"
+                                 VerticalScrollBarVisibility="Auto" Style="{StaticResource FieldInput}" />
                     </StackPanel>
                 </Border>
-                <TextBlock Style="{StaticResource MutedText}" Margin="0,12,0,0"
-                           Text="Gmail dan stamp harus siap sebelum konfirmasi kirim (di langkah berikutnya)." />
-            </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                        <StackPanel>
+                            <TextBlock Text="PRATINJAU SLIP" Style="{StaticResource MicroLabel}" />
+                            <TextBlock Text="Buka satu contoh PDF sebelum pengiriman."
+                                       Style="{StaticResource MutedText}" Margin="0,8,0,14" />
+                            <Button Content="BUKA PRATINJAU PDF" Click="OpenPreview_Click"
+                                    IsEnabled="{Binding CanGeneratePreview}"
+                                    Style="{StaticResource OutlinedButton}" HorizontalAlignment="Stretch" />
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource Card}">
+                        <StackPanel>
+                            <TextBlock Text="RINGKASAN" Style="{StaticResource MicroLabel}" />
+                            <TextBlock Style="{StaticResource BodyText}" Margin="0,14,0,8">
+                                <Run Text="Penerima  " /><Run Text="{Binding RecipientCount}" FontWeight="SemiBold" />
+                            </TextBlock>
+                            <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,8">
+                                <Run Text="Gmail  " /><Run Text="{Binding GmailStatusText}" FontWeight="SemiBold" />
+                            </TextBlock>
+                            <TextBlock Style="{StaticResource BodyText}">
+                                <Run Text="Stamp  " /><Run Text="{Binding StampStatusText}" FontWeight="SemiBold" />
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="ConfirmStep" DataType="{x:Type vm:PayrollWizardViewModel}">
-            <StackPanel MaxWidth="560">
-                <Border Background="{StaticResource FogBrush}" Padding="20,16" CornerRadius="4" Margin="0,0,0,20">
+            <Grid MaxWidth="820">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border Style="{StaticResource Card}">
                     <StackPanel>
-                        <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,8">
-                            <Run Text="Penerima: " /><Run Text="{Binding RecipientCount, Mode=OneWay}" FontWeight="SemiBold" />
+                        <TextBlock Text="RINGKASAN BATCH" Style="{StaticResource MicroLabel}" />
+                        <TextBlock Style="{StaticResource BodyText}" Margin="0,16,0,10">
+                            <Run Text="Periode" /><LineBreak /><Run Text="{Binding Period}" FontWeight="SemiBold" />
                         </TextBlock>
-                        <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,8">
-                            <Run Text="Gmail: " /><Run Text="{Binding ConnectedGmail, Mode=OneWay}" FontWeight="SemiBold" />
+                        <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,10">
+                            <Run Text="Penerima" /><LineBreak /><Run Text="{Binding RecipientCount}" FontWeight="SemiBold" />
                         </TextBlock>
                         <TextBlock Style="{StaticResource BodyText}">
-                            <Run Text="Periode: " /><Run Text="{Binding Period, Mode=OneWay}" FontWeight="SemiBold" />
+                            <Run Text="Akun Gmail" /><LineBreak /><Run Text="{Binding ConnectedGmail}" FontWeight="SemiBold" />
                         </TextBlock>
                     </StackPanel>
                 </Border>
-
-                <!-- Prerequisite checklist -->
-                <StackPanel Margin="0,0,0,20">
-                    <TextBlock Text="PRASYARAT KIRIM" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                        <TextBlock Text="{Binding GmailReady, Mode=OneWay}" Style="{StaticResource BodyText}"
-                                   Foreground="{StaticResource EmberRedBrush}" FontWeight="SemiBold" Width="24" />
-                        <TextBlock Text="Gmail terhubung" Style="{StaticResource BodyText}" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding StampReady, Mode=OneWay}" Style="{StaticResource BodyText}"
-                                   Foreground="{StaticResource EmberRedBrush}" FontWeight="SemiBold" Width="24" />
-                        <TextBlock Text="Stamp aktif" Style="{StaticResource BodyText}" />
-                    </StackPanel>
-                    <TextBlock Text="Lengkapi di Pengaturan jika ada yang belum siap."
-                               Style="{StaticResource MutedText}" Margin="24,8,0,0"
-                               Visibility="{Binding IsReadyToConfirm, Converter={StaticResource InverseBoolToVis}}" />
+                <StackPanel Grid.Column="2">
+                    <Border Style="{StaticResource Card}">
+                        <StackPanel>
+                            <TextBlock Text="PRASYARAT KIRIM" Style="{StaticResource MicroLabel}" />
+                            <Grid Margin="0,16,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Gmail terhubung" Style="{StaticResource BodyText}" />
+                                <Border Grid.Column="1" Style="{StaticResource StatusBadge}">
+                                    <TextBlock Text="{Binding GmailStatusText}" Style="{StaticResource LabelText}" />
+                                </Border>
+                            </Grid>
+                            <Grid Margin="0,12,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Stamp perusahaan" Style="{StaticResource BodyText}" />
+                                <Border Grid.Column="1" Style="{StaticResource StatusBadge}">
+                                    <TextBlock Text="{Binding StampStatusText}" Style="{StaticResource LabelText}" />
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                    <Border Background="{StaticResource FogBrush}" BorderBrush="{StaticResource EmberRedBrush}"
+                            BorderThickness="2,0,0,0" Padding="16,12" Margin="0,14,0,14">
+                        <TextBlock Text="Pengiriman tidak dapat dihentikan setelah konfirmasi."
+                                   Style="{StaticResource BodyText}" TextWrapping="Wrap" />
+                    </Border>
+                    <Button Content="KONFIRMASI &amp; KIRIM" Command="{Binding ConfirmSendCommand}"
+                            Style="{StaticResource PrimaryButton}" HorizontalAlignment="Stretch" />
                 </StackPanel>
-
-                <Border Background="{StaticResource FogBrush}" BorderBrush="{StaticResource EmberRedBrush}"
-                        BorderThickness="2,0,0,0" Padding="16,12" Margin="0,0,0,24">
-                    <TextBlock Style="{StaticResource BodyText}" Text="Pengiriman tidak dapat dihentikan setelah konfirmasi." />
-                </Border>
-                <Button Content="KONFIRMASI &amp; KIRIM" Command="{Binding ConfirmSendCommand}"
-                        Style="{StaticResource PrimaryButton}" Padding="24,12" HorizontalAlignment="Left" />
-            </StackPanel>
+            </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="SendStep" DataType="{x:Type vm:PayrollWizardViewModel}">
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Left" MaxWidth="480">
-                <TextBlock Text="MENGIRIM" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
-                <TextBlock Text="{Binding StatusMessage, Mode=OneWay}" Style="{StaticResource SectionHeading}" Margin="0,0,0,24" />
-                <TextBlock Style="{StaticResource DisplayHeading}" FontSize="48" Margin="0,0,0,16">
-                    <Run Text="{Binding CurrentRecipient, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding TotalRecipients, Mode=OneWay}" />
-                </TextBlock>
-                <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,4">
-                    <Run Text="NIK: " /><Run Text="{Binding CurrentNik, Mode=OneWay}" Foreground="{StaticResource CarbonInkBrush}" />
-                </TextBlock>
-                <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,4">
-                    <Run Text="Nama: " /><Run Text="{Binding CurrentName, Mode=OneWay}" Foreground="{StaticResource CarbonInkBrush}" />
-                </TextBlock>
-                <TextBlock Style="{StaticResource MutedText}" Margin="0,0,0,16">
-                    <Run Text="Percobaan: " /><Run Text="{Binding CurrentAttempt, Mode=OneWay}" Foreground="{StaticResource CarbonInkBrush}" />
-                </TextBlock>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
-                    <TextBlock Style="{StaticResource BodyText}" Margin="0,0,24,0">
-                        <Run Text="Terkirim " /><Run Text="{Binding SentCount, Mode=OneWay}" FontWeight="SemiBold" />
-                    </TextBlock>
-                    <TextBlock Style="{StaticResource BodyText}">
-                        <Run Text="Gagal " /><Run Text="{Binding FailedCount, Mode=OneWay}" FontWeight="SemiBold" Foreground="{StaticResource EmberRedBrush}" />
-                    </TextBlock>
-                </StackPanel>
-                <TextBlock Text="Jangan tutup aplikasi." Style="{StaticResource MutedText}" />
-            </StackPanel>
+            <Grid MaxWidth="760">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <TextBlock Text="PENGIRIMAN BERLANGSUNG" Style="{StaticResource MicroLabel}" />
+                        <TextBlock Style="{StaticResource DisplayHeading}" FontSize="42" Margin="0,12,0,14">
+                            <Run Text="{Binding CurrentRecipient}" /><Run Text=" / " /><Run Text="{Binding TotalRecipients}" />
+                        </TextBlock>
+                        <ProgressBar Minimum="0" Maximum="{Binding TotalRecipients}"
+                                     Value="{Binding CurrentRecipient}" Height="8" />
+                        <Grid Margin="0,20,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="PENERIMA SAAT INI" Style="{StaticResource MicroLabel}" />
+                                <TextBlock Style="{StaticResource BodyText}" Margin="0,8,0,4">
+                                    <Run Text="NIK akhir  " /><Run Text="{Binding CurrentNik}" FontWeight="SemiBold" />
+                                </TextBlock>
+                                <TextBlock Text="{Binding CurrentName}" Style="{StaticResource BodyText}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="PROGRES" Style="{StaticResource MicroLabel}" />
+                                <TextBlock Style="{StaticResource BodyText}" Margin="0,8,0,4">
+                                    <Run Text="Terkirim  " /><Run Text="{Binding SentCount}" FontWeight="SemiBold" />
+                                    <Run Text="   Gagal  " /><Run Text="{Binding FailedCount}" FontWeight="SemiBold" />
+                                </TextBlock>
+                                <TextBlock Style="{StaticResource MutedText}">
+                                    <Run Text="Percobaan saat ini: " /><Run Text="{Binding CurrentAttempt}" />
+                                </TextBlock>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Row="1" Background="{StaticResource FogBrush}" BorderBrush="{StaticResource EmberRedBrush}"
+                        BorderThickness="2,0,0,0" Padding="16,12" Margin="0,14,0,0">
+                    <TextBlock Text="Jangan tutup aplikasi atau berpindah halaman hingga proses selesai."
+                               Style="{StaticResource BodyText}" />
+                </Border>
+            </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="ResultsStep" DataType="{x:Type vm:PayrollWizardViewModel}">
-            <StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
-                    <TextBlock Style="{StaticResource SectionHeading}" Margin="0,0,24,0">
-                        <Run Text="Terkirim " /><Run Text="{Binding SentCount, Mode=OneWay}" />
-                    </TextBlock>
-                    <TextBlock Style="{StaticResource SectionHeading}">
-                        <Run Text="Gagal " /><Run Text="{Binding FailedCount, Mode=OneWay}" Foreground="{StaticResource EmberRedBrush}" />
-                    </TextBlock>
-                </StackPanel>
-                <Border Style="{StaticResource Card}" Padding="0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource SectionHeading}" Margin="0,0,28,0">
+                            <Run Text="TERKIRIM  " /><Run Text="{Binding SentCount}" />
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource SectionHeading}">
+                            <Run Text="GAGAL  " /><Run Text="{Binding FailedCount}" Foreground="{StaticResource EmberRedBrush}" />
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Row="1" Style="{StaticResource Card}" Padding="0">
                     <DataGrid ItemsSource="{Binding Results}" Style="{StaticResource EditorialDataGrid}"
-                              AutoGenerateColumns="False" IsReadOnly="True" MinHeight="320">
+                              AutoGenerateColumns="False" IsReadOnly="True">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="NIK" Binding="{Binding Nik}" Width="120" />
+                            <DataGridTextColumn Header="NIK" Binding="{Binding Nik}" Width="110" />
                             <DataGridTextColumn Header="NAMA" Binding="{Binding Name}" Width="*" />
                             <DataGridTextColumn Header="EMAIL" Binding="{Binding Email}" Width="*" />
                             <DataGridTextColumn Header="PERC." Binding="{Binding AttemptsMade}" Width="70" />
@@ -200,63 +289,127 @@
                         </DataGrid.Columns>
                     </DataGrid>
                 </Border>
-            </StackPanel>
+            </Grid>
         </DataTemplate>
     </UserControl.Resources>
 
-    <Grid Background="{StaticResource PaperWhiteBrush}">
+    <Grid Background="{StaticResource PaperWhiteBrush}" Margin="{StaticResource PageFrame}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Margin="40,36,40,0">
-            <TextBlock Text="{Binding StepTitle}" Style="{StaticResource DisplayHeading}" FontSize="26" />
-            <Border Background="{StaticResource MistBrush}" Height="1" Margin="0,16,0,0" />
-            <TextBlock Text="{Binding ErrorMessage, Mode=OneWay}" Foreground="{StaticResource EmberRedBrush}"
-                       FontFamily="{StaticResource BodyFont}" FontSize="13" Margin="0,12,0,0"
-                       Visibility="{Binding HasError, Converter={StaticResource BoolToVis}}" />
-        </StackPanel>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock Text="Proses Payroll" Style="{StaticResource PageTitle}" />
+                <TextBlock Text="Validasi data dan periksa setiap pengaman sebelum pengiriman."
+                           Style="{StaticResource PageSubtitle}" />
+            </StackPanel>
+            <Border Grid.Column="1" Style="{StaticResource StatusBadge}" VerticalAlignment="Bottom">
+                <TextBlock Text="{Binding StepTitle}" Style="{StaticResource LabelText}" />
+            </Border>
+        </Grid>
 
-        <ContentControl Grid.Row="1" Content="{Binding}" Margin="40,24,40,0">
-            <ContentControl.Style>
-                <Style TargetType="ContentControl">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding CurrentStep}" Value="Select">
-                            <Setter Property="ContentTemplate" Value="{StaticResource SelectStep}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding CurrentStep}" Value="Validate">
-                            <Setter Property="ContentTemplate" Value="{StaticResource ValidateStep}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding CurrentStep}" Value="Preview">
-                            <Setter Property="ContentTemplate" Value="{StaticResource PreviewStep}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding CurrentStep}" Value="Confirm">
-                            <Setter Property="ContentTemplate" Value="{StaticResource ConfirmStep}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding CurrentStep}" Value="Send">
-                            <Setter Property="ContentTemplate" Value="{StaticResource SendStep}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding CurrentStep}" Value="Results">
-                            <Setter Property="ContentTemplate" Value="{StaticResource ResultsStep}" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </ContentControl.Style>
-        </ContentControl>
+        <UniformGrid Grid.Row="1" Columns="6" Margin="0,18,0,18">
+            <Border Margin="0,0,6,0">
+                <Border.Style>
+                    <Style TargetType="Border" BasedOn="{StaticResource ProgressStep}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding StepIndex}" Value="0"><Setter Property="BorderBrush" Value="{StaticResource EmberRedBrush}" /><Setter Property="BorderThickness" Value="2" /></DataTrigger>
+                            <DataTrigger Binding="{Binding StepIndex}" Value="1"><Setter Property="Background" Value="{StaticResource FogBrush}" /></DataTrigger>
+                            <DataTrigger Binding="{Binding StepIndex}" Value="2"><Setter Property="Background" Value="{StaticResource FogBrush}" /></DataTrigger>
+                            <DataTrigger Binding="{Binding StepIndex}" Value="3"><Setter Property="Background" Value="{StaticResource FogBrush}" /></DataTrigger>
+                            <DataTrigger Binding="{Binding StepIndex}" Value="4"><Setter Property="Background" Value="{StaticResource FogBrush}" /></DataTrigger>
+                            <DataTrigger Binding="{Binding StepIndex}" Value="5"><Setter Property="Background" Value="{StaticResource FogBrush}" /></DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <TextBlock Text="01  PILIH" Style="{StaticResource LabelText}" TextAlignment="Center" />
+            </Border>
+            <Border Margin="0,0,6,0">
+                <Border.Style><Style TargetType="Border" BasedOn="{StaticResource ProgressStep}"><Style.Triggers>
+                    <DataTrigger Binding="{Binding StepIndex}" Value="1"><Setter Property="BorderBrush" Value="{StaticResource EmberRedBrush}" /><Setter Property="BorderThickness" Value="2" /></DataTrigger>
+                    <DataTrigger Binding="{Binding StepIndex}" Value="2"><Setter Property="Background" Value="{StaticResource FogBrush}" /></DataTrigger>
+                    <DataTrigger Binding="{Binding StepIndex}" Value="3"><Setter Property="Background" Value="{StaticResource FogBrush}" /></DataTrigger>
+                    <DataTrigger Binding="{Binding StepIndex}" Value="4"><Setter Property="Background" Value="{StaticResource FogBrush}" /></DataTrigger>
+                    <DataTrigger Binding="{Binding StepIndex}" Value="5"><Setter Property="Background" Value="{StaticResource FogBrush}" /></DataTrigger>
+                </Style.Triggers></Style></Border.Style>
+                <TextBlock Text="02  VALIDASI" Style="{StaticResource LabelText}" TextAlignment="Center" />
+            </Border>
+            <Border Margin="0,0,6,0">
+                <Border.Style><Style TargetType="Border" BasedOn="{StaticResource ProgressStep}"><Style.Triggers>
+                    <DataTrigger Binding="{Binding StepIndex}" Value="2"><Setter Property="BorderBrush" Value="{StaticResource EmberRedBrush}" /><Setter Property="BorderThickness" Value="2" /></DataTrigger>
+                    <DataTrigger Binding="{Binding StepIndex}" Value="3"><Setter Property="Background" Value="{StaticResource FogBrush}" /></DataTrigger>
+                    <DataTrigger Binding="{Binding StepIndex}" Value="4"><Setter Property="Background" Value="{StaticResource FogBrush}" /></DataTrigger>
+                    <DataTrigger Binding="{Binding StepIndex}" Value="5"><Setter Property="Background" Value="{StaticResource FogBrush}" /></DataTrigger>
+                </Style.Triggers></Style></Border.Style>
+                <TextBlock Text="03  EMAIL" Style="{StaticResource LabelText}" TextAlignment="Center" />
+            </Border>
+            <Border Margin="0,0,6,0">
+                <Border.Style><Style TargetType="Border" BasedOn="{StaticResource ProgressStep}"><Style.Triggers>
+                    <DataTrigger Binding="{Binding StepIndex}" Value="3"><Setter Property="BorderBrush" Value="{StaticResource EmberRedBrush}" /><Setter Property="BorderThickness" Value="2" /></DataTrigger>
+                    <DataTrigger Binding="{Binding StepIndex}" Value="4"><Setter Property="Background" Value="{StaticResource FogBrush}" /></DataTrigger>
+                    <DataTrigger Binding="{Binding StepIndex}" Value="5"><Setter Property="Background" Value="{StaticResource FogBrush}" /></DataTrigger>
+                </Style.Triggers></Style></Border.Style>
+                <TextBlock Text="04  KONFIRMASI" Style="{StaticResource LabelText}" TextAlignment="Center" />
+            </Border>
+            <Border Margin="0,0,6,0">
+                <Border.Style><Style TargetType="Border" BasedOn="{StaticResource ProgressStep}"><Style.Triggers>
+                    <DataTrigger Binding="{Binding StepIndex}" Value="4"><Setter Property="BorderBrush" Value="{StaticResource EmberRedBrush}" /><Setter Property="BorderThickness" Value="2" /></DataTrigger>
+                    <DataTrigger Binding="{Binding StepIndex}" Value="5"><Setter Property="Background" Value="{StaticResource FogBrush}" /></DataTrigger>
+                </Style.Triggers></Style></Border.Style>
+                <TextBlock Text="05  KIRIM" Style="{StaticResource LabelText}" TextAlignment="Center" />
+            </Border>
+            <Border>
+                <Border.Style><Style TargetType="Border" BasedOn="{StaticResource ProgressStep}"><Style.Triggers>
+                    <DataTrigger Binding="{Binding StepIndex}" Value="5"><Setter Property="BorderBrush" Value="{StaticResource EmberRedBrush}" /><Setter Property="BorderThickness" Value="2" /></DataTrigger>
+                </Style.Triggers></Style></Border.Style>
+                <TextBlock Text="06  HASIL" Style="{StaticResource LabelText}" TextAlignment="Center" />
+            </Border>
+        </UniformGrid>
 
-        <Grid Grid.Row="2" Margin="40,0,40,36">
+        <Grid Grid.Row="2">
+            <ContentControl Content="{Binding}">
+                <ContentControl.Style>
+                    <Style TargetType="ContentControl">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding CurrentStep}" Value="Select"><Setter Property="ContentTemplate" Value="{StaticResource SelectStep}" /></DataTrigger>
+                            <DataTrigger Binding="{Binding CurrentStep}" Value="Validate"><Setter Property="ContentTemplate" Value="{StaticResource ValidateStep}" /></DataTrigger>
+                            <DataTrigger Binding="{Binding CurrentStep}" Value="Preview"><Setter Property="ContentTemplate" Value="{StaticResource PreviewStep}" /></DataTrigger>
+                            <DataTrigger Binding="{Binding CurrentStep}" Value="Confirm"><Setter Property="ContentTemplate" Value="{StaticResource ConfirmStep}" /></DataTrigger>
+                            <DataTrigger Binding="{Binding CurrentStep}" Value="Send"><Setter Property="ContentTemplate" Value="{StaticResource SendStep}" /></DataTrigger>
+                            <DataTrigger Binding="{Binding CurrentStep}" Value="Results"><Setter Property="ContentTemplate" Value="{StaticResource ResultsStep}" /></DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
+            <Border Background="{StaticResource FogBrush}" BorderBrush="{StaticResource EmberRedBrush}"
+                    BorderThickness="2,0,0,0" Padding="14,10" VerticalAlignment="Top"
+                    Visibility="{Binding HasError, Converter={StaticResource BoolToVis}}">
+                <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource EmberRedBrush}"
+                           Style="{StaticResource BodyText}" TextWrapping="Wrap" />
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="3" Margin="0,18,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Button Content="KEMBALI" Command="{Binding BackCommand}" Grid.Column="1"
-                    Style="{StaticResource OutlinedButton}" Margin="0,0,8,0" Padding="20,10"
+            <TextBlock Text="Periksa kembali data sebelum melanjutkan."
+                       Style="{StaticResource MutedText}" VerticalAlignment="Center" />
+            <Button Grid.Column="1" Content="KEMBALI" Command="{Binding BackCommand}"
+                    Style="{StaticResource OutlinedButton}" Margin="0,0,8,0"
                     Visibility="{Binding CanGoBack, Converter={StaticResource BoolToVis}}" />
-            <Button Content="LANJUT" Command="{Binding NextCommand}" Grid.Column="2"
-                    Style="{StaticResource PrimaryButton}" Padding="20,10"
+            <Button Grid.Column="2" Content="LANJUT" Command="{Binding NextCommand}"
+                    Style="{StaticResource PrimaryButton}"
                     Visibility="{Binding CanGoNext, Converter={StaticResource BoolToVis}}" />
         </Grid>
     </Grid>

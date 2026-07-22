@@ -157,6 +157,7 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
         ? Strings.Get("StatusChecking")
         : HasStamp ? Strings.Get("StatusReady") : Strings.Get("StatusNotReady");
     public bool IsSending => CurrentStep == WizardStep.Send && IsBusy;
+    public bool CanGeneratePreview => CurrentStep == WizardStep.Preview && _validRows.Count > 0;
 
     public bool Begin(PayrollWizardEntry entry)
     {
@@ -208,6 +209,7 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
         FailedCount = 0;
         CurrentAttempt = 0;
         OnPropertyChanged(nameof(RecipientCount));
+        OnPropertyChanged(nameof(CanGeneratePreview));
         OnPropertyChanged(nameof(RunMode));
         OnPropertyChanged(nameof(IsResumeMode));
     }
@@ -298,19 +300,18 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
 
     private bool CanBack() => StepIndex > 0 && !IsOnSendStep;
 
-    [RelayCommand(CanExecute = nameof(CanOpenPreview))]
-    private void OpenPreview()
+    public string? GeneratePreviewPdf()
     {
         if (_validRows.Count == 0)
         {
-            return;
+            return null;
         }
 
         string? stampPath = _stampStore.GetActiveStampPath();
         if (string.IsNullOrEmpty(stampPath))
         {
             ErrorMessage = Strings.Get("ValidationBlockingMessage");
-            return;
+            return null;
         }
 
         PayrollRow first = _validRows[0];
@@ -323,21 +324,21 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
             _pdfGenerator.Generate(
                 new PayslipRequest(new BatchContext(Period, DateOnly.FromDateTime(PaymentDate!.Value)), first, stampPath),
                 pdfPath);
-
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(pdfPath)
-            {
-                UseShellExecute = true,
-            });
+            ErrorMessage = null;
+            return pdfPath;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Preview generation failed");
-            ErrorMessage = Strings.Get("UnexpectedErrorMessage");
+            ErrorMessage = Strings.Get("PreviewGenerationFailed");
+            return null;
         }
     }
 
-    private bool CanOpenPreview() =>
-        CurrentStep == WizardStep.Preview && _validRows.Count > 0;
+    public void ReportPreviewOpenFailure()
+    {
+        ErrorMessage = Strings.Get("PreviewOpenFailed");
+    }
 
     private void PersistEmailTemplate()
     {
@@ -417,7 +418,7 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
         SentCount = progress.Succeeded;
         FailedCount = progress.Failed;
         CurrentAttempt = progress.CurrentAttempt;
-        CurrentNik = progress.Nik;
+        CurrentNik = NikHint.LastFour(progress.Nik);
         CurrentName = progress.Name;
     }
 
@@ -474,6 +475,7 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
                 _validRows = validatedRows;
             }
             OnPropertyChanged(nameof(RecipientCount));
+            OnPropertyChanged(nameof(CanGeneratePreview));
 
             bool blockingReadIssue = read.ReadIssues.Any(i => i.Severity == IssueSeverity.Blocking);
             if (!validation.CanProceed || blockingReadIssue)
@@ -538,6 +540,7 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
         OnPropertyChanged(nameof(CanGoNext));
         OnPropertyChanged(nameof(IsReadyToConfirm));
         OnPropertyChanged(nameof(IsSending));
+        OnPropertyChanged(nameof(CanGeneratePreview));
         NextCommand.NotifyCanExecuteChanged();
         BackCommand.NotifyCanExecuteChanged();
         ConfirmSendCommand.NotifyCanExecuteChanged();

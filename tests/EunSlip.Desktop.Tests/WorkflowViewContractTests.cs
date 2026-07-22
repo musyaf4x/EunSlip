@@ -24,4 +24,29 @@ public sealed class WorkflowViewContractTests
 
         Assert.Contains("LoadedCommand.ExecuteAsync", code, StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void WizardView_OpensOnlyPathGeneratedByViewModel()
+    {
+        string code = ReadFile("src", "EunSlip.Desktop", "Views", "WizardView.xaml.cs");
+        Assert.Contains("vm.GeneratePreviewPdf()", code, StringComparison.Ordinal);
+        Assert.Contains("UseShellExecute = true", code, StringComparison.Ordinal);
+        string viewModel = ReadFile("src", "EunSlip.Desktop", "ViewModels", "PayrollWizardViewModel.cs");
+        Assert.DoesNotContain("Process.Start", viewModel, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void WizardView_HasSixStepLabelsAndNoRawBooleanBindings()
+    {
+        string xaml = ReadFile("src", "EunSlip.Desktop", "Views", "WizardView.xaml");
+        foreach (string label in new[] { "PILIH", "VALIDASI", "EMAIL", "KONFIRMASI", "KIRIM", "HASIL" })
+        {
+            Assert.Contains(label, xaml, StringComparison.Ordinal);
+        }
+
+        Assert.DoesNotContain("Text=\"{Binding HasGmailConnection", xaml, StringComparison.Ordinal);
+        Assert.DoesNotContain("Text=\"{Binding HasStamp", xaml, StringComparison.Ordinal);
+        Assert.DoesNotContain("Text=\"{Binding GmailReady", xaml, StringComparison.Ordinal);
+        Assert.DoesNotContain("Text=\"{Binding StampReady", xaml, StringComparison.Ordinal);
+    }
 }

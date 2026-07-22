@@ -112,4 +112,6 @@
   <data name="PrerequisiteRefreshFailed" xml:space="preserve"><value>Status Gmail dan stamp tidak dapat diperiksa.</value></data>
   <data name="RecoveryFingerprintMismatch" xml:space="preserve"><value>Fingerprint file tidak cocok dengan batch asli. Pilih file payroll yang sama.</value></data>
   <data name="RecoveryNoEligibleRecipients" xml:space="preserve"><value>Tidak ada penerima yang memenuhi syarat untuk dikirim ulang.</value></data>
+  <data name="PreviewGenerationFailed" xml:space="preserve"><value>Pratinjau PDF tidak dapat dibuat.</value></data>
+  <data name="PreviewOpenFailed" xml:space="preserve"><value>Pratinjau dibuat, tetapi tidak dapat dibuka oleh aplikasi PDF.</value></data>
 </root>

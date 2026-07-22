@@ -36,4 +36,30 @@ public partial class WizardView : UserControl
             vm.SelectedFilePath = dialog.FileName;
         }
     }
+
+    private void OpenPreview_Click(object sender, System.Windows.RoutedEventArgs e)
+    {
+        if (DataContext is not PayrollWizardViewModel vm)
+        {
+            return;
+        }
+
+        string? path = vm.GeneratePreviewPdf();
+        if (path is null)
+        {
+            return;
+        }
+
+        try
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(path)
+            {
+                UseShellExecute = true,
+            });
+        }
+        catch (Exception)
+        {
+            vm.ReportPreviewOpenFailure();
+        }
+    }
 }

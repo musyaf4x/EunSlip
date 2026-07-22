@@ -111,4 +111,6 @@
   <data name="PrerequisiteRefreshFailed" xml:space="preserve"><value>Gmail and stamp readiness could not be checked.</value></data>
   <data name="RecoveryFingerprintMismatch" xml:space="preserve"><value>The file fingerprint does not match the original batch. Select the same payroll file.</value></data>
   <data name="RecoveryNoEligibleRecipients" xml:space="preserve"><value>No recipients are eligible for resend.</value></data>
+  <data name="PreviewGenerationFailed" xml:space="preserve"><value>The PDF preview could not be generated.</value></data>
+  <data name="PreviewOpenFailed" xml:space="preserve"><value>The preview was generated but could not be opened by a PDF application.</value></data>
 </root>

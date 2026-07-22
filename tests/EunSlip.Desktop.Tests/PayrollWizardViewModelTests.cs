@@ -1,3 +1,4 @@
+using System.IO;
 using EunSlip.Core.Batches;
 using EunSlip.Core.Payroll;
 using EunSlip.Core.Persistence;
@@ -477,23 +478,17 @@ public sealed class PayrollWizardViewModelTests
     }
 
     [Fact]
-    public async Task OpenPreview_GeneratesPdf_WhenValidRowsExist()
+    public async Task GeneratePreviewPdf_ReturnsGeneratedPathWithoutLaunchingExternalViewer()
     {
         PayrollWizardViewModel vm = Create(out _, hasStamp: true);
         FillSelectStep(vm);
         await vm.NextCommand.ExecuteAsync(null);
         vm.CurrentStep = WizardStep.Preview;
 
-        Assert.True(vm.OpenPreviewCommand.CanExecute(null));
+        string? path = vm.GeneratePreviewPdf();
 
-        try
-        {
-            vm.OpenPreviewCommand.Execute(null);
-        }
-        catch (Exception)
-        {
-        }
-
+        Assert.NotNull(path);
+        Assert.True(File.Exists(path));
         Assert.Null(vm.ErrorMessage);
     }
 
