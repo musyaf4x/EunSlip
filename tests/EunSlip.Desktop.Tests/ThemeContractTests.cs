@@ -38,4 +38,21 @@ public sealed class ThemeContractTests
         Assert.DoesNotContain("DropShadowEffect", xaml, StringComparison.Ordinal);
         Assert.DoesNotContain("LinearGradientBrush", xaml, StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void StaticPages_UseSharedPageHierarchyAndNoRawBooleanFormatting()
+    {
+        foreach (string relative in new[]
+        {
+            Path.Combine("src", "EunSlip.Desktop", "Views", "HomeView.xaml"),
+            Path.Combine("src", "EunSlip.Desktop", "Views", "SettingsView.xaml"),
+            Path.Combine("src", "EunSlip.Desktop", "Views", "AboutView.xaml"),
+        })
+        {
+            string xaml = ReadRepositoryFile(relative.Split(Path.DirectorySeparatorChar));
+            Assert.Contains("{StaticResource PageTitle}", xaml, StringComparison.Ordinal);
+            Assert.DoesNotContain("StringFormat='Terkoneksi: {0}'", xaml, StringComparison.Ordinal);
+            Assert.DoesNotContain("StringFormat='Aktif: {0}'", xaml, StringComparison.Ordinal);
+        }
+    }
 }
