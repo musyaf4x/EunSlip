@@ -75,6 +75,7 @@ public sealed class BatchCoordinatorTests
         }
         public Guid AddRecipient(BatchRecipientRecord recipient) { Recipients.Add(recipient); return recipient.Id; }
         public IReadOnlyList<BatchRecipientRecord> ListRecipients(Guid batchId) => [.. Recipients.Where(r => r.BatchId == batchId)];
+        public IReadOnlyList<SendAttemptRecord> ListAttempts(Guid batchId) => [];
         public void UpdateRecipientStatus(Guid recipientId, RecipientStatus status, DateTimeOffset updatedAt)
         {
             int i = Recipients.FindIndex(r => r.Id == recipientId);

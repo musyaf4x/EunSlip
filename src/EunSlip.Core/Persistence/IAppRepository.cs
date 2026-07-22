@@ -15,6 +15,7 @@ public interface IAppRepository
     void UpdateBatchStatus(Guid id, BatchStatus status, DateTimeOffset? startedAtUtc, DateTimeOffset? completedAtUtc);
     Guid AddRecipient(BatchRecipientRecord recipient);
     IReadOnlyList<BatchRecipientRecord> ListRecipients(Guid batchId);
+    IReadOnlyList<SendAttemptRecord> ListAttempts(Guid batchId);
     void UpdateRecipientStatus(Guid recipientId, RecipientStatus status, DateTimeOffset updatedAtUtc);
     void AddAttempt(SendAttemptRecord attempt);
     void CompleteAttempt(Guid attemptId, AttemptStatus status, DateTimeOffset completedAtUtc, string? errorCategory, string? errorMessage, string? gmailMessageId);

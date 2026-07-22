@@ -37,6 +37,7 @@ public sealed class RecoveryServiceTests
         public Guid AddRecipient(BatchRecipientRecord r) { Recipients.Add(r); return r.Id; }
         public IReadOnlyList<BatchRecipientRecord> ListRecipients(Guid batchId) =>
             [.. Recipients.Where(r => r.BatchId == batchId)];
+        public IReadOnlyList<SendAttemptRecord> ListAttempts(Guid batchId) => [];
         public void UpdateRecipientStatus(Guid recipientId, RecipientStatus status, DateTimeOffset updatedAt)
         {
             int i = Recipients.FindIndex(r => r.Id == recipientId);

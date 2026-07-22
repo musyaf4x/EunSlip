@@ -23,6 +23,7 @@ public sealed class HomeViewModelTests
         public void UpdateBatchStatus(Guid id, BatchStatus status, DateTimeOffset? startedAtUtc, DateTimeOffset? completedAtUtc) { }
         public Guid AddRecipient(BatchRecipientRecord recipient) => recipient.Id;
         public IReadOnlyList<BatchRecipientRecord> ListRecipients(Guid batchId) => [];
+        public IReadOnlyList<SendAttemptRecord> ListAttempts(Guid batchId) => [];
         public void UpdateRecipientStatus(Guid recipientId, RecipientStatus status, DateTimeOffset updatedAtUtc) { }
         public void AddAttempt(SendAttemptRecord attempt) { }
         public void CompleteAttempt(Guid attemptId, AttemptStatus status, DateTimeOffset completedAtUtc,

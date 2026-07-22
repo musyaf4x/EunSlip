@@ -22,6 +22,7 @@ public sealed class SettingsViewModelTests
         public void UpdateBatchStatus(Guid id, BatchStatus status, DateTimeOffset? startedAt, DateTimeOffset? completedAt) { }
         public Guid AddRecipient(BatchRecipientRecord recipient) => recipient.Id;
         public IReadOnlyList<BatchRecipientRecord> ListRecipients(Guid batchId) => [];
+        public IReadOnlyList<SendAttemptRecord> ListAttempts(Guid batchId) => [];
         public void UpdateRecipientStatus(Guid recipientId, RecipientStatus status, DateTimeOffset updatedAt) { }
         public void AddAttempt(SendAttemptRecord attempt) { }
         public void CompleteAttempt(Guid attemptId, AttemptStatus status, DateTimeOffset completedAt, string? errorCategory, string? errorMessage, string? gmailMessageId) { }

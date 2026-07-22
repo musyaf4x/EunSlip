@@ -309,6 +309,37 @@ public sealed class SqliteAppRepository(string connectionString) : IAppRepositor
         return Enum.Parse<AttemptStatus>(statusText);
     }
 
+    public IReadOnlyList<SendAttemptRecord> ListAttempts(Guid batchId)
+    {
+        using SqliteConnection connection = OpenConnection();
+        using SqliteCommand command = connection.CreateCommand();
+        command.CommandText =
+            "SELECT a.Id, a.RecipientId, a.AttemptNumber, a.AttemptType, a.StartedAtUtc, " +
+            "a.CompletedAtUtc, a.Status, a.ErrorCategory, a.ErrorMessage, a.GmailMessageId " +
+            "FROM SendAttempts a INNER JOIN BatchRecipients r ON r.Id = a.RecipientId " +
+            "WHERE r.BatchId = @batchId ORDER BY a.StartedAtUtc DESC, a.AttemptNumber DESC;";
+        command.Parameters.AddWithValue("@batchId", batchId.ToString());
+
+        using SqliteDataReader reader = command.ExecuteReader();
+        List<SendAttemptRecord> attempts = [];
+        while (reader.Read())
+        {
+            attempts.Add(new SendAttemptRecord(
+                Guid.Parse(reader.GetString(0)),
+                Guid.Parse(reader.GetString(1)),
+                reader.GetInt32(2),
+                Enum.Parse<AttemptType>(reader.GetString(3)),
+                DateTimeOffset.Parse(reader.GetString(4), CultureInfo.InvariantCulture),
+                reader.IsDBNull(5) ? null : DateTimeOffset.Parse(reader.GetString(5), CultureInfo.InvariantCulture),
+                Enum.Parse<AttemptStatus>(reader.GetString(6)),
+                reader.IsDBNull(7) ? null : reader.GetString(7),
+                reader.IsDBNull(8) ? null : reader.GetString(8),
+                reader.IsDBNull(9) ? null : reader.GetString(9)));
+        }
+
+        return attempts;
+    }
+
     public IReadOnlyList<Guid> FindInterruptedBatches()
     {
         using SqliteConnection connection = OpenConnection();

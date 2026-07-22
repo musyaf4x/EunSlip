@@ -150,6 +150,33 @@ public sealed class SqliteAppRepositoryTests : IDisposable
     }
 
     [Fact]
+    public void ListAttempts_ReturnsOnlyRequestedBatchNewestFirst()
+    {
+        Guid firstBatch = _repo.CreateBatch(NewBatch("JULY 2025"));
+        Guid firstRecipient = _repo.AddRecipient(new BatchRecipientRecord(
+            Guid.NewGuid(), firstBatch, "enc-1", "mail-1", "0001", RecipientStatus.Failed, DateTimeOffset.UtcNow));
+        Guid secondBatch = _repo.CreateBatch(NewBatch("AUGUST 2025"));
+        Guid secondRecipient = _repo.AddRecipient(new BatchRecipientRecord(
+            Guid.NewGuid(), secondBatch, "enc-2", "mail-2", "0002", RecipientStatus.Failed, DateTimeOffset.UtcNow));
+
+        DateTimeOffset older = new(2026, 7, 22, 1, 0, 0, TimeSpan.Zero);
+        DateTimeOffset newer = older.AddMinutes(1);
+        _repo.AddAttempt(new SendAttemptRecord(Guid.NewGuid(), firstRecipient, 1, AttemptType.Normal,
+            older, older.AddSeconds(1), AttemptStatus.Failed, "Network", "safe", null));
+        _repo.AddAttempt(new SendAttemptRecord(Guid.NewGuid(), firstRecipient, 1, AttemptType.FailedRetry,
+            newer, newer.AddSeconds(1), AttemptStatus.Sent, null, null, "gmail-1"));
+        _repo.AddAttempt(new SendAttemptRecord(Guid.NewGuid(), secondRecipient, 1, AttemptType.Normal,
+            newer.AddMinutes(1), newer.AddMinutes(1).AddSeconds(1), AttemptStatus.Failed, "Network", "safe", null));
+
+        IReadOnlyList<SendAttemptRecord> attempts = _repo.ListAttempts(firstBatch);
+
+        Assert.Equal(2, attempts.Count);
+        Assert.Equal(AttemptType.FailedRetry, attempts[0].AttemptType);
+        Assert.Equal(AttemptType.Normal, attempts[1].AttemptType);
+        Assert.All(attempts, attempt => Assert.Equal(firstRecipient, attempt.RecipientId));
+    }
+
+    [Fact]
     public void UpdateBatchStatus_SetsStartedAtOnSending()
     {
         Guid id = _repo.CreateBatch(NewBatch());
