@@ -1,5 +1,7 @@
 using EunSlip.Core.Sending;
 using Google.Apis.Auth.OAuth2;
+using Google.Apis.Gmail.v1;
+using Google.Apis.Services;
 
 namespace EunSlip.Infrastructure.Gmail;
 
@@ -71,6 +73,32 @@ public sealed class GmailAuthorization(
             return null;
         }
 
-        return new GoogleAccount(Credential.UserId);
+        return await ResolveAccountAsync(
+            token => GetProfileEmailAsync(Credential, token),
+            cancellationToken);
+    }
+
+    internal static async Task<GoogleAccount?> ResolveAccountAsync(
+        Func<CancellationToken, Task<string?>> profileEmailProvider,
+        CancellationToken cancellationToken)
+    {
+        string? email = await profileEmailProvider(cancellationToken);
+        return string.IsNullOrWhiteSpace(email)
+            ? null
+            : new GoogleAccount(email.Trim());
+    }
+
+    private static async Task<string?> GetProfileEmailAsync(
+        UserCredential credential,
+        CancellationToken cancellationToken)
+    {
+        using GmailService service = new(new BaseClientService.Initializer
+        {
+            HttpClientInitializer = credential,
+            ApplicationName = "EunSlip",
+        });
+        Google.Apis.Gmail.v1.Data.Profile profile =
+            await service.Users.GetProfile("me").ExecuteAsync(cancellationToken);
+        return profile.EmailAddress;
     }
 }
