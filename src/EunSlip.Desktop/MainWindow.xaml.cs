@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Windows;
 using EunSlip.Desktop.ViewModels;
 
@@ -9,5 +10,21 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         DataContext = viewModel;
+        Closing += OnClosing;
+    }
+
+    private void OnClosing(object? sender, CancelEventArgs e)
+    {
+        if (DataContext is not MainViewModel { CanClose: false })
+        {
+            return;
+        }
+
+        e.Cancel = true;
+        _ = MessageBox.Show(
+            "Pengiriman sedang berlangsung. Tunggu sampai proses selesai.",
+            "EunSlip",
+            MessageBoxButton.OK,
+            MessageBoxImage.Information);
     }
 }

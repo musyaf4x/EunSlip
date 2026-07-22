@@ -34,6 +34,20 @@ public sealed partial class MainViewModel : ViewModelBase
         _settings = settings;
         _about = about;
         _current = home;
+
+        _history.ResumeRequested += OpenWizard;
+        _wizard.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(PayrollWizardViewModel.IsSending))
+            {
+                OnPropertyChanged(nameof(CanClose));
+                GoHomeCommand.NotifyCanExecuteChanged();
+                GoPayrollCommand.NotifyCanExecuteChanged();
+                GoHistoryCommand.NotifyCanExecuteChanged();
+                GoSettingsCommand.NotifyCanExecuteChanged();
+                GoAboutCommand.NotifyCanExecuteChanged();
+            }
+        };
     }
 
     public string NavHome => Strings.Get("Nav_Home");
@@ -48,25 +62,35 @@ public sealed partial class MainViewModel : ViewModelBase
     public bool IsHistoryActive => CurrentSection == NavigationSection.History;
     public bool IsSettingsActive => CurrentSection == NavigationSection.Settings;
     public bool IsAboutActive => CurrentSection == NavigationSection.About;
+    public bool CanClose => !_wizard.IsSending;
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanNavigate))]
     private void GoHome() => Navigate(_home, NavigationSection.Home);
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanNavigate))]
     private void GoPayroll()
     {
-        _wizard.Reset();
-        Navigate(_wizard, NavigationSection.Payroll);
+        OpenWizard(PayrollWizardEntry.Normal());
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanNavigate))]
     private void GoHistory() => Navigate(_history, NavigationSection.History);
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanNavigate))]
     private void GoSettings() => Navigate(_settings, NavigationSection.Settings);
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanNavigate))]
     private void GoAbout() => Navigate(_about, NavigationSection.About);
+
+    private bool CanNavigate() => !_wizard.IsSending;
+
+    private void OpenWizard(PayrollWizardEntry entry)
+    {
+        if (_wizard.Begin(entry))
+        {
+            Navigate(_wizard, NavigationSection.Payroll);
+        }
+    }
 
     private void Navigate(ViewModelBase target, NavigationSection section)
     {
