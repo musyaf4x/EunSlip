@@ -81,7 +81,7 @@
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
                     <Border Style="{StaticResource StatusBadge}" Margin="0,0,8,0">
                         <TextBlock Style="{StaticResource LabelText}">
-                            <Run Text="PENERIMA  " /><Run Text="{Binding RecipientCount}" />
+                            <Run Text="PENERIMA  " /><Run Text="{Binding RecipientCount, Mode=OneWay}" />
                         </TextBlock>
                     </Border>
                     <Border Style="{StaticResource StatusBadge}"
@@ -131,7 +131,7 @@
                         <StackPanel>
                             <TextBlock Text="PRATINJAU SLIP" Style="{StaticResource MicroLabel}" />
                             <TextBlock Text="Buka satu contoh PDF sebelum pengiriman."
-                                       Style="{StaticResource MutedText}" Margin="0,8,0,14" />
+                                       Style="{StaticResource MutedText}" Margin="0,8,0,14" TextWrapping="Wrap" />
                             <Button Content="BUKA PRATINJAU PDF" Click="OpenPreview_Click"
                                     IsEnabled="{Binding CanGeneratePreview}"
                                     Style="{StaticResource OutlinedButton}" HorizontalAlignment="Stretch" />
@@ -141,13 +141,13 @@
                         <StackPanel>
                             <TextBlock Text="RINGKASAN" Style="{StaticResource MicroLabel}" />
                             <TextBlock Style="{StaticResource BodyText}" Margin="0,14,0,8">
-                                <Run Text="Penerima  " /><Run Text="{Binding RecipientCount}" FontWeight="SemiBold" />
+                                <Run Text="Penerima  " /><Run Text="{Binding RecipientCount, Mode=OneWay}" FontWeight="SemiBold" />
                             </TextBlock>
                             <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,8">
-                                <Run Text="Gmail  " /><Run Text="{Binding GmailStatusText}" FontWeight="SemiBold" />
+                                <Run Text="Gmail  " /><Run Text="{Binding GmailStatusText, Mode=OneWay}" FontWeight="SemiBold" />
                             </TextBlock>
                             <TextBlock Style="{StaticResource BodyText}">
-                                <Run Text="Stamp  " /><Run Text="{Binding StampStatusText}" FontWeight="SemiBold" />
+                                <Run Text="Stamp  " /><Run Text="{Binding StampStatusText, Mode=OneWay}" FontWeight="SemiBold" />
                             </TextBlock>
                         </StackPanel>
                     </Border>
@@ -169,7 +169,7 @@
                             <Run Text="Periode" /><LineBreak /><Run Text="{Binding Period}" FontWeight="SemiBold" />
                         </TextBlock>
                         <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,10">
-                            <Run Text="Penerima" /><LineBreak /><Run Text="{Binding RecipientCount}" FontWeight="SemiBold" />
+                            <Run Text="Penerima" /><LineBreak /><Run Text="{Binding RecipientCount, Mode=OneWay}" FontWeight="SemiBold" />
                         </TextBlock>
                         <TextBlock Style="{StaticResource BodyText}">
                             <Run Text="Akun Gmail" /><LineBreak /><Run Text="{Binding ConnectedGmail}" FontWeight="SemiBold" />
@@ -293,7 +293,7 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <Grid Background="{StaticResource PaperWhiteBrush}" Margin="{StaticResource PageFrame}">
+    <Grid Background="{StaticResource PaperWhiteBrush}" Style="{StaticResource PageFrame}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />

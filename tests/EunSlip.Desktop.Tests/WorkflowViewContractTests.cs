@@ -49,4 +49,48 @@ public sealed class WorkflowViewContractTests
         Assert.DoesNotContain("Text=\"{Binding GmailReady", xaml, StringComparison.Ordinal);
         Assert.DoesNotContain("Text=\"{Binding StampReady", xaml, StringComparison.Ordinal);
     }
+
+    [Theory]
+    [InlineData("WizardView.xaml")]
+    [InlineData("HistoryView.xaml")]
+    public void RedesignedViews_ApplyPageFrameAsStyle(string fileName)
+    {
+        string xaml = ReadFile("src", "EunSlip.Desktop", "Views", fileName);
+
+        Assert.DoesNotContain("Margin=\"{StaticResource PageFrame}\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Style=\"{StaticResource PageFrame}\"", xaml, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void WizardView_ReadOnlyRunBindingsAreOneWay()
+    {
+        string xaml = ReadFile("src", "EunSlip.Desktop", "Views", "WizardView.xaml");
+
+        Assert.DoesNotContain("Run Text=\"{Binding RecipientCount}\"", xaml, StringComparison.Ordinal);
+        Assert.DoesNotContain("Run Text=\"{Binding GmailStatusText}\"", xaml, StringComparison.Ordinal);
+        Assert.DoesNotContain("Run Text=\"{Binding StampStatusText}\"", xaml, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void WizardPreview_UsesWrappedSupportingCopy()
+    {
+        string xaml = ReadFile("src", "EunSlip.Desktop", "Views", "WizardView.xaml");
+
+        Assert.Matches(
+            "Text=\"Buka satu contoh PDF sebelum pengiriman\\.\"[\\s\\S]{0,160}TextWrapping=\"Wrap\"",
+            xaml);
+    }
+
+    [Fact]
+    public void HistoryView_SeparatesActionsAndFitsDetailColumns()
+    {
+        string xaml = ReadFile("src", "EunSlip.Desktop", "Views", "HistoryView.xaml");
+
+        Assert.Contains("<ColumnDefinition Width=\"310\" />", xaml, StringComparison.Ordinal);
+        Assert.Contains("<StackPanel Grid.Row=\"1\" Orientation=\"Horizontal\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Header=\"PERIODE\" Binding=\"{Binding Period}\" Width=\"100\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Header=\"GAGAL\" Binding=\"{Binding FailedCount}\" Width=\"80\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Header=\"RINGKASAN\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Header=\"SELESAI\" Binding=\"{Binding LatestAttemptCompletedAtUtc}\" Width=\"96\"", xaml, StringComparison.Ordinal);
+    }
 }
