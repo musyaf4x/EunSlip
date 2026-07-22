@@ -5,6 +5,7 @@
         xmlns:v="clr-namespace:EunSlip.Desktop.Views"
         Title="EunSlip" Width="1180" Height="760" MinWidth="1024" MinHeight="680"
         Background="{StaticResource PaperWhiteBrush}"
+        WindowState="Maximized"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <DataTemplate DataType="{x:Type vm:HomeViewModel}">

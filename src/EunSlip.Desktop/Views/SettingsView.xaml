@@ -105,9 +105,38 @@
                             Content="SIMPAN KREDENSIAL" Command="{Binding SaveOAuthSecretCommand}"
                             Style="{StaticResource PrimaryButton}" HorizontalAlignment="Left"
                             Margin="0,12,0,0" />
-                    <Expander Header="PANDUAN SETUP" Margin="0,12,0,0">
-                        <TextBlock Text="Gunakan OAuth Desktop App, simpan client secret, lalu hubungkan akun Gmail payroll."
-                                   Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,8,0,0" />
+                    <Expander Header="PANDUAN SETUP GOOGLE CLOUD &amp; OAUTH" Margin="0,12,0,0">
+                        <Border Background="{StaticResource FogBrush}" Padding="12" Margin="0,8,0,0">
+                            <StackPanel>
+                                <TextBlock Text="Langkah-langkah:" Style="{StaticResource BodyText}"
+                                           FontWeight="SemiBold" Margin="0,0,0,8" />
+                                <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,0,0,6">
+                                    <Run Text="1. Buka " /><Run Text="console.cloud.google.com" /><Run Text=" → buat / pilih project." />
+                                </TextBlock>
+                                <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,0,0,6">
+                                    <Run Text="2. APIs &amp; Services → Library → aktifkan " /><Run Text="Gmail API" /><Run Text="." />
+                                </TextBlock>
+                                <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,0,0,6">
+                                    <Run Text="3. OAuth consent screen: pilih " /><Run Text="Internal" /><Run Text=" (jika Google Workspace), isi app name &amp; email." />
+                                </TextBlock>
+                                <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,0,0,6">
+                                    <Run Text="4. Credentials → Create Credentials → OAuth client ID → type " /><Run Text="Desktop app" /><Run Text="." />
+                                </TextBlock>
+                                <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,0,0,6">
+                                    <Run Text="5. Download " /><Run Text="client_secret.json" /><Run Text="." />
+                                </TextBlock>
+                                <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,0,0,6">
+                                    <Run Text="6. Buka isi file client_secret.json, tempel ke kotak " /><Run Text="OAuth Client" /><Run Text=" di atas, lalu klik Simpan Kredensial." />
+                                </TextBlock>
+                                <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,0,0,6">
+                                    <Run Text="7. Klik " /><Run Text="Hubungkan" /><Run Text=" — browser terbuka, login akun payroll Gmail, lalu izinkan akses." />
+                                </TextBlock>
+                                <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap"
+                                           Foreground="{StaticResource EmberRedBrush}">
+                                    <Run Text="Catatan: gunakan akun payroll Gmail PT. EUNSUNG INDONESIA. Akun ini menjadi pengirim." />
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
                     </Expander>
                 </StackPanel>
             </Border>
