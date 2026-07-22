@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Windows;
 using EunSlip.Desktop.Views;
 
@@ -26,7 +27,18 @@ public sealed class ViewSmokeTests
                 _ = new HistoryView();
                 _ = new SettingsView();
                 _ = new AboutView();
-                _ = new EunSlip.Desktop.MainWindow(null!);
+
+                CultureInfo originalUiCulture = CultureInfo.CurrentUICulture;
+                try
+                {
+                    CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("id-ID");
+                    EunSlip.Desktop.MainWindow window = new(null!);
+                    Assert.Equal("id-ID", window.Language.IetfLanguageTag, ignoreCase: true);
+                }
+                finally
+                {
+                    CultureInfo.CurrentUICulture = originalUiCulture;
+                }
             }
             catch (Exception ex)
             {
