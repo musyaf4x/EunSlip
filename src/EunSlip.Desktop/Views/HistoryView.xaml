@@ -32,9 +32,9 @@
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="310" />
+                <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="16" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="3*" />
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="0" Style="{StaticResource Card}" Padding="0">
@@ -100,15 +100,16 @@
                                   ItemsSource="{Binding SelectedRecipients}"
                                   Style="{StaticResource EditorialDataGrid}"
                                   AutoGenerateColumns="False" IsReadOnly="True"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                   Visibility="{Binding SelectedBatch, Converter={StaticResource NullToVis}}">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="NIK" Binding="{Binding NikHint}" Width="54" />
-                                <DataGridTextColumn Header="STATUS" Binding="{Binding Status, Converter={StaticResource StatusText}}" Width="64" />
-                                <DataGridTextColumn Header="TIPE" Binding="{Binding LatestAttemptType, Converter={StaticResource StatusText}}" Width="70" />
-                                <DataGridTextColumn Header="PERC." Binding="{Binding LatestAttemptNumber}" Width="44" />
-                                <DataGridTextColumn Header="SELESAI" Binding="{Binding LatestAttemptCompletedAtUtc}" Width="96" />
-                                <DataGridTextColumn Header="KATEGORI" Binding="{Binding ErrorCategory}" Width="80" />
-                                <DataGridTextColumn Header="RINGKASAN" Binding="{Binding ErrorSummary}" Width="*" />
+                                <DataGridTextColumn Header="NIK" Binding="{Binding NikHint}" Width="8*" />
+                                <DataGridTextColumn Header="STATUS" Binding="{Binding Status, Converter={StaticResource StatusText}}" Width="12*" />
+                                <DataGridTextColumn Header="TIPE" Binding="{Binding LatestAttemptType, Converter={StaticResource StatusText}}" Width="13*" />
+                                <DataGridTextColumn Header="COBA" Binding="{Binding LatestAttemptNumber}" Width="8*" />
+                                <DataGridTextColumn Header="WAKTU" Binding="{Binding LatestAttemptCompletedAtUtc}" Width="14*" />
+                                <DataGridTextColumn Header="KAT." Binding="{Binding ErrorCategory}" Width="11*" />
+                                <DataGridTextColumn Header="DETAIL" Binding="{Binding ErrorSummary}" Width="16*" />
                             </DataGrid.Columns>
                         </DataGrid>
                         <TextBlock Text="Pilih batch untuk melihat penerima dan percobaan pengiriman."

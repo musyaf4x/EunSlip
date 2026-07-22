@@ -86,15 +86,16 @@ public sealed class WorkflowViewContractTests
     {
         string xaml = ReadFile("src", "EunSlip.Desktop", "Views", "HistoryView.xaml");
 
-        Assert.Contains("<ColumnDefinition Width=\"310\" />", xaml, StringComparison.Ordinal);
+        Assert.Contains("<ColumnDefinition Width=\"2*\" />", xaml, StringComparison.Ordinal);
+        Assert.Contains("<ColumnDefinition Width=\"3*\" />", xaml, StringComparison.Ordinal);
         Assert.Contains("<StackPanel Grid.Row=\"1\" Orientation=\"Horizontal\"", xaml, StringComparison.Ordinal);
-        Assert.Contains("ScrollViewer.HorizontalScrollBarVisibility=\"Disabled\"", xaml, StringComparison.Ordinal);
+        Assert.Equal(2, xaml.Split("ScrollViewer.HorizontalScrollBarVisibility=\"Disabled\"").Length - 1);
         Assert.Contains("Header=\"PERIODE\" Binding=\"{Binding Period}\" Width=\"14*\"", xaml, StringComparison.Ordinal);
         Assert.Contains("Header=\"STATUS\" Binding=\"{Binding Status, Converter={StaticResource StatusText}}\" Width=\"10*\"", xaml, StringComparison.Ordinal);
         Assert.Contains("Header=\"KIRIM\" Binding=\"{Binding SentCount}\" Width=\"7*\"", xaml, StringComparison.Ordinal);
         Assert.Contains("Header=\"GAGAL\" Binding=\"{Binding FailedCount}\" Width=\"9*\"", xaml, StringComparison.Ordinal);
-        Assert.Contains("Header=\"RINGKASAN\"", xaml, StringComparison.Ordinal);
-        Assert.Contains("Header=\"SELESAI\" Binding=\"{Binding LatestAttemptCompletedAtUtc}\" Width=\"96\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Header=\"WAKTU\" Binding=\"{Binding LatestAttemptCompletedAtUtc}\" Width=\"14*\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Header=\"DETAIL\" Binding=\"{Binding ErrorSummary}\" Width=\"16*\"", xaml, StringComparison.Ordinal);
     }
 
     [Fact]
