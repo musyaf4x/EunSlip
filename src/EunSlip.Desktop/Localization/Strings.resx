@@ -108,4 +108,6 @@
   <data name="SettingsStampRemoved" xml:space="preserve"><value>Stamp dihapus.</value></data>
   <data name="HistoryDeliveryFailedSummary" xml:space="preserve"><value>Pengiriman gagal. Periksa kategori dan log untuk detail teknis.</value></data>
   <data name="HistoryDetailLoadFailed" xml:space="preserve"><value>Detail batch tidak dapat dimuat.</value></data>
+  <data name="HistoryBatchMissing" xml:space="preserve"><value>Batch yang dipilih tidak lagi tersedia.</value></data>
+  <data name="PrerequisiteRefreshFailed" xml:space="preserve"><value>Status Gmail dan stamp tidak dapat diperiksa.</value></data>
 </root>

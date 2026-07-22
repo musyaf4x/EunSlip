@@ -9,6 +9,13 @@ public partial class WizardView : UserControl
     public WizardView()
     {
         InitializeComponent();
+        Loaded += async (_, _) =>
+        {
+            if (DataContext is PayrollWizardViewModel vm)
+            {
+                await vm.LoadedCommand.ExecuteAsync(null);
+            }
+        };
     }
 
     private void PickFile_Click(object sender, System.Windows.RoutedEventArgs e)

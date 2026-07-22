@@ -6,6 +6,7 @@ using EunSlip.Core.Batches;
 using EunSlip.Core.Common;
 using EunSlip.Core.Payroll;
 using EunSlip.Core.Persistence;
+using EunSlip.Core.Recovery;
 using EunSlip.Core.Security;
 using EunSlip.Core.Sending;
 using EunSlip.Core.Validation;
@@ -30,6 +31,7 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
     private readonly ISecretStore _secretStore;
     private readonly ITempFileService _tempFiles;
     private readonly ILogger<PayrollWizardViewModel> _logger;
+    private PayrollWizardEntry _entry = PayrollWizardEntry.Normal();
 
     [ObservableProperty]
     private WizardStep _currentStep = WizardStep.Select;
@@ -67,6 +69,9 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
 
     [ObservableProperty]
     private bool _isBusy;
+
+    [ObservableProperty]
+    private bool _isPrerequisiteLoading;
 
     [ObservableProperty]
     private string? _connectedGmail;
@@ -114,6 +119,7 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
         IAppRepository repository,
         ISecretStore secretStore,
         ITempFileService tempFiles,
+        IRecoveryService recovery,
         ILogger<PayrollWizardViewModel> logger)
     {
         _reader = reader;
@@ -124,6 +130,7 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
         _repository = repository;
         _secretStore = secretStore;
         _tempFiles = tempFiles;
+        ArgumentNullException.ThrowIfNull(recovery);
         _logger = logger;
     }
 
@@ -136,9 +143,43 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
     public bool HasError => !string.IsNullOrEmpty(ErrorMessage);
     public bool CanGoBack => StepIndex > 0 && !IsOnSendStep;
     public bool CanGoNext => !IsOnSendStep && !IsOnResultsStep;
-    public bool IsReadyToConfirm => CurrentStep == WizardStep.Confirm && !IsBusy && HasGmailConnection && HasStamp;
+    public bool IsReadyToConfirm =>
+        CurrentStep == WizardStep.Confirm && !IsBusy && !IsPrerequisiteLoading && HasGmailConnection && HasStamp;
     public bool GmailReady => HasGmailConnection;
     public bool StampReady => HasStamp;
+    public PayrollRunMode RunMode => _entry.Mode;
+    public bool IsResumeMode => _entry.IsResume;
+    public string GmailStatusText => IsPrerequisiteLoading
+        ? Strings.Get("StatusChecking")
+        : HasGmailConnection ? Strings.Get("StatusReady") : Strings.Get("StatusNotReady");
+    public string StampStatusText => IsPrerequisiteLoading
+        ? Strings.Get("StatusChecking")
+        : HasStamp ? Strings.Get("StatusReady") : Strings.Get("StatusNotReady");
+    public bool IsSending => CurrentStep == WizardStep.Send && IsBusy;
+
+    public bool Begin(PayrollWizardEntry entry)
+    {
+        Reset();
+        _entry = entry;
+        OnPropertyChanged(nameof(RunMode));
+        OnPropertyChanged(nameof(IsResumeMode));
+        if (entry.BatchId is not Guid batchId)
+        {
+            return true;
+        }
+
+        PayrollBatchRecord? batch = _repository.GetBatch(batchId);
+        if (batch is null)
+        {
+            ErrorMessage = Strings.Get("HistoryBatchMissing");
+            return false;
+        }
+
+        _batchId = batch.Id;
+        Period = batch.Period;
+        PaymentDate = batch.PaymentDate.ToDateTime(TimeOnly.MinValue);
+        return true;
+    }
 
     public void Reset()
     {
@@ -149,6 +190,10 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
         ErrorMessage = null;
         StatusMessage = null;
         IsBusy = false;
+        IsPrerequisiteLoading = false;
+        ConnectedGmail = null;
+        HasGmailConnection = false;
+        HasStamp = false;
         ValidationRows.Clear();
         Results.Clear();
         _validation = null;
@@ -166,11 +211,31 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
     [RelayCommand]
     private async Task LoadedAsync()
     {
-        GoogleAccount? account = await _gmail.RestoreAsync(CancellationToken.None);
-        ConnectedGmail = account?.Email;
-        HasGmailConnection = account is not null;
-        HasStamp = _stampStore.GetActiveStampPath() is not null;
+        await RefreshPrerequisitesAsync(CancellationToken.None);
         LoadEmailTemplate();
+    }
+
+    public async Task RefreshPrerequisitesAsync(CancellationToken cancellationToken)
+    {
+        IsPrerequisiteLoading = true;
+        try
+        {
+            GoogleAccount? account = await _gmail.RestoreAsync(cancellationToken);
+            ConnectedGmail = account?.Email;
+            HasGmailConnection = account is not null;
+            HasStamp = _stampStore.GetActiveStampPath() is not null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Prerequisite refresh failed");
+            HasGmailConnection = false;
+            HasStamp = false;
+            ErrorMessage = Strings.Get("PrerequisiteRefreshFailed");
+        }
+        finally
+        {
+            IsPrerequisiteLoading = false;
+        }
     }
 
     [RelayCommand(CanExecute = nameof(CanNext))]
@@ -179,6 +244,13 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
         if (CurrentStep == WizardStep.Select)
         {
             await RunValidationAsync();
+            return;
+        }
+
+        if (CurrentStep == WizardStep.Preview)
+        {
+            await RefreshPrerequisitesAsync(CancellationToken.None);
+            CurrentStep = WizardStep.Confirm;
             return;
         }
 
@@ -327,7 +399,7 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
     }
 
     private bool CanConfirmSend() =>
-        CurrentStep == WizardStep.Confirm && !IsBusy && HasGmailConnection && HasStamp;
+        CurrentStep == WizardStep.Confirm && !IsBusy && !IsPrerequisiteLoading && HasGmailConnection && HasStamp;
 
     private void OnProgress(BatchProgress progress)
     {
@@ -425,6 +497,8 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
         OnPropertyChanged(nameof(IsOnResultsStep));
         OnPropertyChanged(nameof(CanGoBack));
         OnPropertyChanged(nameof(CanGoNext));
+        OnPropertyChanged(nameof(IsReadyToConfirm));
+        OnPropertyChanged(nameof(IsSending));
         NextCommand.NotifyCanExecuteChanged();
         BackCommand.NotifyCanExecuteChanged();
         ConfirmSendCommand.NotifyCanExecuteChanged();
@@ -435,8 +509,38 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
     partial void OnSelectedFilePathChanged(string? value) => NextCommand.NotifyCanExecuteChanged();
     partial void OnPeriodChanged(string value) => NextCommand.NotifyCanExecuteChanged();
     partial void OnPaymentDateChanged(DateTime? value) => NextCommand.NotifyCanExecuteChanged();
-    partial void OnHasGmailConnectionChanged(bool value) => NextCommand.NotifyCanExecuteChanged();
-    partial void OnHasStampChanged(bool value) => NextCommand.NotifyCanExecuteChanged();
+    partial void OnHasGmailConnectionChanged(bool value)
+    {
+        OnPropertyChanged(nameof(GmailReady));
+        OnPropertyChanged(nameof(GmailStatusText));
+        OnPropertyChanged(nameof(IsReadyToConfirm));
+        ConfirmSendCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnHasStampChanged(bool value)
+    {
+        OnPropertyChanged(nameof(StampReady));
+        OnPropertyChanged(nameof(StampStatusText));
+        OnPropertyChanged(nameof(IsReadyToConfirm));
+        ConfirmSendCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnIsPrerequisiteLoadingChanged(bool value)
+    {
+        OnPropertyChanged(nameof(GmailStatusText));
+        OnPropertyChanged(nameof(StampStatusText));
+        OnPropertyChanged(nameof(IsReadyToConfirm));
+        ConfirmSendCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnIsBusyChanged(bool value)
+    {
+        OnPropertyChanged(nameof(IsSending));
+        OnPropertyChanged(nameof(IsReadyToConfirm));
+        NextCommand.NotifyCanExecuteChanged();
+        BackCommand.NotifyCanExecuteChanged();
+        ConfirmSendCommand.NotifyCanExecuteChanged();
+    }
 }
 
 public sealed partial class ValidationRowViewModel : ObservableObject

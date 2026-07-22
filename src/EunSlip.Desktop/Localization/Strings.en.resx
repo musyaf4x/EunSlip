@@ -107,4 +107,6 @@
   <data name="SettingsStampRemoved" xml:space="preserve"><value>Stamp removed.</value></data>
   <data name="HistoryDeliveryFailedSummary" xml:space="preserve"><value>Delivery failed. Review the category and logs for technical details.</value></data>
   <data name="HistoryDetailLoadFailed" xml:space="preserve"><value>Batch details could not be loaded.</value></data>
+  <data name="HistoryBatchMissing" xml:space="preserve"><value>The selected batch is no longer available.</value></data>
+  <data name="PrerequisiteRefreshFailed" xml:space="preserve"><value>Gmail and stamp readiness could not be checked.</value></data>
 </root>

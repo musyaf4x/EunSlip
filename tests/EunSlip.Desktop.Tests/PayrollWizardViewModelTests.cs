@@ -1,6 +1,7 @@
 using EunSlip.Core.Batches;
 using EunSlip.Core.Payroll;
 using EunSlip.Core.Persistence;
+using EunSlip.Core.Recovery;
 using EunSlip.Core.Security;
 using EunSlip.Core.Sending;
 using EunSlip.Core.Validation;
@@ -54,19 +55,46 @@ public sealed class PayrollWizardViewModelTests
 
     private sealed class FakeGmail(bool connected, string? email = null) : IGmailAuthorization
     {
+        public bool Connected { get; set; } = connected;
         public Task<GoogleAccount?> ConnectAsync(string clientSecretJson, CancellationToken cancellationToken)
-            => Task.FromResult<GoogleAccount?>(connected ? new GoogleAccount(email ?? "g@e.co") : null);
+            => Task.FromResult<GoogleAccount?>(Connected ? new GoogleAccount(email ?? "g@e.co") : null);
         public Task<GoogleAccount?> RestoreAsync(CancellationToken cancellationToken)
-            => Task.FromResult<GoogleAccount?>(connected ? new GoogleAccount(email ?? "g@e.co") : null);
-        public Task DisconnectAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-        public Task<bool> IsConnectedAsync(CancellationToken cancellationToken) => Task.FromResult(connected);
+            => Task.FromResult<GoogleAccount?>(Connected ? new GoogleAccount(email ?? "g@e.co") : null);
+        public Task DisconnectAsync(CancellationToken cancellationToken)
+        {
+            Connected = false;
+            return Task.CompletedTask;
+        }
+        public Task<bool> IsConnectedAsync(CancellationToken cancellationToken) => Task.FromResult(Connected);
     }
 
     private sealed class FakeStampStore(bool hasStamp) : ISharedFileStore
     {
-        public string? GetActiveStampPath() => hasStamp ? "stamp.png" : null;
-        public string ImportStamp(string sourcePath) => "stamp.png";
-        public void RemoveStamp() { }
+        public bool HasStamp { get; set; } = hasStamp;
+        public string? GetActiveStampPath() => HasStamp ? "stamp.png" : null;
+        public string ImportStamp(string sourcePath)
+        {
+            HasStamp = true;
+            return "stamp.png";
+        }
+        public void RemoveStamp() => HasStamp = false;
+    }
+
+    private sealed class FakeRecovery : IRecoveryService
+    {
+        public List<Guid> Prepared { get; } = [];
+        public IReadOnlyList<string> FailedNiks { get; init; } = ["NIK0001"];
+        public IReadOnlyList<string> RecoveryNiks { get; init; } = ["NIK0001"];
+        public bool FingerprintMatches { get; init; } = true;
+        public IReadOnlyList<Guid> DetectInterruptedBatches() => [];
+        public IReadOnlyList<Guid> MarkDetectedBatchesInterrupted() => [];
+        public void PrepareForRecovery(Guid batchId) => Prepared.Add(batchId);
+        public RecoveryGate VerifyFingerprint(Guid batchId, BatchContext context, IReadOnlyList<PayrollRow> rows) =>
+            FingerprintMatches
+                ? new RecoveryGate(RecoveryGateResult.Match, "stored", "stored")
+                : new RecoveryGate(RecoveryGateResult.Mismatch, "stored", "different");
+        public IReadOnlyList<string> SelectRetryFailedNiks(Guid batchId) => FailedNiks;
+        public IReadOnlyList<string> SelectRecoveryResendNiks(Guid batchId) => RecoveryNiks;
     }
 
     private sealed class FakeRepository : IAppRepository
@@ -102,23 +130,36 @@ public sealed class PayrollWizardViewModelTests
     }
 
     private static PayrollWizardViewModel Create(
-        IPayrollWorkbookReader? reader = null, bool gmailConnected = true, bool hasStamp = true)
-        => Create(out _, reader, gmailConnected, hasStamp);
+        IPayrollWorkbookReader? reader = null,
+        bool gmailConnected = true,
+        bool hasStamp = true,
+        IBatchCoordinator? coordinator = null,
+        FakeRecovery? recovery = null,
+        FakeGmail? gmail = null,
+        FakeStampStore? stampStore = null) =>
+        Create(out _, reader, gmailConnected, hasStamp, coordinator, recovery, gmail, stampStore);
 
     private static PayrollWizardViewModel Create(
-        out FakeRepository repo,
-        IPayrollWorkbookReader? reader = null, bool gmailConnected = true, bool hasStamp = true)
+        out FakeRepository repository,
+        IPayrollWorkbookReader? reader = null,
+        bool gmailConnected = true,
+        bool hasStamp = true,
+        IBatchCoordinator? coordinator = null,
+        FakeRecovery? recovery = null,
+        FakeGmail? gmail = null,
+        FakeStampStore? stampStore = null)
     {
-        repo = new FakeRepository();
+        repository = new FakeRepository();
         return new PayrollWizardViewModel(
             reader ?? new FakeReader(_ => new WorkbookReadResult(PayrollContract.Headers, [ValidInput(1)], [])),
-            new FakeCoordinator(),
+            coordinator ?? new FakeCoordinator(),
             new FakePdfGenerator(),
-            new FakeGmail(gmailConnected),
-            new FakeStampStore(hasStamp),
-            repo,
+            gmail ?? new FakeGmail(gmailConnected),
+            stampStore ?? new FakeStampStore(hasStamp),
+            repository,
             new PassThroughSecretStore(),
             new FakeTempFiles(),
+            recovery ?? new FakeRecovery(),
             NullLogger<PayrollWizardViewModel>.Instance);
     }
 
@@ -264,6 +305,42 @@ public sealed class PayrollWizardViewModelTests
         await vm.NextCommand.ExecuteAsync(null);
         vm.CurrentStep = WizardStep.Confirm;
 
+        Assert.True(vm.ConfirmSendCommand.CanExecute(null));
+    }
+
+    [Fact]
+    public async Task Loaded_RefreshesPrerequisitesAndEnablesConfirm()
+    {
+        PayrollWizardViewModel vm = Create();
+        vm.Begin(PayrollWizardEntry.Normal());
+        FillSelectStep(vm);
+        await vm.NextCommand.ExecuteAsync(null);
+        vm.CurrentStep = WizardStep.Confirm;
+
+        Assert.False(vm.ConfirmSendCommand.CanExecute(null));
+        await vm.LoadedCommand.ExecuteAsync(null);
+
+        Assert.True(vm.GmailReady);
+        Assert.True(vm.StampReady);
+        Assert.True(vm.ConfirmSendCommand.CanExecute(null));
+    }
+
+    [Fact]
+    public async Task MovingFromPreviewToConfirm_RefreshesPrerequisites()
+    {
+        FakeGmail gmail = new(false);
+        FakeStampStore stamp = new(false);
+        PayrollWizardViewModel vm = Create(gmail: gmail, stampStore: stamp);
+        vm.Begin(PayrollWizardEntry.Normal());
+        FillSelectStep(vm);
+        await vm.NextCommand.ExecuteAsync(null);
+        vm.CurrentStep = WizardStep.Preview;
+        gmail.Connected = true;
+        stamp.HasStamp = true;
+
+        await vm.NextCommand.ExecuteAsync(null);
+
+        Assert.Equal(WizardStep.Confirm, vm.CurrentStep);
         Assert.True(vm.ConfirmSendCommand.CanExecute(null));
     }
 
