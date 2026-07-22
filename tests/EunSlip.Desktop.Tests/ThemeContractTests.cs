@@ -132,7 +132,11 @@ public sealed class ThemeContractTests
         string iconPath = RepositoryPath("src", "EunSlip.Desktop", "Assets", "eunslip.ico");
 
         Assert.Contains("<ApplicationIcon>Assets\\eunslip.ico</ApplicationIcon>", project, StringComparison.Ordinal);
-        Assert.Contains("Icon=\"/Assets/eunslip.ico\"", shell, StringComparison.Ordinal);
+        Assert.Contains(
+            "<Resource Include=\"..\\..\\logo\\eunslip-logo-bg-01.png\" Link=\"Assets\\eunslip-logo-bg-01.png\" />",
+            project,
+            StringComparison.Ordinal);
+        Assert.Contains("Icon=\"/Assets/eunslip-logo-bg-01.png\"", shell, StringComparison.Ordinal);
         Assert.True(File.Exists(sourceLogo));
         Assert.True(File.Exists(iconPath));
 
