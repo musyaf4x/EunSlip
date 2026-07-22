@@ -41,7 +41,7 @@
                 <Border Grid.Column="2" Style="{StaticResource Card}">
                     <StackPanel>
                         <TextBlock Text="DIKEMBANGKAN OLEH" Style="{StaticResource MicroLabel}" />
-                        <Image Source="/Assets/vierth.png" Height="28" HorizontalAlignment="Left"
+                        <Image Source="/Assets/vierth.png" Height="35" HorizontalAlignment="Left"
                                RenderOptions.BitmapScalingMode="HighQuality" Margin="0,16,0,12" />
                         <TextBlock Text="{Binding Developer}" Style="{StaticResource SectionHeading}" />
                         <TextBlock Text="{Binding ContactEmail}" Style="{StaticResource MutedText}"
