@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:EunSlip.Desktop.ViewModels"
         xmlns:v="clr-namespace:EunSlip.Desktop.Views"
-        Title="EunSlip" Width="1180" Height="760"
+        Title="EunSlip" Width="1180" Height="760" MinWidth="1024" MinHeight="680"
         Background="{StaticResource PaperWhiteBrush}"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
@@ -26,7 +26,7 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="232" />
+            <ColumnDefinition Width="240" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -42,8 +42,8 @@
 
                 <!-- Brand -->
                 <StackPanel Grid.Row="0" Margin="24,28,24,24">
-                    <TextBlock Text="EunSlip" FontFamily="{StaticResource BodyFont}"
-                               FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource CarbonInkBrush}" />
+                    <TextBlock Text="EUNSLIP" FontFamily="{StaticResource BodyFont}"
+                               FontSize="22" FontWeight="Bold" Foreground="{StaticResource CarbonInkBrush}" />
                     <TextBlock Text="PAYROLL DELIVERY" FontFamily="{StaticResource BodyFont}"
                                FontSize="10" FontWeight="SemiBold"
                                Foreground="{StaticResource GraphiteBrush}" Margin="0,4,0,0"
@@ -52,28 +52,77 @@
 
                 <!-- Nav buttons -->
                 <StackPanel Grid.Row="1" Margin="16,0">
-                    <Button Content="{Binding NavHome}" Command="{Binding GoHomeCommand}"
-                            Style="{StaticResource NavButton}" Margin="0,2" />
-                    <Button Content="{Binding NavPayrollProcess}" Command="{Binding GoPayrollCommand}"
-                            Style="{StaticResource NavButton}" Margin="0,2" />
-                    <Button Content="{Binding NavHistory}" Command="{Binding GoHistoryCommand}"
-                            Style="{StaticResource NavButton}" Margin="0,2" />
-                    <Button Content="{Binding NavSettings}" Command="{Binding GoSettingsCommand}"
-                            Style="{StaticResource NavButton}" Margin="0,2" />
-                    <Button Content="{Binding NavAbout}" Command="{Binding GoAboutCommand}"
-                            Style="{StaticResource NavButton}" Margin="0,2" />
+                    <Button Content="{Binding NavHome}" Command="{Binding GoHomeCommand}" Margin="0,2">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsHomeActive}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource CarbonInkBrush}" />
+                                        <Setter Property="Foreground" Value="{StaticResource PaperWhiteBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Content="{Binding NavPayrollProcess}" Command="{Binding GoPayrollCommand}" Margin="0,2">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPayrollActive}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource CarbonInkBrush}" />
+                                        <Setter Property="Foreground" Value="{StaticResource PaperWhiteBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Content="{Binding NavHistory}" Command="{Binding GoHistoryCommand}" Margin="0,2">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsHistoryActive}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource CarbonInkBrush}" />
+                                        <Setter Property="Foreground" Value="{StaticResource PaperWhiteBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Content="{Binding NavSettings}" Command="{Binding GoSettingsCommand}" Margin="0,2">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsSettingsActive}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource CarbonInkBrush}" />
+                                        <Setter Property="Foreground" Value="{StaticResource PaperWhiteBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Content="{Binding NavAbout}" Command="{Binding GoAboutCommand}" Margin="0,2">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsAboutActive}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource CarbonInkBrush}" />
+                                        <Setter Property="Foreground" Value="{StaticResource PaperWhiteBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
                 </StackPanel>
 
                 <!-- Vierth Labs trademark footer -->
                 <StackPanel Grid.Row="2" Margin="24,16,24,24">
-                    <Border BorderBrush="{StaticResource MistBrush}" BorderThickness="0,1,0,0" Margin="0,0,0,12" />
+                    <Border BorderBrush="{StaticResource MistBrush}" BorderThickness="0,1,0,0" Margin="0,0,0,16" />
+                    <TextBlock Text="{Binding ActiveLanguage}" Style="{StaticResource MicroLabel}" />
+                    <TextBlock Text="{Binding VersionText}" Style="{StaticResource MutedText}" Margin="0,4,0,12" />
                     <Image Source="/Assets/vierth.png" Height="22" HorizontalAlignment="Left"
                            RenderOptions.BitmapScalingMode="HighQuality" />
-                    <TextBlock Text="DEVELOPED BY VIERTH LABS" FontFamily="{StaticResource BodyFont}"
-                               FontSize="9" FontWeight="SemiBold" Foreground="{StaticResource GraphiteBrush}"
-                               Margin="0,6,0,0" TextOptions.TextFormattingMode="Display" />
-                    <TextBlock Text="© 2026 Vierth Labs" FontFamily="{StaticResource BodyFont}"
-                               FontSize="9" Foreground="{StaticResource GraphiteBrush}" Margin="0,2,0,0" />
+                    <TextBlock Text="DEVELOPED BY VIERTH LABS" Style="{StaticResource MicroLabel}"
+                               Margin="0,8,0,0" />
                 </StackPanel>
             </Grid>
         </Border>
