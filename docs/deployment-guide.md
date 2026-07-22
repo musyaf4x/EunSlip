@@ -86,6 +86,23 @@ C:\ProgramData\EunSlip\
 5. Verifikasi subject/body default dan sender display name.
 6. Jalankan UAT satu recipient menggunakan data dummy.
 
+Untuk release-candidate internal, gate otomatis yang sengaja tidak aktif pada
+test biasa dapat dijalankan dari root repository:
+
+```powershell
+$env:EUNSLIP_RUN_REAL_GMAIL_UAT = '1'
+dotnet test tests\EunSlip.Infrastructure.Tests\EunSlip.Infrastructure.Tests.csproj `
+  --configuration Release --no-restore `
+  --filter FullyQualifiedName~RealGmailUatTests
+Remove-Item Env:EUNSLIP_RUN_REAL_GMAIL_UAT
+```
+
+Gate mengambil alamat Gmail dari profil OpenID akun yang terautentikasi dan
+mengirim hanya ke akun itu sendiri. Alamat, OAuth token, client secret, dan
+message ID tidak dicetak. Setelah API menerima pesan, operator tetap memeriksa
+inbox secara manual untuk memastikan display name, nama attachment, PDF, dan
+stamp tampil sesuai konfigurasi Gmail perusahaan.
+
 ## Upgrade manual
 
 1. Pastikan tidak ada proses pengiriman dan tutup EunSlip.
