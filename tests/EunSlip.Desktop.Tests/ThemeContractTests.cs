@@ -117,8 +117,8 @@ public sealed class ThemeContractTests
         string runtimeLogo = RepositoryPath("src", "EunSlip.Desktop", "Assets", "eunslip-logo-black-01.png");
 
         Assert.Contains("<Resource Include=\"Assets\\eunslip-logo-black-01.png\" />", project, StringComparison.Ordinal);
-        Assert.Contains("Source=\"/Assets/eunslip-logo-black-01.png\"", shell, StringComparison.Ordinal);
-        Assert.Contains("Source=\"/Assets/eunslip-logo-black-01.png\"", about, StringComparison.Ordinal);
+        Assert.Contains("Source=\"/EunSlip.Desktop;component/Assets/eunslip-logo-black-01.png\"", shell, StringComparison.Ordinal);
+        Assert.Contains("Source=\"/EunSlip.Desktop;component/Assets/eunslip-logo-black-01.png\"", about, StringComparison.Ordinal);
         Assert.True(File.Exists(sourceLogo));
         Assert.True(File.Exists(runtimeLogo));
         Assert.Equal(File.ReadAllBytes(sourceLogo), File.ReadAllBytes(runtimeLogo));
@@ -135,7 +135,7 @@ public sealed class ThemeContractTests
 
         Assert.Contains("<ApplicationIcon>Assets\\eunslip.ico</ApplicationIcon>", project, StringComparison.Ordinal);
         Assert.Contains("<Resource Include=\"Assets\\eunslip-logo-bg-01.png\" />", project, StringComparison.Ordinal);
-        Assert.Contains("Icon=\"/Assets/eunslip-logo-bg-01.png\"", shell, StringComparison.Ordinal);
+        Assert.Contains("Icon=\"/EunSlip.Desktop;component/Assets/eunslip-logo-bg-01.png\"", shell, StringComparison.Ordinal);
         Assert.True(File.Exists(sourceLogo));
         Assert.True(File.Exists(windowLogo));
         Assert.True(File.Exists(iconPath));
