@@ -39,9 +39,13 @@ public sealed class WorkflowViewContractTests
     public void WizardView_HasSixStepLabelsAndNoRawBooleanBindings()
     {
         string xaml = ReadFile("src", "EunSlip.Desktop", "Views", "WizardView.xaml");
-        foreach (string label in new[] { "PILIH", "VALIDASI", "EMAIL", "KONFIRMASI", "KIRIM", "HASIL" })
+        foreach (string resourceKey in new[]
         {
-            Assert.Contains(label, xaml, StringComparison.Ordinal);
+            "Wizard_StepSelect", "Wizard_StepValidate", "Wizard_StepEmail",
+            "Wizard_StepConfirm", "Wizard_StepSend", "Wizard_StepResults",
+        })
+        {
+            Assert.Contains($"{{loc:Loc {resourceKey}}}", xaml, StringComparison.Ordinal);
         }
 
         Assert.DoesNotContain("Text=\"{Binding HasGmailConnection", xaml, StringComparison.Ordinal);
@@ -77,7 +81,7 @@ public sealed class WorkflowViewContractTests
         string xaml = ReadFile("src", "EunSlip.Desktop", "Views", "WizardView.xaml");
 
         Assert.Matches(
-            "Text=\"Buka satu contoh PDF sebelum pengiriman\\.\"[\\s\\S]{0,160}TextWrapping=\"Wrap\"",
+            "Text=\"\\{loc:Loc Wizard_PreviewDescription\\}\"[\\s\\S]{0,160}TextWrapping=\"Wrap\"",
             xaml);
     }
 
@@ -90,12 +94,12 @@ public sealed class WorkflowViewContractTests
         Assert.Contains("<ColumnDefinition Width=\"3*\" />", xaml, StringComparison.Ordinal);
         Assert.Contains("<StackPanel Grid.Row=\"1\" Orientation=\"Horizontal\"", xaml, StringComparison.Ordinal);
         Assert.Equal(2, xaml.Split("ScrollViewer.HorizontalScrollBarVisibility=\"Disabled\"").Length - 1);
-        Assert.Contains("Header=\"PERIODE\" Binding=\"{Binding Period}\" Width=\"14*\"", xaml, StringComparison.Ordinal);
-        Assert.Contains("Header=\"STATUS\" Binding=\"{Binding Status, Converter={StaticResource StatusText}}\" Width=\"10*\"", xaml, StringComparison.Ordinal);
-        Assert.Contains("Header=\"KIRIM\" Binding=\"{Binding SentCount}\" Width=\"7*\"", xaml, StringComparison.Ordinal);
-        Assert.Contains("Header=\"GAGAL\" Binding=\"{Binding FailedCount}\" Width=\"9*\"", xaml, StringComparison.Ordinal);
-        Assert.Contains("Header=\"WAKTU\" Binding=\"{Binding LatestAttemptCompletedAtUtc}\" Width=\"14*\"", xaml, StringComparison.Ordinal);
-        Assert.Contains("Header=\"DETAIL\" Binding=\"{Binding ErrorSummary}\" Width=\"16*\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Header=\"{loc:Loc Grid_Period}\" Binding=\"{Binding Period}\" Width=\"14*\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Header=\"{loc:Loc Grid_Status}\" Binding=\"{Binding Status, Converter={StaticResource StatusText}}\" Width=\"10*\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Header=\"{loc:Loc Grid_Sent}\" Binding=\"{Binding SentCount}\" Width=\"7*\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Header=\"{loc:Loc Grid_Failed}\" Binding=\"{Binding FailedCount}\" Width=\"9*\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Header=\"{loc:Loc Grid_Time}\" Binding=\"{Binding LatestAttemptCompletedAtUtc}\" Width=\"14*\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Header=\"{loc:Loc Grid_Detail}\" Binding=\"{Binding ErrorSummary}\" Width=\"16*\"", xaml, StringComparison.Ordinal);
     }
 
     [Fact]
