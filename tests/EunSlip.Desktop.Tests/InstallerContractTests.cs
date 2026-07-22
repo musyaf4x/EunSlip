@@ -47,6 +47,15 @@ public sealed class InstallerContractTests
     }
 
     [Fact]
+    public void DesktopProject_PublishesRequiredExecutableNameAndVersion()
+    {
+        string project = ReadRepositoryFile("src", "EunSlip.Desktop", "EunSlip.Desktop.csproj");
+
+        Assert.Contains("<AssemblyName>EunSlip</AssemblyName>", project, StringComparison.Ordinal);
+        Assert.Contains("<Version>1.0.0</Version>", project, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void LifecycleTest_UsesSandboxAndChecksPreservationAcrossUpgradeAndUninstall()
     {
         string script = ReadRepositoryFile("scripts", "Test-InstallerLifecycle.ps1");
