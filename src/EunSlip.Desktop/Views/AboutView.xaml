@@ -34,10 +34,10 @@
                         <TextBlock Text="{Binding AppName}" Style="{StaticResource SectionHeading}"
                                    Margin="0,0,0,8" />
                         <TextBlock Style="{StaticResource BodyText}">
-                            <Run Text="{loc:Loc About_VersionPrefix}" /><Run Text="{Binding Version}" />
+                            <Run Text="{loc:Loc About_VersionPrefix}" /><Run Text="{Binding Version, Mode=OneWay}" />
                         </TextBlock>
                         <TextBlock Style="{StaticResource MutedText}" Margin="0,4,0,0">
-                            <Run Text="{loc:Loc About_ForPrefix}" /><Run Text="{Binding Company}" />
+                            <Run Text="{loc:Loc About_ForPrefix}" /><Run Text="{Binding Company, Mode=OneWay}" />
                         </TextBlock>
                     </StackPanel>
                 </Border>
@@ -63,7 +63,7 @@
                                TextWrapping="Wrap" />
                     <TextBlock FontFamily="{StaticResource TechnicalFont}" FontSize="13"
                                TextWrapping="Wrap" Margin="0,20,0,0">
-                        <Run Text="{loc:Loc About_LogFolderPrefix}" /><Run Text="{Binding LogFolder}" />
+                        <Run Text="{loc:Loc About_LogFolderPrefix}" /><Run Text="{Binding LogFolder, Mode=OneWay}" />
                     </TextBlock>
                 </StackPanel>
             </Border>
