@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using EunSlip.Core.Payroll;
 using EunSlip.Core.Persistence;
 using EunSlip.Core.Sending;
+using EunSlip.Desktop.Localization;
 using EunSlip.Infrastructure.Security;
 using Microsoft.Extensions.Logging;
 
@@ -39,6 +40,21 @@ public sealed partial class SettingsViewModel(
     private string? _statusMessage;
 
     [ObservableProperty]
+    private bool _isLoading;
+
+    [ObservableProperty]
+    private string _gmailStatusText = Strings.Get("StatusChecking");
+
+    [ObservableProperty]
+    private string _stampStatusText = Strings.Get("StatusChecking");
+
+    [ObservableProperty]
+    private string _oauthStatusText = Strings.Get("StatusChecking");
+
+    [ObservableProperty]
+    private bool _isRemoveStampConfirmationVisible;
+
+    [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(SaveOAuthSecretCommand))]
     private string _oauthClientSecretJson = string.Empty;
 
@@ -56,14 +72,27 @@ public sealed partial class SettingsViewModel(
     [RelayCommand]
     private async Task LoadedAsync()
     {
-        await RefreshGmailAsync();
-        HasStamp = _stampStore.GetActiveStampPath() is not null;
-        string? savedLanguage = _repository.GetSetting(SettingUiLanguage);
-        if (!string.IsNullOrEmpty(savedLanguage))
+        IsLoading = true;
+        GmailStatusText = Strings.Get("StatusChecking");
+        StampStatusText = Strings.Get("StatusChecking");
+        OauthStatusText = Strings.Get("StatusChecking");
+        try
         {
-            SelectedLanguage = savedLanguage;
+            await RefreshGmailAsync();
+            HasStamp = _stampStore.GetActiveStampPath() is not null;
+            StampStatusText = HasStamp ? Strings.Get("StatusReady") : Strings.Get("StatusNotReady");
+            string? savedLanguage = _repository.GetSetting(SettingUiLanguage);
+            if (!string.IsNullOrEmpty(savedLanguage))
+            {
+                SelectedLanguage = savedLanguage;
+            }
+            HasOAuthSecret = !string.IsNullOrWhiteSpace(_repository.GetSetting(SettingClientSecret));
+            OauthStatusText = HasOAuthSecret ? Strings.Get("StatusReady") : Strings.Get("StatusNotReady");
         }
-        HasOAuthSecret = !string.IsNullOrWhiteSpace(_repository.GetSetting(SettingClientSecret));
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
     [RelayCommand(CanExecute = nameof(CanSaveOAuthSecret))]
@@ -75,6 +104,7 @@ public sealed partial class SettingsViewModel(
             byte[] envelope = DpapiKeyProtector.ProtectToken(secretBytes);
             _repository.SetSetting(SettingClientSecret, Convert.ToBase64String(envelope));
             HasOAuthSecret = true;
+            OauthStatusText = Strings.Get("StatusReady");
             OauthClientSecretJson = string.Empty;
             StatusMessage = "Kredensial OAuth disimpan (terenkripsi DPAPI).";
         }
@@ -95,10 +125,14 @@ public sealed partial class SettingsViewModel(
             GoogleAccount? account = await _gmail.RestoreAsync(CancellationToken.None);
             ConnectedGmail = account?.Email;
             HasGmailConnection = account is not null;
+            GmailStatusText = HasGmailConnection
+                ? Strings.Get("StatusReady")
+                : Strings.Get("StatusNotReady");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Gmail refresh failed");
+            GmailStatusText = Strings.Get("StatusNotReady");
         }
     }
 
@@ -127,6 +161,9 @@ public sealed partial class SettingsViewModel(
             GoogleAccount? account = await _gmail.ConnectAsync(clientSecret, CancellationToken.None);
             ConnectedGmail = account?.Email;
             HasGmailConnection = account is not null;
+            GmailStatusText = HasGmailConnection
+                ? Strings.Get("StatusReady")
+                : Strings.Get("StatusNotReady");
             StatusMessage = HasGmailConnection
                 ? $"Gmail terhubung: {account?.Email}"
                 : "Gagal menghubungkan Gmail. Periksa kredensial / jaringan.";
@@ -171,6 +208,7 @@ public sealed partial class SettingsViewModel(
             await _gmail.DisconnectAsync(CancellationToken.None);
             HasGmailConnection = false;
             ConnectedGmail = null;
+            GmailStatusText = Strings.Get("StatusNotReady");
             StatusMessage = "Gmail diputus. Riwayat tetap dipertahankan.";
         }
         catch (Exception ex)
@@ -186,6 +224,7 @@ public sealed partial class SettingsViewModel(
         {
             _ = _stampStore.ImportStamp(filePath);
             HasStamp = true;
+            StampStatusText = Strings.Get("StatusReady");
             StatusMessage = "Stamp diperbarui.";
         }
         catch (StampValidationException ex)
@@ -196,11 +235,19 @@ public sealed partial class SettingsViewModel(
     }
 
     [RelayCommand]
-    private void RemoveStamp()
+    private void RequestRemoveStamp() => IsRemoveStampConfirmationVisible = true;
+
+    [RelayCommand]
+    private void CancelRemoveStamp() => IsRemoveStampConfirmationVisible = false;
+
+    [RelayCommand]
+    private void ConfirmRemoveStamp()
     {
         _stampStore.RemoveStamp();
         HasStamp = false;
-        StatusMessage = "Stamp dihapus.";
+        StampStatusText = Strings.Get("StatusNotReady");
+        IsRemoveStampConfirmationVisible = false;
+        StatusMessage = Strings.Get("SettingsStampRemoved");
     }
 
     partial void OnSelectedLanguageChanged(string value)

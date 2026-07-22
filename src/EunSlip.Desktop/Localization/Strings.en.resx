@@ -104,4 +104,5 @@
   <data name="StatusNotReady" xml:space="preserve"><value>Not ready</value></data>
   <data name="HomeNoRecentBatch" xml:space="preserve"><value>No payroll batch yet.</value></data>
   <data name="HomeInterruptedBatch" xml:space="preserve"><value>Batch {0} was interrupted and must be recovered from History.</value></data>
+  <data name="SettingsStampRemoved" xml:space="preserve"><value>Stamp removed.</value></data>
 </root>

@@ -105,4 +105,5 @@
   <data name="StatusNotReady" xml:space="preserve"><value>Belum siap</value></data>
   <data name="HomeNoRecentBatch" xml:space="preserve"><value>Belum ada batch payroll.</value></data>
   <data name="HomeInterruptedBatch" xml:space="preserve"><value>Batch {0} terputus dan perlu dipulihkan dari Riwayat.</value></data>
+  <data name="SettingsStampRemoved" xml:space="preserve"><value>Stamp dihapus.</value></data>
 </root>

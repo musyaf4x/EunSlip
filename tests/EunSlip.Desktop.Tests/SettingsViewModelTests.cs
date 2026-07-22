@@ -93,6 +93,18 @@ public sealed class SettingsViewModelTests
     }
 
     [Fact]
+    public async Task Loaded_UsesProfessionalStatusLabels()
+    {
+        SettingsViewModel vm = Create(out _, connected: true, hasStamp: true);
+
+        await vm.LoadedCommand.ExecuteAsync(null);
+
+        Assert.Equal(EunSlip.Desktop.Localization.Strings.Get("StatusReady"), vm.GmailStatusText);
+        Assert.Equal(EunSlip.Desktop.Localization.Strings.Get("StatusReady"), vm.StampStatusText);
+        Assert.False(vm.IsLoading);
+    }
+
+    [Fact]
     public async Task ConnectGmail_NoClientSecret_ShowsWarning()
     {
         SettingsViewModel vm = Create(out _);
@@ -142,12 +154,17 @@ public sealed class SettingsViewModelTests
     }
 
     [Fact]
-    public void RemoveStamp_ClearsFlag()
+    public async Task RemoveStamp_RequiresExplicitConfirmation()
     {
         SettingsViewModel vm = Create(out _, hasStamp: true);
+        await vm.LoadedCommand.ExecuteAsync(null);
 
-        vm.RemoveStampCommand.Execute(null);
+        vm.RequestRemoveStampCommand.Execute(null);
+        Assert.True(vm.IsRemoveStampConfirmationVisible);
+        Assert.True(vm.HasStamp);
 
+        vm.ConfirmRemoveStampCommand.Execute(null);
+        Assert.False(vm.IsRemoveStampConfirmationVisible);
         Assert.False(vm.HasStamp);
     }
 
