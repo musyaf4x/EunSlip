@@ -113,4 +113,3 @@ Referensi resmi:
 - [Google Auth Platform overview](https://support.google.com/cloud/answer/15548748)
 - [Manage app audience](https://support.google.com/cloud/answer/15549945)
 - [Gmail API authorization](https://developers.google.com/workspace/gmail/api/auth/about-auth)
-
