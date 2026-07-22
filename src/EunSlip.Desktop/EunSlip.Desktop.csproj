@@ -13,7 +13,8 @@
   <ItemGroup>
     <Resource Include="Assets\vierth.png" />
     <Resource Include="Assets\eunslip.ico" />
-    <Resource Include="..\..\logo\eunslip-logo-black-01.png" Link="Assets\eunslip-logo-black-01.png" />
+    <Resource Include="Assets\eunslip-logo-black-01.png" />
+    <Resource Include="Assets\eunslip-logo-bg-01.png" />
   </ItemGroup>
 
   <PropertyGroup>

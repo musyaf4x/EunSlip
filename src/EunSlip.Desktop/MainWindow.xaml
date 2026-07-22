@@ -5,7 +5,7 @@
         xmlns:v="clr-namespace:EunSlip.Desktop.Views"
         Title="EunSlip" Width="1180" Height="760" MinWidth="1024" MinHeight="680"
         Background="{StaticResource PaperWhiteBrush}"
-        Icon="/Assets/eunslip.ico"
+        Icon="/EunSlip.Desktop;component/Assets/eunslip-logo-bg-01.png"
         WindowState="Maximized"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
@@ -49,7 +49,7 @@
                         <ColumnDefinition Width="12" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Image Grid.Column="0" Source="/Assets/eunslip-logo-black-01.png"
+                    <Image Grid.Column="0" Source="/EunSlip.Desktop;component/Assets/eunslip-logo-black-01.png"
                            Width="40" Height="40" Stretch="Uniform"
                            AutomationProperties.Name="EunSlip logo"
                            RenderOptions.BitmapScalingMode="HighQuality" />
