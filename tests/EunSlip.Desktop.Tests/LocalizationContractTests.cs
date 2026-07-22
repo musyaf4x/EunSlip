@@ -141,6 +141,37 @@ public sealed class LocalizationContractTests
     }
 
     [Fact]
+    public void AllStaticLocalizationReferences_HaveResources()
+    {
+        HashSet<string> resourceKeys =
+        [
+            .. ResourceEntries("src/EunSlip.Desktop/Localization/Strings.resx").Keys,
+        ];
+        HashSet<string> referencedKeys = [];
+
+        foreach (string relativePath in UserFacingXamlFiles)
+        {
+            string xaml = File.ReadAllText(RepositoryPath(relativePath));
+            foreach (Match match in Regex.Matches(xaml, @"\{loc:Loc\s+(?<key>[A-Za-z0-9_]+)\}"))
+            {
+                _ = referencedKeys.Add(match.Groups["key"].Value);
+            }
+        }
+
+        string desktopSource = RepositoryPath("src/EunSlip.Desktop");
+        foreach (string sourcePath in Directory.GetFiles(desktopSource, "*.cs", SearchOption.AllDirectories))
+        {
+            string source = File.ReadAllText(sourcePath);
+            foreach (Match match in Regex.Matches(source, "Strings\\.Get\\(\"(?<key>[A-Za-z0-9_]+)\"\\)"))
+            {
+                _ = referencedKeys.Add(match.Groups["key"].Value);
+            }
+        }
+
+        Assert.Empty(referencedKeys.Except(resourceKeys));
+    }
+
+    [Fact]
     public void LocExtension_ResolvesCopyForCurrentUiCulture()
     {
         Type? extensionType = typeof(Strings).Assembly.GetType("EunSlip.Desktop.Localization.LocExtension");

@@ -106,12 +106,12 @@ public sealed partial class SettingsViewModel(
             HasOAuthSecret = true;
             OauthStatusText = Strings.Get("StatusReady");
             OauthClientSecretJson = string.Empty;
-            StatusMessage = "Kredensial OAuth disimpan (terenkripsi DPAPI).";
+            StatusMessage = Strings.Get("Settings_OAuthSaved");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "OAuth secret save failed");
-            StatusMessage = "Gagal menyimpan kredensial OAuth.";
+            StatusMessage = Strings.Get("Settings_OAuthSaveFailed");
         }
     }
 
@@ -141,18 +141,18 @@ public sealed partial class SettingsViewModel(
     {
         if (!HasOAuthSecret)
         {
-            StatusMessage = "Simpan kredensial OAuth di bawah ini dulu, lalu klik Hubungkan.";
+            StatusMessage = Strings.Get("Settings_SaveOAuthFirst");
             return;
         }
 
         IsConnecting = true;
-        StatusMessage = "Membuka browser untuk otorisasi Gmail…";
+        StatusMessage = Strings.Get("Settings_OpeningBrowser");
         try
         {
             byte[]? secretEnvelope = LoadSecretEnvelope();
             if (secretEnvelope is null)
             {
-                StatusMessage = "Kredensial OAuth rusak. Tempel ulang dan simpan.";
+                StatusMessage = Strings.Get("Settings_OAuthCorrupt");
                 return;
             }
 
@@ -165,13 +165,15 @@ public sealed partial class SettingsViewModel(
                 ? Strings.Get("StatusReady")
                 : Strings.Get("StatusNotReady");
             StatusMessage = HasGmailConnection
-                ? $"Gmail terhubung: {account?.Email}"
-                : "Gagal menghubungkan Gmail. Periksa kredensial / jaringan.";
+                ? Strings.Get("Settings_GmailConnectedFormat")
+                    .Replace("{0}", account?.Email, StringComparison.Ordinal)
+                : Strings.Get("Settings_GmailConnectFailed");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Gmail connect failed");
-            StatusMessage = "Gagal menghubungkan Gmail: " + ex.Message;
+            StatusMessage = Strings.Get("Settings_GmailConnectErrorFormat")
+                .Replace("{0}", ex.Message, StringComparison.Ordinal);
         }
         finally
         {
@@ -209,7 +211,7 @@ public sealed partial class SettingsViewModel(
             HasGmailConnection = false;
             ConnectedGmail = null;
             GmailStatusText = Strings.Get("StatusNotReady");
-            StatusMessage = "Gmail diputus. Riwayat tetap dipertahankan.";
+            StatusMessage = Strings.Get("Settings_GmailDisconnected");
         }
         catch (Exception ex)
         {
@@ -225,7 +227,7 @@ public sealed partial class SettingsViewModel(
             _ = _stampStore.ImportStamp(filePath);
             HasStamp = true;
             StampStatusText = Strings.Get("StatusReady");
-            StatusMessage = "Stamp diperbarui.";
+            StatusMessage = Strings.Get("Settings_StampUpdated");
         }
         catch (StampValidationException ex)
         {
@@ -254,6 +256,6 @@ public sealed partial class SettingsViewModel(
     {
         _repository.SetSetting(SettingUiLanguage, value);
         LanguageChangedRequiresRestart = true;
-        StatusMessage = "Bahasa disimpan. Mulai ulang aplikasi untuk menerapkan.";
+        StatusMessage = Strings.Get("Settings_LanguageSaved");
     }
 }

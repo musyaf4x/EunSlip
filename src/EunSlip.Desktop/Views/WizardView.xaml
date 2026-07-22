@@ -2,6 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:EunSlip.Desktop.ViewModels"
+             xmlns:loc="clr-namespace:EunSlip.Desktop.Localization"
              xmlns:c="clr-namespace:EunSlip.Desktop.Converters">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
@@ -27,28 +28,28 @@
                 <Border Grid.Row="0" Style="{StaticResource Card}" Margin="0,0,0,16"
                         Visibility="{Binding IsResumeMode, Converter={StaticResource BoolToVis}}">
                     <StackPanel>
-                        <TextBlock Text="MODE TINDAK LANJUT" Style="{StaticResource MicroLabel}" />
+                        <TextBlock Text="{loc:Loc Wizard_ResumeMode}" Style="{StaticResource MicroLabel}" />
                         <TextBlock Text="{Binding RunMode, Converter={StaticResource StatusText}}"
                                    Style="{StaticResource SectionHeading}" Margin="0,6,0,0" />
-                        <TextBlock Text="Gunakan file payroll asli. Fingerprint akan diverifikasi sebelum penerima dipilih."
+                        <TextBlock Text="{loc:Loc Wizard_ResumeDescription}"
                                    Style="{StaticResource MutedText}" Margin="0,6,0,0" />
                     </StackPanel>
                 </Border>
 
                 <Border Grid.Row="1" Style="{StaticResource Card}">
                     <StackPanel>
-                        <TextBlock Text="FILE PAYROLL" Style="{StaticResource MicroLabel}" />
+                        <TextBlock Text="{loc:Loc Wizard_PayrollFile}" Style="{StaticResource MicroLabel}" />
                         <Grid Margin="0,10,0,22">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBox AutomationProperties.AutomationId="PayrollFilePath"
-                                     AutomationProperties.Name="File payroll"
+                                     AutomationProperties.Name="{loc:Loc Wizard_PayrollFileAutomationName}"
                                      Text="{Binding SelectedFilePath, UpdateSourceTrigger=PropertyChanged}"
                                      IsReadOnly="True" Style="{StaticResource FieldInput}" Margin="0,0,10,0" />
                             <Button Grid.Column="1" AutomationProperties.AutomationId="PickPayrollFile"
-                                    Content="PILIH FILE .XLSX" Click="PickFile_Click"
+                                    Content="{loc:Loc Wizard_SelectFile}" Click="PickFile_Click"
                                     Style="{StaticResource OutlinedButton}" />
                         </Grid>
 
@@ -59,23 +60,23 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <StackPanel>
-                                <TextBlock Text="PERIODE PAYROLL" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
+                                <TextBlock Text="{loc:Loc Wizard_PayrollPeriod}" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
                                 <TextBox AutomationProperties.AutomationId="PayrollPeriod"
-                                         AutomationProperties.Name="Periode payroll"
+                                         AutomationProperties.Name="{loc:Loc Wizard_PayrollPeriodAutomationName}"
                                          Text="{Binding Period, UpdateSourceTrigger=PropertyChanged}"
                                          Style="{StaticResource FieldInput}" />
                             </StackPanel>
                             <StackPanel Grid.Column="2">
-                                <TextBlock Text="TANGGAL PEMBAYARAN" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
+                                <TextBlock Text="{loc:Loc Wizard_PaymentDate}" Style="{StaticResource MicroLabel}" Margin="0,0,0,8" />
                                 <DatePicker AutomationProperties.AutomationId="PaymentDate"
-                                            AutomationProperties.Name="Tanggal pembayaran"
+                                            AutomationProperties.Name="{loc:Loc Wizard_PaymentDateAutomationName}"
                                             SelectedDate="{Binding PaymentDate}" Style="{StaticResource FieldPicker}" />
                             </StackPanel>
                         </Grid>
                     </StackPanel>
                 </Border>
 
-                <TextBlock Grid.Row="2" Text="Periode dan tanggal harus sama dengan file sumber untuk menjaga konsistensi slip."
+                <TextBlock Grid.Row="2" Text="{loc:Loc Wizard_SelectConsistencyNote}"
                            Style="{StaticResource MutedText}" Margin="0,12,0,0" />
             </Grid>
         </DataTemplate>
@@ -90,12 +91,12 @@
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
                     <Border Style="{StaticResource StatusBadge}" Margin="0,0,8,0">
                         <TextBlock Style="{StaticResource LabelText}">
-                            <Run Text="PENERIMA  " /><Run Text="{Binding RecipientCount, Mode=OneWay}" />
+                            <Run Text="{loc:Loc Wizard_RecipientsCount}" /><Run Text="  " /><Run Text="{Binding RecipientCount, Mode=OneWay}" />
                         </TextBlock>
                     </Border>
                     <Border Style="{StaticResource StatusBadge}"
                             Visibility="{Binding IsResumeMode, Converter={StaticResource BoolToVis}}">
-                        <TextBlock Text="PENERIMA MEMENUHI SYARAT" Style="{StaticResource LabelText}" />
+                        <TextBlock Text="{loc:Loc Wizard_EligibleRecipients}" Style="{StaticResource LabelText}" />
                     </Border>
                 </StackPanel>
                 <Border Grid.Row="1" Style="{StaticResource Card}" Padding="0">
@@ -103,16 +104,16 @@
                               ItemsSource="{Binding ValidationRows}" Style="{StaticResource EditorialDataGrid}"
                               AutoGenerateColumns="False" IsReadOnly="True">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="BARIS" Binding="{Binding RowNumber}" Width="60" />
+                            <DataGridTextColumn Header="{loc:Loc Grid_Row}" Binding="{Binding RowNumber}" Width="60" />
                             <DataGridTextColumn Header="NIK" Binding="{Binding Nik}" Width="110" />
-                            <DataGridTextColumn Header="NAMA" Binding="{Binding Name}" Width="*" />
+                            <DataGridTextColumn Header="{loc:Loc Grid_Name}" Binding="{Binding Name}" Width="*" />
                             <DataGridTextColumn Header="EMAIL" Binding="{Binding Email}" Width="*" />
-                            <DataGridTextColumn Header="MASALAH" Binding="{Binding IssueSummary}" Width="210" />
+                            <DataGridTextColumn Header="{loc:Loc Grid_Issue}" Binding="{Binding IssueSummary}" Width="210" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </Border>
                 <CheckBox Grid.Row="2" IsChecked="{Binding WarningConfirmed}" Margin="0,14,0,0"
-                          Content="Saya telah meninjau peringatan dan mengonfirmasi data dapat diproses."
+                          Content="{loc:Loc Wizard_WarningConfirmation}"
                           Visibility="{Binding HasWarnings, Converter={StaticResource BoolToVis}}" />
             </Grid>
         </DataTemplate>
@@ -126,11 +127,11 @@
                 </Grid.ColumnDefinitions>
                 <Border Style="{StaticResource Card}">
                     <StackPanel>
-                        <TextBlock Text="EMAIL PENGANTAR" Style="{StaticResource MicroLabel}" />
-                        <TextBlock Text="SUBJEK" Style="{StaticResource LabelText}" Margin="0,16,0,8" />
+                        <TextBlock Text="{loc:Loc Wizard_EmailDelivery}" Style="{StaticResource MicroLabel}" />
+                        <TextBlock Text="{loc:Loc Wizard_Subject}" Style="{StaticResource LabelText}" Margin="0,16,0,8" />
                         <TextBox Text="{Binding EmailSubject, UpdateSourceTrigger=PropertyChanged}"
                                  Style="{StaticResource FieldInput}" />
-                        <TextBlock Text="ISI EMAIL" Style="{StaticResource LabelText}" Margin="0,18,0,8" />
+                        <TextBlock Text="{loc:Loc Wizard_EmailBody}" Style="{StaticResource LabelText}" Margin="0,18,0,8" />
                         <TextBox Text="{Binding EmailBody, UpdateSourceTrigger=PropertyChanged}"
                                  AcceptsReturn="True" TextWrapping="Wrap" MinHeight="180"
                                  VerticalScrollBarVisibility="Auto" Style="{StaticResource FieldInput}" />
@@ -139,26 +140,26 @@
                 <StackPanel Grid.Column="2">
                     <Border Style="{StaticResource Card}" Margin="0,0,0,14">
                         <StackPanel>
-                            <TextBlock Text="PRATINJAU SLIP" Style="{StaticResource MicroLabel}" />
-                            <TextBlock Text="Buka satu contoh PDF sebelum pengiriman."
+                            <TextBlock Text="{loc:Loc Wizard_PayslipPreview}" Style="{StaticResource MicroLabel}" />
+                            <TextBlock Text="{loc:Loc Wizard_PreviewDescription}"
                                        Style="{StaticResource MutedText}" Margin="0,8,0,14" TextWrapping="Wrap" />
                             <Button AutomationProperties.AutomationId="PreviewPdf"
-                                    Content="BUKA PRATINJAU PDF" Click="OpenPreview_Click"
+                                    Content="{loc:Loc ButtonOpenPreview}" Click="OpenPreview_Click"
                                     IsEnabled="{Binding CanGeneratePreview}"
                                     Style="{StaticResource OutlinedButton}" HorizontalAlignment="Stretch" />
                         </StackPanel>
                     </Border>
                     <Border Style="{StaticResource Card}">
                         <StackPanel>
-                            <TextBlock Text="RINGKASAN" Style="{StaticResource MicroLabel}" />
+                            <TextBlock Text="{loc:Loc Wizard_Summary}" Style="{StaticResource MicroLabel}" />
                             <TextBlock Style="{StaticResource BodyText}" Margin="0,14,0,8">
-                                <Run Text="Penerima  " /><Run Text="{Binding RecipientCount, Mode=OneWay}" FontWeight="SemiBold" />
+                                <Run Text="{loc:Loc Wizard_RecipientsPrefix}" /><Run Text="{Binding RecipientCount, Mode=OneWay}" FontWeight="SemiBold" />
                             </TextBlock>
                             <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,8">
-                                <Run Text="Gmail  " /><Run Text="{Binding GmailStatusText, Mode=OneWay}" FontWeight="SemiBold" />
+                                <Run Text="{loc:Loc Wizard_GmailPrefix}" /><Run Text="{Binding GmailStatusText, Mode=OneWay}" FontWeight="SemiBold" />
                             </TextBlock>
                             <TextBlock Style="{StaticResource BodyText}">
-                                <Run Text="Stamp  " /><Run Text="{Binding StampStatusText, Mode=OneWay}" FontWeight="SemiBold" />
+                                <Run Text="{loc:Loc Wizard_StampPrefix}" /><Run Text="{Binding StampStatusText, Mode=OneWay}" FontWeight="SemiBold" />
                             </TextBlock>
                         </StackPanel>
                     </Border>
@@ -175,28 +176,28 @@
                 </Grid.ColumnDefinitions>
                 <Border Style="{StaticResource Card}">
                     <StackPanel>
-                        <TextBlock Text="RINGKASAN BATCH" Style="{StaticResource MicroLabel}" />
+                        <TextBlock Text="{loc:Loc Wizard_BatchSummary}" Style="{StaticResource MicroLabel}" />
                         <TextBlock Style="{StaticResource BodyText}" Margin="0,16,0,10">
-                            <Run Text="Periode" /><LineBreak /><Run Text="{Binding Period}" FontWeight="SemiBold" />
+                            <Run Text="{loc:Loc Wizard_Period}" /><LineBreak /><Run Text="{Binding Period}" FontWeight="SemiBold" />
                         </TextBlock>
                         <TextBlock Style="{StaticResource BodyText}" Margin="0,0,0,10">
-                            <Run Text="Penerima" /><LineBreak /><Run Text="{Binding RecipientCount, Mode=OneWay}" FontWeight="SemiBold" />
+                            <Run Text="{loc:Loc Wizard_Recipients}" /><LineBreak /><Run Text="{Binding RecipientCount, Mode=OneWay}" FontWeight="SemiBold" />
                         </TextBlock>
                         <TextBlock Style="{StaticResource BodyText}">
-                            <Run Text="Akun Gmail" /><LineBreak /><Run Text="{Binding ConnectedGmail}" FontWeight="SemiBold" />
+                            <Run Text="{loc:Loc Wizard_GmailAccount}" /><LineBreak /><Run Text="{Binding ConnectedGmail}" FontWeight="SemiBold" />
                         </TextBlock>
                     </StackPanel>
                 </Border>
                 <StackPanel Grid.Column="2">
                     <Border Style="{StaticResource Card}">
                         <StackPanel>
-                            <TextBlock Text="PRASYARAT KIRIM" Style="{StaticResource MicroLabel}" />
+                            <TextBlock Text="{loc:Loc Wizard_SendPrerequisites}" Style="{StaticResource MicroLabel}" />
                             <Grid Margin="0,16,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Gmail terhubung" Style="{StaticResource BodyText}" />
+                                <TextBlock Text="{loc:Loc Wizard_GmailConnected}" Style="{StaticResource BodyText}" />
                                 <Border Grid.Column="1" Style="{StaticResource StatusBadge}">
                                     <TextBlock Text="{Binding GmailStatusText}" Style="{StaticResource LabelText}" />
                                 </Border>
@@ -206,7 +207,7 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Stamp perusahaan" Style="{StaticResource BodyText}" />
+                                <TextBlock Text="{loc:Loc Wizard_CompanyStamp}" Style="{StaticResource BodyText}" />
                                 <Border Grid.Column="1" Style="{StaticResource StatusBadge}">
                                     <TextBlock Text="{Binding StampStatusText}" Style="{StaticResource LabelText}" />
                                 </Border>
@@ -215,11 +216,11 @@
                     </Border>
                     <Border Background="{StaticResource FogBrush}" BorderBrush="{StaticResource EmberRedBrush}"
                             BorderThickness="2,0,0,0" Padding="16,12" Margin="0,14,0,14">
-                        <TextBlock Text="Pengiriman tidak dapat dihentikan setelah konfirmasi."
+                        <TextBlock Text="{loc:Loc ConfirmCannotStop}"
                                    Style="{StaticResource BodyText}" TextWrapping="Wrap" />
                     </Border>
                     <Button AutomationProperties.AutomationId="ConfirmSend"
-                            Content="KONFIRMASI &amp; KIRIM" Command="{Binding ConfirmSendCommand}"
+                            Content="{loc:Loc ButtonConfirmSend}" Command="{Binding ConfirmSendCommand}"
                             Style="{StaticResource PrimaryButton}" HorizontalAlignment="Stretch" />
                 </StackPanel>
             </Grid>
@@ -234,7 +235,7 @@
                 </Grid.RowDefinitions>
                 <Border Style="{StaticResource Card}">
                     <StackPanel>
-                        <TextBlock Text="PENGIRIMAN BERLANGSUNG" Style="{StaticResource MicroLabel}" />
+                        <TextBlock Text="{loc:Loc Wizard_Sending}" Style="{StaticResource MicroLabel}" />
                         <TextBlock Style="{StaticResource DisplayHeading}" FontSize="42" Margin="0,12,0,14">
                             <Run Text="{Binding CurrentRecipient}" /><Run Text=" / " /><Run Text="{Binding TotalRecipients}" />
                         </TextBlock>
@@ -246,20 +247,20 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <StackPanel>
-                                <TextBlock Text="PENERIMA SAAT INI" Style="{StaticResource MicroLabel}" />
+                                <TextBlock Text="{loc:Loc Wizard_CurrentRecipient}" Style="{StaticResource MicroLabel}" />
                                 <TextBlock Style="{StaticResource BodyText}" Margin="0,8,0,4">
-                                    <Run Text="NIK akhir  " /><Run Text="{Binding CurrentNik}" FontWeight="SemiBold" />
+                                    <Run Text="{loc:Loc Wizard_LastNikPrefix}" /><Run Text="{Binding CurrentNik}" FontWeight="SemiBold" />
                                 </TextBlock>
                                 <TextBlock Text="{Binding CurrentName}" Style="{StaticResource BodyText}" />
                             </StackPanel>
                             <StackPanel Grid.Column="1">
-                                <TextBlock Text="PROGRES" Style="{StaticResource MicroLabel}" />
+                                <TextBlock Text="{loc:Loc Wizard_Progress}" Style="{StaticResource MicroLabel}" />
                                 <TextBlock Style="{StaticResource BodyText}" Margin="0,8,0,4">
-                                    <Run Text="Terkirim  " /><Run Text="{Binding SentCount}" FontWeight="SemiBold" />
-                                    <Run Text="   Gagal  " /><Run Text="{Binding FailedCount}" FontWeight="SemiBold" />
+                                    <Run Text="{loc:Loc Wizard_SentPrefix}" /><Run Text="{Binding SentCount}" FontWeight="SemiBold" />
+                                    <Run Text="   " /><Run Text="{loc:Loc Wizard_FailedPrefix}" /><Run Text="{Binding FailedCount}" FontWeight="SemiBold" />
                                 </TextBlock>
                                 <TextBlock Style="{StaticResource MutedText}">
-                                    <Run Text="Percobaan saat ini: " /><Run Text="{Binding CurrentAttempt}" />
+                                    <Run Text="{loc:Loc Wizard_CurrentAttemptPrefix}" /><Run Text="{Binding CurrentAttempt}" />
                                 </TextBlock>
                             </StackPanel>
                         </Grid>
@@ -267,7 +268,7 @@
                 </Border>
                 <Border Grid.Row="1" Background="{StaticResource FogBrush}" BorderBrush="{StaticResource EmberRedBrush}"
                         BorderThickness="2,0,0,0" Padding="16,12" Margin="0,14,0,0">
-                    <TextBlock Text="Jangan tutup aplikasi atau berpindah halaman hingga proses selesai."
+                    <TextBlock Text="{loc:Loc Wizard_DoNotClose}"
                                Style="{StaticResource BodyText}" />
                 </Border>
             </Grid>
@@ -282,10 +283,10 @@
                 <Border Style="{StaticResource Card}" Margin="0,0,0,14">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Style="{StaticResource SectionHeading}" Margin="0,0,28,0">
-                            <Run Text="TERKIRIM  " /><Run Text="{Binding SentCount}" />
+                            <Run Text="{loc:Loc Wizard_Sent}" /><Run Text="  " /><Run Text="{Binding SentCount}" />
                         </TextBlock>
                         <TextBlock Style="{StaticResource SectionHeading}">
-                            <Run Text="GAGAL  " /><Run Text="{Binding FailedCount}" Foreground="{StaticResource EmberRedBrush}" />
+                            <Run Text="{loc:Loc Wizard_Failed}" /><Run Text="  " /><Run Text="{Binding FailedCount}" Foreground="{StaticResource EmberRedBrush}" />
                         </TextBlock>
                     </StackPanel>
                 </Border>
@@ -295,10 +296,10 @@
                               AutoGenerateColumns="False" IsReadOnly="True">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="NIK" Binding="{Binding Nik}" Width="110" />
-                            <DataGridTextColumn Header="NAMA" Binding="{Binding Name}" Width="*" />
+                            <DataGridTextColumn Header="{loc:Loc Grid_Name}" Binding="{Binding Name}" Width="*" />
                             <DataGridTextColumn Header="EMAIL" Binding="{Binding Email}" Width="*" />
-                            <DataGridTextColumn Header="PERC." Binding="{Binding AttemptsMade}" Width="70" />
-                            <DataGridTextColumn Header="ALASAN" Binding="{Binding ErrorMessage}" Width="*" />
+                            <DataGridTextColumn Header="{loc:Loc Grid_AttemptsAbbreviation}" Binding="{Binding AttemptsMade}" Width="70" />
+                            <DataGridTextColumn Header="{loc:Loc Grid_Reason}" Binding="{Binding ErrorMessage}" Width="*" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </Border>
@@ -320,8 +321,8 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel>
-                <TextBlock Text="Proses Payroll" Style="{StaticResource PageTitle}" />
-                <TextBlock Text="Validasi data dan periksa setiap pengaman sebelum pengiriman."
+                <TextBlock Text="{loc:Loc Wizard_Title}" Style="{StaticResource PageTitle}" />
+                <TextBlock Text="{loc:Loc Wizard_Subtitle}"
                            Style="{StaticResource PageSubtitle}" />
             </StackPanel>
             <Border Grid.Column="1" Style="{StaticResource StatusBadge}" VerticalAlignment="Bottom">
@@ -343,7 +344,7 @@
                         </Style.Triggers>
                     </Style>
                 </Border.Style>
-                <TextBlock Text="01  PILIH" Style="{StaticResource LabelText}" TextAlignment="Center" />
+                <TextBlock Text="{loc:Loc Wizard_StepSelect}" Style="{StaticResource LabelText}" TextAlignment="Center" />
             </Border>
             <Border Margin="0,0,6,0">
                 <Border.Style><Style TargetType="Border" BasedOn="{StaticResource ProgressStep}"><Style.Triggers>
@@ -353,7 +354,7 @@
                     <DataTrigger Binding="{Binding StepIndex}" Value="4"><Setter Property="Background" Value="{StaticResource FogBrush}" /></DataTrigger>
                     <DataTrigger Binding="{Binding StepIndex}" Value="5"><Setter Property="Background" Value="{StaticResource FogBrush}" /></DataTrigger>
                 </Style.Triggers></Style></Border.Style>
-                <TextBlock Text="02  VALIDASI" Style="{StaticResource LabelText}" TextAlignment="Center" />
+                <TextBlock Text="{loc:Loc Wizard_StepValidate}" Style="{StaticResource LabelText}" TextAlignment="Center" />
             </Border>
             <Border Margin="0,0,6,0">
                 <Border.Style><Style TargetType="Border" BasedOn="{StaticResource ProgressStep}"><Style.Triggers>
@@ -362,7 +363,7 @@
                     <DataTrigger Binding="{Binding StepIndex}" Value="4"><Setter Property="Background" Value="{StaticResource FogBrush}" /></DataTrigger>
                     <DataTrigger Binding="{Binding StepIndex}" Value="5"><Setter Property="Background" Value="{StaticResource FogBrush}" /></DataTrigger>
                 </Style.Triggers></Style></Border.Style>
-                <TextBlock Text="03  EMAIL" Style="{StaticResource LabelText}" TextAlignment="Center" />
+                <TextBlock Text="{loc:Loc Wizard_StepEmail}" Style="{StaticResource LabelText}" TextAlignment="Center" />
             </Border>
             <Border Margin="0,0,6,0">
                 <Border.Style><Style TargetType="Border" BasedOn="{StaticResource ProgressStep}"><Style.Triggers>
@@ -370,20 +371,20 @@
                     <DataTrigger Binding="{Binding StepIndex}" Value="4"><Setter Property="Background" Value="{StaticResource FogBrush}" /></DataTrigger>
                     <DataTrigger Binding="{Binding StepIndex}" Value="5"><Setter Property="Background" Value="{StaticResource FogBrush}" /></DataTrigger>
                 </Style.Triggers></Style></Border.Style>
-                <TextBlock Text="04  KONFIRMASI" Style="{StaticResource LabelText}" TextAlignment="Center" />
+                <TextBlock Text="{loc:Loc Wizard_StepConfirm}" Style="{StaticResource LabelText}" TextAlignment="Center" />
             </Border>
             <Border Margin="0,0,6,0">
                 <Border.Style><Style TargetType="Border" BasedOn="{StaticResource ProgressStep}"><Style.Triggers>
                     <DataTrigger Binding="{Binding StepIndex}" Value="4"><Setter Property="BorderBrush" Value="{StaticResource EmberRedBrush}" /><Setter Property="BorderThickness" Value="2" /></DataTrigger>
                     <DataTrigger Binding="{Binding StepIndex}" Value="5"><Setter Property="Background" Value="{StaticResource FogBrush}" /></DataTrigger>
                 </Style.Triggers></Style></Border.Style>
-                <TextBlock Text="05  KIRIM" Style="{StaticResource LabelText}" TextAlignment="Center" />
+                <TextBlock Text="{loc:Loc Wizard_StepSend}" Style="{StaticResource LabelText}" TextAlignment="Center" />
             </Border>
             <Border>
                 <Border.Style><Style TargetType="Border" BasedOn="{StaticResource ProgressStep}"><Style.Triggers>
                     <DataTrigger Binding="{Binding StepIndex}" Value="5"><Setter Property="BorderBrush" Value="{StaticResource EmberRedBrush}" /><Setter Property="BorderThickness" Value="2" /></DataTrigger>
                 </Style.Triggers></Style></Border.Style>
-                <TextBlock Text="06  HASIL" Style="{StaticResource LabelText}" TextAlignment="Center" />
+                <TextBlock Text="{loc:Loc Wizard_StepResults}" Style="{StaticResource LabelText}" TextAlignment="Center" />
             </Border>
         </UniformGrid>
 
@@ -416,14 +417,14 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock Text="Periksa kembali data sebelum melanjutkan."
+            <TextBlock Text="{loc:Loc Wizard_ReviewBeforeContinue}"
                        Style="{StaticResource MutedText}" VerticalAlignment="Center" />
             <Button Grid.Column="1" AutomationProperties.AutomationId="WizardBack"
-                    Content="KEMBALI" Command="{Binding BackCommand}"
+                    Content="{loc:Loc ButtonBack}" Command="{Binding BackCommand}"
                     Style="{StaticResource OutlinedButton}" Margin="0,0,8,0"
                     Visibility="{Binding CanGoBack, Converter={StaticResource BoolToVis}}" />
             <Button Grid.Column="2" AutomationProperties.AutomationId="WizardNext"
-                    Content="LANJUT" Command="{Binding NextCommand}"
+                    Content="{loc:Loc ButtonNext}" Command="{Binding NextCommand}"
                     Style="{StaticResource PrimaryButton}"
                     Visibility="{Binding CanGoNext, Converter={StaticResource BoolToVis}}" />
         </Grid>

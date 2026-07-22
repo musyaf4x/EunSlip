@@ -1,6 +1,7 @@
 <UserControl x:Class="EunSlip.Desktop.Views.AboutView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:EunSlip.Desktop.Localization">
     <ScrollViewer Background="{StaticResource PaperWhiteBrush}"
                   VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <Grid Style="{StaticResource PageFrame}" MaxWidth="920" HorizontalAlignment="Left">
@@ -11,8 +12,8 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0" Margin="0,0,0,24">
-                <TextBlock Text="Tentang Aplikasi" Style="{StaticResource PageTitle}" />
-                <TextBlock Text="Identitas produk, lisensi penggunaan, dan lokasi diagnostik."
+                <TextBlock Text="{loc:Loc About_Title}" Style="{StaticResource PageTitle}" />
+                <TextBlock Text="{loc:Loc About_Subtitle}"
                            Style="{StaticResource PageSubtitle}" Margin="0,6,0,0" />
             </StackPanel>
 
@@ -28,19 +29,21 @@
                         <Image Source="/EunSlip.Desktop;component/Assets/eunslip-logo-black-01.png"
                                Width="52" Height="52" Stretch="Uniform"
                                HorizontalAlignment="Left" Margin="0,16,0,12"
-                               AutomationProperties.Name="EunSlip logo"
+                               AutomationProperties.Name="{loc:Loc Ui_EunSlipLogoAutomationName}"
                                RenderOptions.BitmapScalingMode="HighQuality" />
                         <TextBlock Text="{Binding AppName}" Style="{StaticResource SectionHeading}"
                                    Margin="0,0,0,8" />
-                        <TextBlock Text="{Binding Version, StringFormat='Versi {0}'}"
-                                   Style="{StaticResource BodyText}" />
-                        <TextBlock Text="{Binding Company, StringFormat='Untuk {0}'}"
-                                   Style="{StaticResource MutedText}" Margin="0,4,0,0" />
+                        <TextBlock Style="{StaticResource BodyText}">
+                            <Run Text="{loc:Loc About_VersionPrefix}" /><Run Text="{Binding Version}" />
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource MutedText}" Margin="0,4,0,0">
+                            <Run Text="{loc:Loc About_ForPrefix}" /><Run Text="{Binding Company}" />
+                        </TextBlock>
                     </StackPanel>
                 </Border>
                 <Border Grid.Column="2" Style="{StaticResource Card}">
                     <StackPanel>
-                        <TextBlock Text="DIKEMBANGKAN OLEH" Style="{StaticResource MicroLabel}" />
+                        <TextBlock Text="{loc:Loc About_DevelopedBy}" Style="{StaticResource MicroLabel}" />
                         <Image Source="/Assets/vierth.png" Height="35" HorizontalAlignment="Left"
                                RenderOptions.BitmapScalingMode="HighQuality" Margin="0,16,0,12" />
                         <TextBlock Text="{Binding Developer}" Style="{StaticResource SectionHeading}" />
@@ -53,14 +56,15 @@
             <Border Grid.Row="2" BorderBrush="{StaticResource MistBrush}"
                     BorderThickness="0,1,0,0" Padding="0,24,0,0">
                 <StackPanel>
-                    <TextBlock Text="LISENSI" Style="{StaticResource MicroLabel}" />
+                    <TextBlock Text="{loc:Loc About_License}" Style="{StaticResource MicroLabel}" />
                     <TextBlock Text="{Binding LicenseSummary}" Style="{StaticResource BodyText}"
                                TextWrapping="Wrap" Margin="0,12,0,8" />
                     <TextBlock Text="{Binding Disclaimer}" Style="{StaticResource MutedText}"
                                TextWrapping="Wrap" />
-                    <TextBlock Text="{Binding LogFolder, StringFormat='Folder log: {0}'}"
-                               FontFamily="{StaticResource TechnicalFont}" FontSize="13"
-                               TextWrapping="Wrap" Margin="0,20,0,0" />
+                    <TextBlock FontFamily="{StaticResource TechnicalFont}" FontSize="13"
+                               TextWrapping="Wrap" Margin="0,20,0,0">
+                        <Run Text="{loc:Loc About_LogFolderPrefix}" /><Run Text="{Binding LogFolder}" />
+                    </TextBlock>
                 </StackPanel>
             </Border>
         </Grid>

@@ -90,20 +90,31 @@ public sealed class ThemeContractTests
     public void SettingsView_KeepsCompleteGoogleCloudSetupTutorial()
     {
         string xaml = ReadRepositoryFile("src", "EunSlip.Desktop", "Views", "SettingsView.xaml");
+        string resources = ReadRepositoryFile("src", "EunSlip.Desktop", "Localization", "Strings.resx");
 
-        foreach (string instruction in new[]
+        foreach (string resourceKey in new[]
         {
-            "PANDUAN SETUP GOOGLE CLOUD &amp; OAUTH",
-            "1. Buka ",
-            "2. APIs &amp; Services",
-            "3. OAuth consent screen",
-            "4. Credentials",
-            "5. Download ",
-            "6. Buka isi file client_secret.json",
-            "7. Klik ",
+            "Settings_OAuthGuideHeader",
+            "Settings_GuideStep1",
+            "Settings_GuideStep2",
+            "Settings_GuideStep3",
+            "Settings_GuideStep4",
+            "Settings_GuideStep5",
+            "Settings_GuideStep6",
+            "Settings_GuideStep7",
+            "Settings_GuideNote",
         })
         {
-            Assert.Contains(instruction, xaml, StringComparison.Ordinal);
+            Assert.Contains($"{{loc:Loc {resourceKey}}}", xaml, StringComparison.Ordinal);
+            Assert.Contains($"name=\"{resourceKey}\"", resources, StringComparison.Ordinal);
+        }
+
+        foreach (string requiredDetail in new[]
+        {
+            "console.cloud.google.com", "Gmail API", "client_secret.json", "PT. EUNSUNG INDONESIA",
+        })
+        {
+            Assert.Contains(requiredDetail, resources, StringComparison.Ordinal);
         }
     }
 

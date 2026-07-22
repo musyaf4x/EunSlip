@@ -122,12 +122,12 @@ public sealed partial class HistoryViewModel(
             SelectedBatch = null;
             SelectedRecipients.Clear();
             ConfirmDelete = false;
-            StatusMessage = "Batch dihapus permanen.";
+            StatusMessage = Strings.Get("History_BatchDeleted");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Delete batch failed");
-            StatusMessage = "Gagal menghapus batch.";
+            StatusMessage = Strings.Get("History_BatchDeleteFailed");
         }
     }
 

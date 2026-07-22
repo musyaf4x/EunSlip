@@ -1,4 +1,5 @@
 using System.Windows.Controls;
+using EunSlip.Desktop.Localization;
 using Microsoft.Win32;
 
 namespace EunSlip.Desktop.Views;
@@ -26,8 +27,8 @@ public partial class SettingsView : UserControl
 
         OpenFileDialog dialog = new()
         {
-            Filter = "Gambar|*.png;*.jpg;*.jpeg",
-            Title = "Pilih gambar stamp",
+            Filter = $"{Strings.Get("Dialog_ImageFiles")}|*.png;*.jpg;*.jpeg",
+            Title = Strings.Get("Dialog_StampImageTitle"),
         };
 
         if (dialog.ShowDialog() == true)

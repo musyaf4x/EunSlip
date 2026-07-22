@@ -1,4 +1,5 @@
 using System.Windows.Controls;
+using EunSlip.Desktop.Localization;
 using EunSlip.Desktop.ViewModels;
 using Microsoft.Win32;
 
@@ -28,7 +29,7 @@ public partial class WizardView : UserControl
         OpenFileDialog dialog = new()
         {
             Filter = "Excel Workbook|*.xlsx",
-            Title = "Pilih file payroll",
+            Title = Strings.Get("Dialog_PayrollFileTitle"),
         };
 
         if (dialog.ShowDialog() == true)

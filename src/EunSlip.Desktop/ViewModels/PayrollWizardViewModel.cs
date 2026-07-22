@@ -50,10 +50,10 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
     private DateTime? _paymentDate;
 
     [ObservableProperty]
-    private string _emailSubject = "Slip Gaji Karyawan";
+    private string _emailSubject = Strings.Get("DefaultEmailSubject");
 
     [ObservableProperty]
-    private string _emailBody = "Yth. Bapak/Ibu,\n\nTerlampir kami sampaikan slip gaji Anda.\n\nMohon menjaga kerahasiaan dokumen ini dan tidak meneruskannya kepada pihak lain.\n\nTerima kasih.\n\nPT. EUNSUNG INDONESIA";
+    private string _emailBody = Strings.Get("DefaultEmailBody");
 
     [ObservableProperty]
     private string? _errorMessage;

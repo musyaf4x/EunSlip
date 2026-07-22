@@ -132,4 +132,146 @@
   <data name="PayrollRunMode_Normal" xml:space="preserve"><value>Proses normal</value></data>
   <data name="PayrollRunMode_FailedRetry" xml:space="preserve"><value>Kirim ulang gagal</value></data>
   <data name="PayrollRunMode_RecoveryRetry" xml:space="preserve"><value>Pemulihan batch</value></data>
+  <data name="Ui_EunSlipLogoAutomationName" xml:space="preserve"><value>Logo EunSlip</value></data>
+  <data name="Ui_DevelopedByVierthLabs" xml:space="preserve"><value>DIKEMBANGKAN OLEH VIERTH LABS</value></data>
+  <data name="Ui_Language" xml:space="preserve"><value>BAHASA</value></data>
+  <data name="Common_Delete" xml:space="preserve"><value>HAPUS</value></data>
+  <data name="Common_Cancel" xml:space="preserve"><value>BATAL</value></data>
+  <data name="Common_YesDelete" xml:space="preserve"><value>YA, HAPUS</value></data>
+  <data name="Grid_Row" xml:space="preserve"><value>BARIS</value></data>
+  <data name="Grid_Name" xml:space="preserve"><value>NAMA</value></data>
+  <data name="Grid_Issue" xml:space="preserve"><value>MASALAH</value></data>
+  <data name="Grid_Period" xml:space="preserve"><value>PERIODE</value></data>
+  <data name="Grid_Status" xml:space="preserve"><value>STATUS</value></data>
+  <data name="Grid_Sent" xml:space="preserve"><value>KIRIM</value></data>
+  <data name="Grid_Failed" xml:space="preserve"><value>GAGAL</value></data>
+  <data name="Grid_Type" xml:space="preserve"><value>TIPE</value></data>
+  <data name="Grid_Attempt" xml:space="preserve"><value>COBA</value></data>
+  <data name="Grid_Time" xml:space="preserve"><value>WAKTU</value></data>
+  <data name="Grid_CategoryAbbreviation" xml:space="preserve"><value>KAT.</value></data>
+  <data name="Grid_Detail" xml:space="preserve"><value>DETAIL</value></data>
+  <data name="Grid_AttemptsAbbreviation" xml:space="preserve"><value>PERC.</value></data>
+  <data name="Grid_Reason" xml:space="preserve"><value>ALASAN</value></data>
+
+  <data name="Home_Title" xml:space="preserve"><value>EUNSLIP PAYROLL DELIVERY</value></data>
+  <data name="Home_Subtitle" xml:space="preserve"><value>Proses slip gaji dengan alur yang terverifikasi.</value></data>
+  <data name="Home_Description" xml:space="preserve"><value>Validasi data, tinjau hasil, lalu kirim melalui Gmail payroll.</value></data>
+  <data name="Home_SystemReadiness" xml:space="preserve"><value>KESIAPAN SISTEM</value></data>
+  <data name="Home_SystemReadinessDescription" xml:space="preserve"><value>Pastikan prasyarat pengiriman tersedia.</value></data>
+  <data name="Home_ManagedThroughSettings" xml:space="preserve"><value>Dikelola melalui Pengaturan</value></data>
+  <data name="Home_LanguageRestartNote" xml:space="preserve"><value>Aktif setelah aplikasi dimulai ulang</value></data>
+  <data name="Home_ActionRequired" xml:space="preserve"><value>TINDAKAN DIPERLUKAN</value></data>
+  <data name="Home_LatestBatch" xml:space="preserve"><value>BATCH TERBARU</value></data>
+
+  <data name="Wizard_ResumeMode" xml:space="preserve"><value>MODE TINDAK LANJUT</value></data>
+  <data name="Wizard_ResumeDescription" xml:space="preserve"><value>Gunakan file payroll asli. Fingerprint akan diverifikasi sebelum penerima dipilih.</value></data>
+  <data name="Wizard_PayrollFile" xml:space="preserve"><value>FILE PAYROLL</value></data>
+  <data name="Wizard_PayrollFileAutomationName" xml:space="preserve"><value>File payroll</value></data>
+  <data name="Wizard_SelectFile" xml:space="preserve"><value>PILIH FILE .XLSX</value></data>
+  <data name="Wizard_PayrollPeriod" xml:space="preserve"><value>PERIODE PAYROLL</value></data>
+  <data name="Wizard_PayrollPeriodAutomationName" xml:space="preserve"><value>Periode payroll</value></data>
+  <data name="Wizard_PaymentDate" xml:space="preserve"><value>TANGGAL PEMBAYARAN</value></data>
+  <data name="Wizard_PaymentDateAutomationName" xml:space="preserve"><value>Tanggal pembayaran</value></data>
+  <data name="Wizard_SelectConsistencyNote" xml:space="preserve"><value>Periode dan tanggal harus sama dengan file sumber untuk menjaga konsistensi slip.</value></data>
+  <data name="Wizard_RecipientsCount" xml:space="preserve"><value>PENERIMA</value></data>
+  <data name="Wizard_EligibleRecipients" xml:space="preserve"><value>PENERIMA MEMENUHI SYARAT</value></data>
+  <data name="Wizard_WarningConfirmation" xml:space="preserve"><value>Saya telah meninjau peringatan dan mengonfirmasi data dapat diproses.</value></data>
+  <data name="Wizard_EmailDelivery" xml:space="preserve"><value>EMAIL PENGANTAR</value></data>
+  <data name="Wizard_Subject" xml:space="preserve"><value>SUBJEK</value></data>
+  <data name="Wizard_EmailBody" xml:space="preserve"><value>ISI EMAIL</value></data>
+  <data name="Wizard_PayslipPreview" xml:space="preserve"><value>PRATINJAU SLIP</value></data>
+  <data name="Wizard_PreviewDescription" xml:space="preserve"><value>Buka satu contoh PDF sebelum pengiriman.</value></data>
+  <data name="Wizard_Summary" xml:space="preserve"><value>RINGKASAN</value></data>
+  <data name="Wizard_RecipientsPrefix" xml:space="preserve"><value>Penerima: </value></data>
+  <data name="Wizard_GmailPrefix" xml:space="preserve"><value>Gmail: </value></data>
+  <data name="Wizard_StampPrefix" xml:space="preserve"><value>Stamp: </value></data>
+  <data name="Wizard_BatchSummary" xml:space="preserve"><value>RINGKASAN BATCH</value></data>
+  <data name="Wizard_Period" xml:space="preserve"><value>Periode</value></data>
+  <data name="Wizard_Recipients" xml:space="preserve"><value>Penerima</value></data>
+  <data name="Wizard_GmailAccount" xml:space="preserve"><value>Akun Gmail</value></data>
+  <data name="Wizard_SendPrerequisites" xml:space="preserve"><value>PRASYARAT KIRIM</value></data>
+  <data name="Wizard_GmailConnected" xml:space="preserve"><value>Gmail terhubung</value></data>
+  <data name="Wizard_CompanyStamp" xml:space="preserve"><value>Stamp perusahaan</value></data>
+  <data name="Wizard_Sending" xml:space="preserve"><value>PENGIRIMAN BERLANGSUNG</value></data>
+  <data name="Wizard_CurrentRecipient" xml:space="preserve"><value>PENERIMA SAAT INI</value></data>
+  <data name="Wizard_LastNikPrefix" xml:space="preserve"><value>NIK akhir: </value></data>
+  <data name="Wizard_Progress" xml:space="preserve"><value>PROGRES</value></data>
+  <data name="Wizard_SentPrefix" xml:space="preserve"><value>Terkirim: </value></data>
+  <data name="Wizard_FailedPrefix" xml:space="preserve"><value>Gagal: </value></data>
+  <data name="Wizard_CurrentAttemptPrefix" xml:space="preserve"><value>Percobaan saat ini: </value></data>
+  <data name="Wizard_DoNotClose" xml:space="preserve"><value>Jangan tutup aplikasi atau berpindah halaman hingga proses selesai.</value></data>
+  <data name="Wizard_Sent" xml:space="preserve"><value>TERKIRIM</value></data>
+  <data name="Wizard_Failed" xml:space="preserve"><value>GAGAL</value></data>
+  <data name="Wizard_Title" xml:space="preserve"><value>Proses Payroll</value></data>
+  <data name="Wizard_Subtitle" xml:space="preserve"><value>Validasi data dan periksa setiap pengaman sebelum pengiriman.</value></data>
+  <data name="Wizard_StepSelect" xml:space="preserve"><value>01  PILIH</value></data>
+  <data name="Wizard_StepValidate" xml:space="preserve"><value>02  VALIDASI</value></data>
+  <data name="Wizard_StepEmail" xml:space="preserve"><value>03  EMAIL</value></data>
+  <data name="Wizard_StepConfirm" xml:space="preserve"><value>04  KONFIRMASI</value></data>
+  <data name="Wizard_StepSend" xml:space="preserve"><value>05  KIRIM</value></data>
+  <data name="Wizard_StepResults" xml:space="preserve"><value>06  HASIL</value></data>
+  <data name="Wizard_ReviewBeforeContinue" xml:space="preserve"><value>Periksa kembali data sebelum melanjutkan.</value></data>
+
+  <data name="History_Title" xml:space="preserve"><value>Riwayat Payroll</value></data>
+  <data name="History_Subtitle" xml:space="preserve"><value>Tinjau hasil per batch, percobaan terakhir, dan tindak lanjut yang aman.</value></data>
+  <data name="History_Batches" xml:space="preserve"><value>BATCH</value></data>
+  <data name="History_SelectProcess" xml:space="preserve"><value>Pilih proses untuk melihat detail pengiriman.</value></data>
+  <data name="History_DeliveryDetails" xml:space="preserve"><value>DETAIL PENGIRIMAN</value></data>
+  <data name="History_SensitiveDataNote" xml:space="preserve"><value>Data sensitif disamarkan; detail teknis tersedia di log.</value></data>
+  <data name="History_RetryFailed" xml:space="preserve"><value>KIRIM ULANG GAGAL</value></data>
+  <data name="History_Recover" xml:space="preserve"><value>PULIHKAN</value></data>
+  <data name="History_SelectBatch" xml:space="preserve"><value>Pilih batch untuk melihat penerima dan percobaan pengiriman.</value></data>
+  <data name="History_DeleteConfirmation" xml:space="preserve"><value>Hapus permanen batch ini? Riwayat tidak dapat dikembalikan.</value></data>
+  <data name="History_DeletePermanent" xml:space="preserve"><value>HAPUS PERMANEN</value></data>
+  <data name="History_BatchDeleted" xml:space="preserve"><value>Batch dihapus permanen.</value></data>
+  <data name="History_BatchDeleteFailed" xml:space="preserve"><value>Gagal menghapus batch.</value></data>
+
+  <data name="Settings_Title" xml:space="preserve"><value>Pengaturan</value></data>
+  <data name="Settings_Subtitle" xml:space="preserve"><value>Kelola koneksi pengiriman, stamp, dan preferensi aplikasi.</value></data>
+  <data name="Settings_Connect" xml:space="preserve"><value>HUBUNGKAN</value></data>
+  <data name="Settings_Connecting" xml:space="preserve"><value>MENGHUBUNGKAN…</value></data>
+  <data name="Settings_Disconnect" xml:space="preserve"><value>PUTUSKAN</value></data>
+  <data name="Settings_SelectImage" xml:space="preserve"><value>PILIH GAMBAR</value></data>
+  <data name="Settings_RemoveStampConfirmation" xml:space="preserve"><value>Hapus stamp aktif? Pengiriman diblokir sampai stamp baru dipilih.</value></data>
+  <data name="Settings_SaveCredentials" xml:space="preserve"><value>SIMPAN KREDENSIAL</value></data>
+  <data name="Settings_OAuthSecretAutomationName" xml:space="preserve"><value>JSON rahasia klien OAuth</value></data>
+  <data name="Settings_OAuthGuideHeader" xml:space="preserve"><value>PANDUAN SETUP GOOGLE CLOUD &amp; OAUTH</value></data>
+  <data name="Settings_GuideSteps" xml:space="preserve"><value>Langkah-langkah:</value></data>
+  <data name="Settings_GuideStep1" xml:space="preserve"><value>1. Buka console.cloud.google.com → buat / pilih project.</value></data>
+  <data name="Settings_GuideStep2" xml:space="preserve"><value>2. APIs &amp; Services → Library → aktifkan Gmail API.</value></data>
+  <data name="Settings_GuideStep3" xml:space="preserve"><value>3. OAuth consent screen: pilih Internal (jika Google Workspace), isi app name &amp; email.</value></data>
+  <data name="Settings_GuideStep4" xml:space="preserve"><value>4. Credentials → Create Credentials → OAuth client ID → type Desktop app.</value></data>
+  <data name="Settings_GuideStep5" xml:space="preserve"><value>5. Download client_secret.json.</value></data>
+  <data name="Settings_GuideStep6" xml:space="preserve"><value>6. Buka isi file client_secret.json, tempel ke kotak OAuth Client di atas, lalu klik Simpan Kredensial.</value></data>
+  <data name="Settings_GuideStep7" xml:space="preserve"><value>7. Klik Hubungkan — browser terbuka, login akun payroll Gmail, lalu izinkan akses.</value></data>
+  <data name="Settings_GuideNote" xml:space="preserve"><value>Catatan: gunakan akun payroll Gmail PT. EUNSUNG INDONESIA. Akun ini menjadi pengirim.</value></data>
+  <data name="Settings_LanguageLabel" xml:space="preserve"><value>Bahasa antarmuka</value></data>
+  <data name="Settings_LanguageRestartNote" xml:space="preserve"><value>Perubahan bahasa diterapkan setelah aplikasi dimulai ulang.</value></data>
+  <data name="Settings_OAuthSaved" xml:space="preserve"><value>Kredensial OAuth disimpan (terenkripsi DPAPI).</value></data>
+  <data name="Settings_OAuthSaveFailed" xml:space="preserve"><value>Gagal menyimpan kredensial OAuth.</value></data>
+  <data name="Settings_SaveOAuthFirst" xml:space="preserve"><value>Simpan kredensial OAuth di bawah ini dulu, lalu klik Hubungkan.</value></data>
+  <data name="Settings_OpeningBrowser" xml:space="preserve"><value>Membuka browser untuk otorisasi Gmail…</value></data>
+  <data name="Settings_OAuthCorrupt" xml:space="preserve"><value>Kredensial OAuth rusak. Tempel ulang dan simpan.</value></data>
+  <data name="Settings_GmailConnectedFormat" xml:space="preserve"><value>Gmail terhubung: {0}</value></data>
+  <data name="Settings_GmailConnectFailed" xml:space="preserve"><value>Gagal menghubungkan Gmail. Periksa kredensial / jaringan.</value></data>
+  <data name="Settings_GmailConnectErrorFormat" xml:space="preserve"><value>Gagal menghubungkan Gmail: {0}</value></data>
+  <data name="Settings_GmailDisconnected" xml:space="preserve"><value>Gmail diputus. Riwayat tetap dipertahankan.</value></data>
+  <data name="Settings_StampUpdated" xml:space="preserve"><value>Stamp diperbarui.</value></data>
+  <data name="Settings_LanguageSaved" xml:space="preserve"><value>Bahasa disimpan. Mulai ulang aplikasi untuk menerapkan.</value></data>
+
+  <data name="About_Title" xml:space="preserve"><value>Tentang Aplikasi</value></data>
+  <data name="About_Subtitle" xml:space="preserve"><value>Identitas produk, lisensi penggunaan, dan lokasi diagnostik.</value></data>
+  <data name="About_DevelopedBy" xml:space="preserve"><value>DIKEMBANGKAN OLEH</value></data>
+  <data name="About_VersionPrefix" xml:space="preserve"><value>Versi </value></data>
+  <data name="About_ForPrefix" xml:space="preserve"><value>Untuk </value></data>
+  <data name="About_License" xml:space="preserve"><value>LISENSI</value></data>
+  <data name="About_LogFolderPrefix" xml:space="preserve"><value>Folder log: </value></data>
+  <data name="About_LicenseSummary" xml:space="preserve"><value>EunSlip adalah perangkat lunak berpemilik yang dilisensikan kepada PT. EUNSUNG INDONESIA untuk penggunaan internal. Hak cipta 2026 Vierth Labs. Dilarang menyebarluaskan, memodifikasi, atau menjual ulang tanpa izin tertulis.</value></data>
+  <data name="About_Disclaimer" xml:space="preserve"><value>Perangkat lunak ini disediakan &quot;sebagaimana adanya&quot;. Vierth Labs tidak bertanggung jawab atas kerugian akibat penggunaan tidak langsung. Pengguna menanggung risiko penggunaan.</value></data>
+
+  <data name="Dialog_PayrollFileTitle" xml:space="preserve"><value>Pilih file payroll</value></data>
+  <data name="Dialog_ImageFiles" xml:space="preserve"><value>Gambar</value></data>
+  <data name="Dialog_StampImageTitle" xml:space="preserve"><value>Pilih gambar stamp</value></data>
+  <data name="DefaultEmailSubject" xml:space="preserve"><value>Slip Gaji Karyawan</value></data>
+  <data name="DefaultEmailBody" xml:space="preserve"><value>Yth. Bapak/Ibu,&#xA;&#xA;Terlampir kami sampaikan slip gaji Anda.&#xA;&#xA;Mohon menjaga kerahasiaan dokumen ini dan tidak meneruskannya kepada pihak lain.&#xA;&#xA;Terima kasih.&#xA;&#xA;PT. EUNSUNG INDONESIA</value></data>
 </root>

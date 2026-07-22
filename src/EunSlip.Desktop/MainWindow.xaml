@@ -1,6 +1,7 @@
 <Window x:Class="EunSlip.Desktop.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:EunSlip.Desktop.Localization"
         xmlns:vm="clr-namespace:EunSlip.Desktop.ViewModels"
         xmlns:v="clr-namespace:EunSlip.Desktop.Views"
         Title="EunSlip" Width="1180" Height="760" MinWidth="1024" MinHeight="680"
@@ -51,7 +52,7 @@
                     </Grid.ColumnDefinitions>
                     <Image Grid.Column="0" Source="/EunSlip.Desktop;component/Assets/eunslip-logo-black-01.png"
                            Width="40" Height="40" Stretch="Uniform"
-                           AutomationProperties.Name="EunSlip logo"
+                           AutomationProperties.Name="{loc:Loc Ui_EunSlipLogoAutomationName}"
                            RenderOptions.BitmapScalingMode="HighQuality" />
                     <StackPanel Grid.Column="2" VerticalAlignment="Center">
                         <TextBlock Text="EUNSLIP" FontFamily="{StaticResource BodyFont}"
@@ -139,7 +140,7 @@
                     <TextBlock Text="{Binding VersionText}" Style="{StaticResource MutedText}" Margin="0,4,0,12" />
                     <Image Source="/Assets/vierth.png" Height="28" HorizontalAlignment="Left"
                            RenderOptions.BitmapScalingMode="HighQuality" />
-                    <TextBlock Text="DEVELOPED BY VIERTH LABS" Style="{StaticResource MicroLabel}"
+                    <TextBlock Text="{loc:Loc Ui_DevelopedByVierthLabs}" Style="{StaticResource MicroLabel}"
                                Margin="0,8,0,0" />
                 </StackPanel>
             </Grid>
