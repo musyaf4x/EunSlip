@@ -5,7 +5,7 @@ namespace EunSlip.Desktop.Tests;
 
 public sealed class ThemeContractTests
 {
-    private static string ReadRepositoryFile(params string[] parts)
+    private static string RepositoryPath(params string[] parts)
     {
         DirectoryInfo? directory = new(AppContext.BaseDirectory);
         while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "EunSlip.slnx")))
@@ -14,8 +14,11 @@ public sealed class ThemeContractTests
         }
 
         Assert.NotNull(directory);
-        return File.ReadAllText(Path.Combine([directory.FullName, .. parts]), Encoding.UTF8);
+        return Path.Combine([directory.FullName, .. parts]);
     }
+
+    private static string ReadRepositoryFile(params string[] parts) =>
+        File.ReadAllText(RepositoryPath(parts), Encoding.UTF8);
 
     [Fact]
     public void Theme_DefinesRedesignResourcesAndBindsButtonBorders()
@@ -102,5 +105,40 @@ public sealed class ThemeContractTests
         {
             Assert.Contains(instruction, xaml, StringComparison.Ordinal);
         }
+    }
+
+    [Fact]
+    public void Branding_UsesSuppliedEunSlipLogoInShellAndAbout()
+    {
+        string project = ReadRepositoryFile("src", "EunSlip.Desktop", "EunSlip.Desktop.csproj");
+        string shell = ReadRepositoryFile("src", "EunSlip.Desktop", "MainWindow.xaml");
+        string about = ReadRepositoryFile("src", "EunSlip.Desktop", "Views", "AboutView.xaml");
+
+        Assert.Contains(
+            "<Resource Include=\"..\\..\\logo\\eunslip-logo-black-01.png\" Link=\"Assets\\eunslip-logo-black-01.png\" />",
+            project,
+            StringComparison.Ordinal);
+        Assert.Contains("Source=\"/Assets/eunslip-logo-black-01.png\"", shell, StringComparison.Ordinal);
+        Assert.Contains("Source=\"/Assets/eunslip-logo-black-01.png\"", about, StringComparison.Ordinal);
+        Assert.True(File.Exists(RepositoryPath("logo", "eunslip-logo-black-01.png")));
+    }
+
+    [Fact]
+    public void DesktopExecutable_UsesMultiSizeIconDerivedFromBackgroundLogo()
+    {
+        string project = ReadRepositoryFile("src", "EunSlip.Desktop", "EunSlip.Desktop.csproj");
+        string shell = ReadRepositoryFile("src", "EunSlip.Desktop", "MainWindow.xaml");
+        string sourceLogo = RepositoryPath("logo", "eunslip-logo-bg-01.png");
+        string iconPath = RepositoryPath("src", "EunSlip.Desktop", "Assets", "eunslip.ico");
+
+        Assert.Contains("<ApplicationIcon>Assets\\eunslip.ico</ApplicationIcon>", project, StringComparison.Ordinal);
+        Assert.Contains("Icon=\"/Assets/eunslip.ico\"", shell, StringComparison.Ordinal);
+        Assert.True(File.Exists(sourceLogo));
+        Assert.True(File.Exists(iconPath));
+
+        byte[] icon = File.ReadAllBytes(iconPath);
+        Assert.True(icon.Length > 6);
+        Assert.Equal(new byte[] { 0, 0, 1, 0 }, icon[..4]);
+        Assert.True(BitConverter.ToUInt16(icon, 4) >= 5);
     }
 }
