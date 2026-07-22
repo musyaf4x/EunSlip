@@ -44,11 +44,13 @@ public sealed class PayrollWizardViewModelTests
     private sealed class FakeCoordinator : IBatchCoordinator
     {
         public bool WasCalled { get; private set; }
+        public BatchRunRequest? LastRequest { get; private set; }
         public Task<BatchRunResult> RunBatchAsync(BatchRunRequest request, CancellationToken cancellationToken)
         {
             WasCalled = true;
+            LastRequest = request;
             List<RecipientResult> results = [.. request.Rows
-                .Select(r => new RecipientResult(r.Nik, r.Nama, "e@e.co", true, 1, null, null))];
+                .Select(r => new RecipientResult(r.Nik, r.Nama, r.Email, true, 1, null, null))];
             return Task.FromResult(new BatchRunResult(request.BatchId, results));
         }
     }
@@ -168,6 +170,28 @@ public sealed class PayrollWizardViewModelTests
         vm.SelectedFilePath = file;
         vm.Period = "JULY 2025";
         vm.PaymentDate = new DateTime(2026, 5, 11);
+    }
+
+    private static FakeReader ReaderWithRows(params PayrollRowInput[] rows) =>
+        new(_ => new WorkbookReadResult(PayrollContract.Headers, rows, []));
+
+    private static PayrollBatchRecord BatchForRows(Guid id, string period, params PayrollRowInput[] rows)
+    {
+        DateOnly paymentDate = new(2026, 5, 11);
+        ValidationResult validation = PayrollValidator.Validate(PayrollContract.Headers, rows, null);
+        string fingerprint = PayrollFingerprint.Compute(new BatchContext(period, paymentDate), validation.ValidRows);
+        return new PayrollBatchRecord(id, period, paymentDate, fingerprint, BatchStatus.Completed,
+            DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, true,
+            validation.ValidRows.Count, validation.ValidRows.Count - 1, 1);
+    }
+
+    private static void SeedRecipients(FakeRepository repository, Guid batchId, params string[] niks)
+    {
+        foreach (string nik in niks)
+        {
+            repository.AddRecipient(new BatchRecipientRecord(Guid.NewGuid(), batchId, nik,
+                $"{nik}@example.com", NikHint.LastFour(nik), RecipientStatus.Failed, DateTimeOffset.UtcNow));
+        }
     }
 
     [Fact]
@@ -342,6 +366,73 @@ public sealed class PayrollWizardViewModelTests
 
         Assert.Equal(WizardStep.Confirm, vm.CurrentStep);
         Assert.True(vm.ConfirmSendCommand.CanExecute(null));
+    }
+
+    [Fact]
+    public async Task FailedRetry_ReusesBatchFiltersRowsAndUsesFailedRetryAttemptType()
+    {
+        Guid batchId = Guid.NewGuid();
+        FakeCoordinator coordinator = new();
+        FakeRecovery recovery = new() { FailedNiks = ["NIK0002"] };
+        PayrollWizardViewModel vm = Create(out FakeRepository repository,
+            reader: ReaderWithRows(ValidInput(1), ValidInput(2)), coordinator: coordinator, recovery: recovery);
+        repository.CreateBatch(BatchForRows(batchId, "JULY 2025", ValidInput(1), ValidInput(2)));
+        SeedRecipients(repository, batchId, "NIK0001", "NIK0002");
+        Assert.True(vm.Begin(PayrollWizardEntry.FailedRetry(batchId)));
+        vm.SelectedFilePath = "payroll.xlsx";
+
+        await vm.NextCommand.ExecuteAsync(null);
+        vm.CurrentStep = WizardStep.Confirm;
+        await vm.LoadedCommand.ExecuteAsync(null);
+        await vm.ConfirmSendCommand.ExecuteAsync(null);
+
+        Assert.Equal(batchId, coordinator.LastRequest!.BatchId);
+        Assert.Equal(AttemptType.FailedRetry, coordinator.LastRequest.AttemptKind);
+        Assert.Single(coordinator.LastRequest.Rows, row => row.Nik == "NIK0002");
+        Assert.Empty(recovery.Prepared);
+    }
+
+    [Fact]
+    public async Task Recovery_PreparesOnlyAtConfirmedSendAndExcludesSentRecipients()
+    {
+        Guid batchId = Guid.NewGuid();
+        FakeCoordinator coordinator = new();
+        FakeRecovery recovery = new() { RecoveryNiks = ["NIK0002"] };
+        PayrollWizardViewModel vm = Create(out FakeRepository repository,
+            reader: ReaderWithRows(ValidInput(1), ValidInput(2)), coordinator: coordinator, recovery: recovery);
+        repository.CreateBatch(BatchForRows(batchId, "JULY 2025", ValidInput(1), ValidInput(2)) with
+        {
+            Status = BatchStatus.Interrupted,
+        });
+        SeedRecipients(repository, batchId, "NIK0001", "NIK0002");
+        Assert.True(vm.Begin(PayrollWizardEntry.RecoveryRetry(batchId)));
+        vm.SelectedFilePath = "payroll.xlsx";
+
+        await vm.NextCommand.ExecuteAsync(null);
+        Assert.Empty(recovery.Prepared);
+        vm.CurrentStep = WizardStep.Confirm;
+        await vm.LoadedCommand.ExecuteAsync(null);
+        await vm.ConfirmSendCommand.ExecuteAsync(null);
+
+        Assert.Single(recovery.Prepared, batchId);
+        Assert.Equal(AttemptType.RecoveryRetry, coordinator.LastRequest!.AttemptKind);
+        Assert.Single(coordinator.LastRequest.Rows, row => row.Nik == "NIK0002");
+    }
+
+    [Fact]
+    public async Task Resume_FingerprintMismatchBlocksBeforeRecipientFiltering()
+    {
+        FakeRecovery recovery = new() { FingerprintMatches = false };
+        PayrollWizardViewModel vm = Create(out FakeRepository repository, recovery: recovery);
+        Guid batchId = repository.CreateBatch(BatchForRows(Guid.NewGuid(), "JULY 2025", ValidInput(1)));
+        Assert.True(vm.Begin(PayrollWizardEntry.FailedRetry(batchId)));
+        vm.SelectedFilePath = "different.xlsx";
+
+        await vm.NextCommand.ExecuteAsync(null);
+
+        Assert.Equal(WizardStep.Select, vm.CurrentStep);
+        Assert.Contains("fingerprint", vm.ErrorMessage, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(repository.Batches, batch => batch.Id != batchId);
     }
 
     [Fact]

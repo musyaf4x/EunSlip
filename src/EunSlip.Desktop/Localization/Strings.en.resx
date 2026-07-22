@@ -109,4 +109,6 @@
   <data name="HistoryDetailLoadFailed" xml:space="preserve"><value>Batch details could not be loaded.</value></data>
   <data name="HistoryBatchMissing" xml:space="preserve"><value>The selected batch is no longer available.</value></data>
   <data name="PrerequisiteRefreshFailed" xml:space="preserve"><value>Gmail and stamp readiness could not be checked.</value></data>
+  <data name="RecoveryFingerprintMismatch" xml:space="preserve"><value>The file fingerprint does not match the original batch. Select the same payroll file.</value></data>
+  <data name="RecoveryNoEligibleRecipients" xml:space="preserve"><value>No recipients are eligible for resend.</value></data>
 </root>

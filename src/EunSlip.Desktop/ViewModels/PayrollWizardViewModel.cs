@@ -30,6 +30,7 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
     private readonly IAppRepository _repository;
     private readonly ISecretStore _secretStore;
     private readonly ITempFileService _tempFiles;
+    private readonly IRecoveryService _recovery;
     private readonly ILogger<PayrollWizardViewModel> _logger;
     private PayrollWizardEntry _entry = PayrollWizardEntry.Normal();
 
@@ -130,7 +131,7 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
         _repository = repository;
         _secretStore = secretStore;
         _tempFiles = tempFiles;
-        ArgumentNullException.ThrowIfNull(recovery);
+        _recovery = recovery;
         _logger = logger;
     }
 
@@ -183,6 +184,7 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
 
     public void Reset()
     {
+        _entry = PayrollWizardEntry.Normal();
         CurrentStep = WizardStep.Select;
         SelectedFilePath = null;
         Period = string.Empty;
@@ -206,6 +208,8 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
         FailedCount = 0;
         CurrentAttempt = 0;
         OnPropertyChanged(nameof(RecipientCount));
+        OnPropertyChanged(nameof(RunMode));
+        OnPropertyChanged(nameof(IsResumeMode));
     }
 
     [RelayCommand]
@@ -363,6 +367,11 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
         CurrentStep = WizardStep.Send;
         try
         {
+            if (_entry.Mode == PayrollRunMode.RecoveryRetry)
+            {
+                _recovery.PrepareForRecovery(_batchId);
+            }
+
             BatchRunRequest request = new(
                 new BatchContext(Period, DateOnly.FromDateTime(PaymentDate!.Value)),
                 _validRows,
@@ -370,7 +379,7 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
                 EmailBody,
                 "PT. EUNSUNG INDONESIA",
                 _batchId,
-                AttemptType.Normal,
+                _entry.AttemptType,
                 new Progress<BatchProgress>(OnProgress));
 
             TotalRecipients = _validRows.Count;
@@ -420,7 +429,9 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
         try
         {
             WorkbookReadResult read = _reader.Read(SelectedFilePath!);
-            IReadOnlyList<string> previouslySentNiks = _repository.FindPreviouslySentNiks(Period);
+            IReadOnlyList<string> previouslySentNiks = _entry.IsResume
+                ? []
+                : _repository.FindPreviouslySentNiks(Period);
             ValidationResult validation = PayrollValidator.Validate(
                 read.Headers, read.Rows,
                 previouslySentNiks.Count == 0 ? null : new HashSet<string>(previouslySentNiks, StringComparer.OrdinalIgnoreCase));
@@ -436,7 +447,32 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
                     row.Email ?? string.Empty, allIssues.FirstOrDefault(i => i.RowNumber == row.RowNumber)));
             }
 
-            _validRows = validation.ValidRows;
+            IReadOnlyList<PayrollRow> validatedRows = validation.ValidRows;
+            if (_entry.IsResume)
+            {
+                BatchContext context = new(Period, DateOnly.FromDateTime(PaymentDate!.Value));
+                RecoveryGate gate = _recovery.VerifyFingerprint(_batchId, context, validatedRows);
+                if (!gate.CanProceed)
+                {
+                    ErrorMessage = Strings.Get("RecoveryFingerprintMismatch");
+                    return;
+                }
+
+                IReadOnlyList<string> eligibleNiks = _entry.Mode == PayrollRunMode.FailedRetry
+                    ? _recovery.SelectRetryFailedNiks(_batchId)
+                    : _recovery.SelectRecoveryResendNiks(_batchId);
+                HashSet<string> eligible = new(eligibleNiks, StringComparer.OrdinalIgnoreCase);
+                _validRows = [.. validatedRows.Where(row => eligible.Contains(row.Nik))];
+                if (_validRows.Count == 0)
+                {
+                    ErrorMessage = Strings.Get("RecoveryNoEligibleRecipients");
+                    return;
+                }
+            }
+            else
+            {
+                _validRows = validatedRows;
+            }
             OnPropertyChanged(nameof(RecipientCount));
 
             bool blockingReadIssue = read.ReadIssues.Any(i => i.Severity == IssueSeverity.Blocking);
@@ -447,7 +483,10 @@ public sealed partial class PayrollWizardViewModel : ViewModelBase
             }
 
             HasWarnings = validation.Issues.Any(i => i.Severity == IssueSeverity.Warning);
-            _batchId = CreateBatchRecord();
+            if (!_entry.IsResume)
+            {
+                _batchId = CreateBatchRecord();
+            }
             CurrentStep = WizardStep.Validate;
         }
         catch (WorkbookUnreadableException ex)

@@ -110,4 +110,6 @@
   <data name="HistoryDetailLoadFailed" xml:space="preserve"><value>Detail batch tidak dapat dimuat.</value></data>
   <data name="HistoryBatchMissing" xml:space="preserve"><value>Batch yang dipilih tidak lagi tersedia.</value></data>
   <data name="PrerequisiteRefreshFailed" xml:space="preserve"><value>Status Gmail dan stamp tidak dapat diperiksa.</value></data>
+  <data name="RecoveryFingerprintMismatch" xml:space="preserve"><value>Fingerprint file tidak cocok dengan batch asli. Pilih file payroll yang sama.</value></data>
+  <data name="RecoveryNoEligibleRecipients" xml:space="preserve"><value>Tidak ada penerima yang memenuhi syarat untuk dikirim ulang.</value></data>
 </root>
