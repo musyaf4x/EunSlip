@@ -483,3 +483,4 @@ $RECYCLE.BIN/
 
 # Local agent tooling state
 .agent/
+.worktrees/
