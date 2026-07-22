@@ -15,6 +15,7 @@ function Resolve-IsccPath {
     $candidates = @(
         $RequestedPath,
         (Get-Command ISCC.exe -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1),
+        (Join-Path $env:LOCALAPPDATA 'Programs\Inno Setup 6\ISCC.exe'),
         'C:\Program Files (x86)\Inno Setup 6\ISCC.exe',
         'C:\Program Files\Inno Setup 6\ISCC.exe'
     ) | Where-Object { $_ }
@@ -65,7 +66,7 @@ function Compile-SandboxInstaller {
         [string]$DataPath
     )
 
-    & $Compiler @(
+    $compilerOutput = & $Compiler @(
         '/Qp',
         "/O$OutputPath",
         "/F$BaseName",
@@ -76,8 +77,10 @@ function Compile-SandboxInstaller {
         "/DInstallerBaseName=`"$BaseName`"",
         $InstallerScript
     )
-    if ($LASTEXITCODE -ne 0) {
-        throw "ISCC failed for sandbox installer version $Version with exit code $LASTEXITCODE."
+    $compilerExitCode = $LASTEXITCODE
+    $compilerOutput | ForEach-Object { Write-Host $_ }
+    if ($compilerExitCode -ne 0) {
+        throw "ISCC failed for sandbox installer version $Version with exit code $compilerExitCode."
     }
 
     $setupPath = Join-Path $OutputPath "$BaseName.exe"

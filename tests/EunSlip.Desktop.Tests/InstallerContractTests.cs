@@ -44,6 +44,7 @@ public sealed class InstallerContractTests
         Assert.Contains("--self-contained", script, StringComparison.Ordinal);
         Assert.Contains("ISCC.exe", script, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("EunSlip-Setup-x64.exe", script, StringComparison.Ordinal);
+        Assert.Contains("$env:LOCALAPPDATA", script, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -69,6 +70,7 @@ public sealed class InstallerContractTests
         Assert.Contains("oauth", script, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("stamp", script, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("Assert-Preserved", script, StringComparison.Ordinal);
+        Assert.Contains("$env:LOCALAPPDATA", script, StringComparison.Ordinal);
     }
 
     [Fact]

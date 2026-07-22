@@ -19,6 +19,7 @@ function Resolve-IsccPath {
     $candidates = @(
         $RequestedPath,
         (Get-Command ISCC.exe -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1),
+        (Join-Path $env:LOCALAPPDATA 'Programs\Inno Setup 6\ISCC.exe'),
         'C:\Program Files (x86)\Inno Setup 6\ISCC.exe',
         'C:\Program Files\Inno Setup 6\ISCC.exe'
     ) | Where-Object { $_ }
