@@ -102,6 +102,40 @@ public sealed class PayslipPdfGeneratorTests : IDisposable
             new PayslipPdfGenerator().Generate(Request(stampPath: garbage), output));
     }
 
+    [Fact]
+    public void Generate_WritesReferenceEvidenceWhenPathIsProvided()
+    {
+        string? output = Environment.GetEnvironmentVariable("EUNSLIP_PDF_EVIDENCE_PATH");
+        if (string.IsNullOrWhiteSpace(output))
+        {
+            return;
+        }
+
+        Directory.CreateDirectory(Path.GetDirectoryName(output)!);
+        new PayslipPdfGenerator().Generate(
+            Request(stampPath: FindRepositoryFile("vierth.png")),
+            output);
+
+        Assert.True(File.Exists(output));
+    }
+
+    private static string FindRepositoryFile(string fileName)
+    {
+        DirectoryInfo? directory = new(AppContext.BaseDirectory);
+        while (directory is not null)
+        {
+            string candidate = Path.Combine(directory.FullName, fileName);
+            if (File.Exists(candidate))
+            {
+                return candidate;
+            }
+
+            directory = directory.Parent;
+        }
+
+        throw new FileNotFoundException($"Repository file '{fileName}' was not found.");
+    }
+
     public void Dispose()
     {
         if (Directory.Exists(_directory))
