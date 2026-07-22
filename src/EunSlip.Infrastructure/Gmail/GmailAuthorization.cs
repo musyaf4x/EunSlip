@@ -1,7 +1,7 @@
+using System.Net.Http.Headers;
+using System.Text.Json;
 using EunSlip.Core.Sending;
 using Google.Apis.Auth.OAuth2;
-using Google.Apis.Gmail.v1;
-using Google.Apis.Services;
 
 namespace EunSlip.Infrastructure.Gmail;
 
@@ -92,13 +92,25 @@ public sealed class GmailAuthorization(
         UserCredential credential,
         CancellationToken cancellationToken)
     {
-        using GmailService service = new(new BaseClientService.Initializer
-        {
-            HttpClientInitializer = credential,
-            ApplicationName = "EunSlip",
-        });
-        Google.Apis.Gmail.v1.Data.Profile profile =
-            await service.Users.GetProfile("me").ExecuteAsync(cancellationToken);
-        return profile.EmailAddress;
+        string accessToken = await credential.GetAccessTokenForRequestAsync(
+            cancellationToken: cancellationToken);
+        using HttpClient client = new();
+        using HttpRequestMessage request = new(
+            HttpMethod.Get,
+            "https://openidconnect.googleapis.com/v1/userinfo");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        using HttpResponseMessage response = await client.SendAsync(request, cancellationToken);
+        response.EnsureSuccessStatusCode();
+        string json = await response.Content.ReadAsStringAsync(cancellationToken);
+        return ParseUserInfoEmail(json);
+    }
+
+    internal static string? ParseUserInfoEmail(string json)
+    {
+        using JsonDocument document = JsonDocument.Parse(json);
+        return document.RootElement.TryGetProperty("email", out JsonElement email)
+            && email.ValueKind == JsonValueKind.String
+            ? email.GetString()
+            : null;
     }
 }
