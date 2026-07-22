@@ -93,6 +93,7 @@ public sealed class LocalizationContractTests
     {
         Dictionary<string, string[]> prohibitedCopy = new()
         {
+            ["src/EunSlip.Desktop/MainWindow.xaml.cs"] = ["Pengiriman sedang berlangsung"],
             ["src/EunSlip.Desktop/Views/WizardView.xaml.cs"] = ["Pilih file payroll"],
             ["src/EunSlip.Desktop/Views/SettingsView.xaml.cs"] = ["Gambar|", "Pilih gambar stamp"],
             ["src/EunSlip.Desktop/ViewModels/PayrollWizardViewModel.cs"] = ["Slip Gaji Karyawan", "Yth. Bapak/Ibu"],
