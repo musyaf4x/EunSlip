@@ -6,6 +6,7 @@
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <c:NullToVisibilityConverter x:Key="NullToVis" />
         <c:NullToVisibilityInverseConverter x:Key="NullToVisInverse" />
+        <c:StatusTextConverter x:Key="StatusText" />
     </UserControl.Resources>
 
     <Grid Background="{StaticResource PaperWhiteBrush}" Style="{StaticResource PageFrame}">
@@ -53,7 +54,7 @@
                               SelectedItem="{Binding SelectedBatch}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="PERIODE" Binding="{Binding Period}" Width="100" />
-                            <DataGridTextColumn Header="STATUS" Binding="{Binding Status}" Width="75" />
+                            <DataGridTextColumn Header="STATUS" Binding="{Binding Status, Converter={StaticResource StatusText}}" Width="75" />
                             <DataGridTextColumn Header="KIRIM" Binding="{Binding SentCount}" Width="55" />
                             <DataGridTextColumn Header="GAGAL" Binding="{Binding FailedCount}" Width="80" />
                         </DataGrid.Columns>
@@ -96,8 +97,8 @@
                                   Visibility="{Binding SelectedBatch, Converter={StaticResource NullToVis}}">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="NIK" Binding="{Binding NikHint}" Width="54" />
-                                <DataGridTextColumn Header="STATUS" Binding="{Binding Status}" Width="64" />
-                                <DataGridTextColumn Header="TIPE" Binding="{Binding LatestAttemptType}" Width="70" />
+                                <DataGridTextColumn Header="STATUS" Binding="{Binding Status, Converter={StaticResource StatusText}}" Width="64" />
+                                <DataGridTextColumn Header="TIPE" Binding="{Binding LatestAttemptType, Converter={StaticResource StatusText}}" Width="70" />
                                 <DataGridTextColumn Header="PERC." Binding="{Binding LatestAttemptNumber}" Width="44" />
                                 <DataGridTextColumn Header="SELESAI" Binding="{Binding LatestAttemptCompletedAtUtc}" Width="96" />
                                 <DataGridTextColumn Header="KATEGORI" Binding="{Binding ErrorCategory}" Width="80" />

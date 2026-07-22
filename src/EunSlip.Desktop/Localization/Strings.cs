@@ -12,4 +12,7 @@ public static class Strings
     {
         return Manager.GetString(name, CultureInfo.CurrentUICulture) ?? name;
     }
+
+    public static string GetForCulture(string name, CultureInfo culture) =>
+        Manager.GetString(name, culture) ?? name;
 }

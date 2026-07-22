@@ -114,4 +114,22 @@
   <data name="RecoveryNoEligibleRecipients" xml:space="preserve"><value>Tidak ada penerima yang memenuhi syarat untuk dikirim ulang.</value></data>
   <data name="PreviewGenerationFailed" xml:space="preserve"><value>Pratinjau PDF tidak dapat dibuat.</value></data>
   <data name="PreviewOpenFailed" xml:space="preserve"><value>Pratinjau dibuat, tetapi tidak dapat dibuka oleh aplikasi PDF.</value></data>
+  <data name="BatchStatus_Draft" xml:space="preserve"><value>Draf</value></data>
+  <data name="BatchStatus_Ready" xml:space="preserve"><value>Siap</value></data>
+  <data name="BatchStatus_Sending" xml:space="preserve"><value>Mengirim</value></data>
+  <data name="BatchStatus_Completed" xml:space="preserve"><value>Selesai</value></data>
+  <data name="BatchStatus_Interrupted" xml:space="preserve"><value>Terputus</value></data>
+  <data name="RecipientStatus_Pending" xml:space="preserve"><value>Menunggu</value></data>
+  <data name="RecipientStatus_Sending" xml:space="preserve"><value>Mengirim</value></data>
+  <data name="RecipientStatus_Sent" xml:space="preserve"><value>Terkirim</value></data>
+  <data name="RecipientStatus_Failed" xml:space="preserve"><value>Gagal</value></data>
+  <data name="AttemptStatus_Pending" xml:space="preserve"><value>Menunggu</value></data>
+  <data name="AttemptStatus_Sent" xml:space="preserve"><value>Terkirim</value></data>
+  <data name="AttemptStatus_Failed" xml:space="preserve"><value>Gagal</value></data>
+  <data name="AttemptType_Normal" xml:space="preserve"><value>Normal</value></data>
+  <data name="AttemptType_FailedRetry" xml:space="preserve"><value>Kirim ulang gagal</value></data>
+  <data name="AttemptType_RecoveryRetry" xml:space="preserve"><value>Pemulihan</value></data>
+  <data name="PayrollRunMode_Normal" xml:space="preserve"><value>Proses normal</value></data>
+  <data name="PayrollRunMode_FailedRetry" xml:space="preserve"><value>Kirim ulang gagal</value></data>
+  <data name="PayrollRunMode_RecoveryRetry" xml:space="preserve"><value>Pemulihan batch</value></data>
 </root>

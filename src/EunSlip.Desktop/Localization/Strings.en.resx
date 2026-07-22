@@ -113,4 +113,22 @@
   <data name="RecoveryNoEligibleRecipients" xml:space="preserve"><value>No recipients are eligible for resend.</value></data>
   <data name="PreviewGenerationFailed" xml:space="preserve"><value>The PDF preview could not be generated.</value></data>
   <data name="PreviewOpenFailed" xml:space="preserve"><value>The preview was generated but could not be opened by a PDF application.</value></data>
+  <data name="BatchStatus_Draft" xml:space="preserve"><value>Draft</value></data>
+  <data name="BatchStatus_Ready" xml:space="preserve"><value>Ready</value></data>
+  <data name="BatchStatus_Sending" xml:space="preserve"><value>Sending</value></data>
+  <data name="BatchStatus_Completed" xml:space="preserve"><value>Completed</value></data>
+  <data name="BatchStatus_Interrupted" xml:space="preserve"><value>Interrupted</value></data>
+  <data name="RecipientStatus_Pending" xml:space="preserve"><value>Pending</value></data>
+  <data name="RecipientStatus_Sending" xml:space="preserve"><value>Sending</value></data>
+  <data name="RecipientStatus_Sent" xml:space="preserve"><value>Sent</value></data>
+  <data name="RecipientStatus_Failed" xml:space="preserve"><value>Failed</value></data>
+  <data name="AttemptStatus_Pending" xml:space="preserve"><value>Pending</value></data>
+  <data name="AttemptStatus_Sent" xml:space="preserve"><value>Sent</value></data>
+  <data name="AttemptStatus_Failed" xml:space="preserve"><value>Failed</value></data>
+  <data name="AttemptType_Normal" xml:space="preserve"><value>Normal</value></data>
+  <data name="AttemptType_FailedRetry" xml:space="preserve"><value>Failed retry</value></data>
+  <data name="AttemptType_RecoveryRetry" xml:space="preserve"><value>Recovery retry</value></data>
+  <data name="PayrollRunMode_Normal" xml:space="preserve"><value>Normal process</value></data>
+  <data name="PayrollRunMode_FailedRetry" xml:space="preserve"><value>Failed retry</value></data>
+  <data name="PayrollRunMode_RecoveryRetry" xml:space="preserve"><value>Batch recovery</value></data>
 </root>

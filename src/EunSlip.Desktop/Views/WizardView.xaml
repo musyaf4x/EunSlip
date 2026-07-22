@@ -6,6 +6,7 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <c:InverseBoolToVisibilityConverter x:Key="InverseBoolToVis" />
+        <c:StatusTextConverter x:Key="StatusText" />
 
         <Style x:Key="ProgressStep" TargetType="Border">
             <Setter Property="Background" Value="Transparent" />
@@ -27,7 +28,8 @@
                         Visibility="{Binding IsResumeMode, Converter={StaticResource BoolToVis}}">
                     <StackPanel>
                         <TextBlock Text="MODE TINDAK LANJUT" Style="{StaticResource MicroLabel}" />
-                        <TextBlock Text="{Binding RunMode}" Style="{StaticResource SectionHeading}" Margin="0,6,0,0" />
+                        <TextBlock Text="{Binding RunMode, Converter={StaticResource StatusText}}"
+                                   Style="{StaticResource SectionHeading}" Margin="0,6,0,0" />
                         <TextBlock Text="Gunakan file payroll asli. Fingerprint akan diverifikasi sebelum penerima dipilih."
                                    Style="{StaticResource MutedText}" Margin="0,6,0,0" />
                     </StackPanel>

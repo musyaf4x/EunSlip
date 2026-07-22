@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Globalization;
 using EunSlip.Core.Payroll;
 using EunSlip.Core.Persistence;
 using EunSlip.Core.Sending;
@@ -77,7 +78,7 @@ public sealed partial class HomeViewModel : ViewModelBase
                 .FirstOrDefault();
             RecentBatchSummary = latest is null
                 ? Strings.Get("HomeNoRecentBatch")
-                : $"{latest.Period} · {latest.Status} · {latest.SentCount}/{latest.RecipientCount}";
+                : $"{latest.Period} · {Strings.GetForCulture($"BatchStatus_{latest.Status}", CultureInfo.GetCultureInfo(ActiveLanguage))} · {latest.SentCount}/{latest.RecipientCount}";
 
             PayrollBatchRecord? interrupted = batches
                 .Where(batch => batch.Status == BatchStatus.Interrupted)

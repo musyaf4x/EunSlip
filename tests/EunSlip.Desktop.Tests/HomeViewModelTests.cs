@@ -69,6 +69,11 @@ public sealed class HomeViewModelTests
         Assert.Equal(EunSlip.Desktop.Localization.Strings.Get("StatusReady"), vm.StampStatusText);
         Assert.Equal("id-ID", vm.ActiveLanguage);
         Assert.Contains("JULI 2026", vm.RecentBatchSummary);
+        Assert.Contains(
+            EunSlip.Desktop.Localization.Strings.GetForCulture(
+                "BatchStatus_Completed", System.Globalization.CultureInfo.GetCultureInfo("id-ID")),
+            vm.RecentBatchSummary);
+        Assert.DoesNotContain(nameof(BatchStatus.Completed), vm.RecentBatchSummary);
         Assert.False(vm.IsLoading);
     }
 
