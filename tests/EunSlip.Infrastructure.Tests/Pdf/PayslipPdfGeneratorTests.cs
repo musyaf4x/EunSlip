@@ -57,6 +57,30 @@ public sealed class PayslipPdfGeneratorTests : IDisposable
     }
 
     [Fact]
+    public void Generate_LongIdentityAndNegativeValues_RemainsOnePageWithStamp()
+    {
+        PayslipRequest request = Request() with
+        {
+            Row = Request().Row with
+            {
+                Nama = "NAMA KARYAWAN DENGAN IDENTITAS PROFESIONAL YANG PANJANG",
+                Departement = "HUMAN RESOURCES AND GENERAL AFFAIRS",
+                Position = "SENIOR OPERATIONAL PAYROLL MANAGER",
+                Koreksi = -99_999_999L,
+                Total = 999_999_999L,
+                Nett = 888_888_888L,
+            },
+        };
+        string output = Path.Combine(_directory, "long-values.pdf");
+
+        new PayslipPdfGenerator().Generate(request, output);
+
+        using PdfDocument document = PdfReader.Open(output, PdfDocumentOpenMode.Import);
+        Assert.Equal(1, document.PageCount);
+        Assert.True(document.Pages[0].Resources.Elements.ContainsKey("/XObject"));
+    }
+
+    [Fact]
     public void Generate_MissingStamp_Throws()
     {
         string output = Path.Combine(_directory, "out.pdf");
