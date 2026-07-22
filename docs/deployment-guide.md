@@ -26,7 +26,7 @@ Prasyarat mesin build:
 Jalankan dari root repository:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\Build-Installer.ps1 -Version 1.0.0
+& .\scripts\Build-Installer.ps1 -Version 1.0.0
 ```
 
 Script melakukan `dotnet publish` Release untuk `win-x64` dengan
@@ -45,7 +45,7 @@ Lifecycle test memakai direktori sandbox di `%TEMP%`; tidak menyentuh data asli
 `C:\ProgramData\EunSlip`.
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\Test-InstallerLifecycle.ps1
+& .\scripts\Test-InstallerLifecycle.ps1
 ```
 
 Test harus membuktikan:
